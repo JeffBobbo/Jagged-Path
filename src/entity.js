@@ -263,6 +263,7 @@ JP.Entity.Lumberjack.prototype.Talk = function()
   {
     new JP.Logger.LogItem("\"... Row row row your boat, gently down the stream, belts off trousers down, isn't life a scream?!\"", false, false, false).Post();
     new JP.Logger.LogItem("You now know how to swim", false, false, true).Post();
+    JP.player.ItemDelta("Oak Log", -20);
     JP.player.canSwim = true;
     return true;
   }
@@ -274,7 +275,7 @@ JP.Entity.Lumberjack.prototype.Talk = function()
   else if (JP.player.ItemQuant("Oak Log") >= 5)
   {
     JP.player.ItemDelta("Oak Log", -5);
-    new JP.Logger.LogItem("\"'Ere you go.").Post();
+    new JP.Logger.LogItem("\"'Ere you go.\"").Post();
     JP.player.DeltaGold(JP.Item.Spec("Oak Log", "value") * 5);
     return true;
   }
