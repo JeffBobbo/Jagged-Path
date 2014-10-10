@@ -109,6 +109,8 @@ JP.Draw = function()
   var h = (JP.ui_height >> 1) + 8;
   // inventory
   JP.context.font = '14pt Courier New';
+  JP.context.fillText(SIfy(JP.player.gold) + " Gold Coins", w, h);
+  h += 24;
   JP.context.fillText("Inventory", w, h);
   
   JP.context.font = '12pt Courier New';
