@@ -38,7 +38,7 @@ JP.Item.Register = function(name, item)
 JP.Item.Spec = function(name, spec)
 {
   var item = JP.Item.Create(name);
-  return item !== undefined ? item.spec : undefined;
+  return item !== undefined ? item[spec] : undefined;
 }
 
 JP.Item.Item = function()
