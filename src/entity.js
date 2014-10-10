@@ -43,6 +43,8 @@ JP.Entity.Entity = function(x, y, lifespan)
   // item drops on death
   // array of objects like: {item, chance};
   this.drops = [];
+  this.goldMin = 0;
+  this.goldMax = 0;
 };
 
 JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
@@ -109,6 +111,9 @@ JP.Entity.Entity.prototype.Death = function(doDrops)
       if (this.drops[i].chance >= 1.0 || this.drops[i].chance > Math.random())
         JP.player.ItemDelta(this.drops[i].name);
     };
+
+    if (this.goldMax > 0)
+      JP.player.DeltaGold(randIntRange(this.goldMin, this.goldMax));
   }
 
   JP.world.entities.splice(JP.Entity.FindByID(this.id), 1);
@@ -241,17 +246,24 @@ JP.Entity.Lumberjack.prototype.Talk = function()
     JP.player.ItemDelta("Tinderbox");
     return true;
   }
-  else if (JP.player.canSwim === false && JP.player.ItemQuant("Oak Log") < 20)
+  else if (JP.player.canSwim === false && JP.player.ItemQuant("Evergreen Log") < 25 && JP.player.ItemQuant("Oak Log") < 20)
   {
-    new JP.Logger.LogItem("\"Bring me 20 Oak Logs and I'll teach you to swim.\"", false, false, false).Post();
+    new JP.Logger.LogItem("\"Bring me 25 Evergreen Logs or 20 Oak Logs and I'll teach you to swim.\"", false, false, false).Post();
     return true;
   }
-  else if (JP.player.canSwim === false)
+  else if (JP.player.canSwim === false && JP.player.ItemQuant("Evergreen Log") >= 25)
   {
     new JP.Logger.LogItem("\"... Row row row your boat, gently down the stream, belts off trousers down, isn't life a scream?!\"", false, false, false).Post();
     new JP.Logger.LogItem("You now know how to swim", false, false, true).Post();
     JP.player.canSwim = true;
-    JP.player.ItemDelta("Oak Log", -20);
+    JP.player.ItemDelta("Evergreen Log", -25);
+    return true;
+  }
+  else if (JP.player.canSwim === false && JP.player.ItemQuant("Oak Log") >= 20)
+  {
+    new JP.Logger.LogItem("\"... Row row row your boat, gently down the stream, belts off trousers down, isn't life a scream?!\"", false, false, false).Post();
+    new JP.Logger.LogItem("You now know how to swim", false, false, true).Post();
+    JP.player.canSwim = true;
     return true;
   }
   else if (JP.player.ItemQuant("Oak Log") < 5)
@@ -261,6 +273,7 @@ JP.Entity.Lumberjack.prototype.Talk = function()
   }
   else if (JP.player.ItemQuant("Oak Log") >= 5)
   {
+    JP.player.ItemDelta("Oak Log", -5);
     new JP.Logger.LogItem("\"'Ere you go.").Post();
     JP.player.DeltaGold(JP.Item.Spec("Oak Log", "value") * 5);
     return true;
