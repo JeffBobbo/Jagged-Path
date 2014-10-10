@@ -181,6 +181,8 @@ JP.Player.prototype.DeltaGold = function(quant, absolute)
   if (quant === undefined)
     return false;
 
+  quant = Math.floor(quant);
+
   var gold = absolute ? quant : this.gold + quant;
 
   if (gold < 0)
