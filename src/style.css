@@ -1,0 +1,210 @@
+/*
+  WorldExplorer, javascript browser game
+  Copyright (C) 2014 Jeff Bobbo
+  All rights reserved
+*/
+
+body
+{
+  background-color:#222;
+  background-size:100%;
+  font-family:"Courier New", Courier, monospace;
+  color:#fff;
+  font-size:14px;
+  margin:0;
+  min-height:100%;
+  position:relative;
+}
+
+h1,h2,h3,h4
+{
+  font-weight:400;
+  color:#ffa500;
+  margin:0;
+}
+
+h1
+{
+  font-size:36px;
+  margin:0;
+  padding:14px 0 15px;
+}
+
+*.loading
+{
+  text-align:center;
+}
+
+h2
+{
+  font-size:24px;
+  font-weight:bold;
+}
+
+h4
+{
+  font-weight:bold;
+}
+
+p
+{
+  margin-top:0;
+  line-height:120%;
+  text-align:inherit;
+  color:#fff;
+}
+
+a
+{
+  color:#ffa500;
+}
+
+button
+{
+  background-color:#444;
+  color:#ffa500;
+  border-width:1px;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  text-align:center;
+  width:120px;
+  border-style:solid;
+  border:3px #ffa500;
+  box-shadow:1px 1px 1px 1px rgba(0, 0, 0, 1);
+  margin:5px;
+}
+
+button:hover
+{
+  box-shadow:0px 0px 3px 2px rgba(255, 165, 0, 0.5);
+}
+
+button:disabled
+{
+  background:rgba(60, 60, 60, 1);
+  box-shadow:0px 0px 3px 2px rgba(200, 0, 0, 0.5);
+}
+
+input[type="range"]
+{
+  height:20px;
+  width:200px;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  background:#271900;
+  border:1px #ffa500;
+  box-shadow:0px 0px 0px 0px rgba(255, 165, 0, 0.0);
+}
+
+input[type="range"]::-webkit-slider-thumb
+{
+  -webkit-appearance: none;
+  background-color: #888;
+  width: 10px;
+  height: 20px;
+  border-radius:5px;
+  -moz-border-radius:5px;
+}
+
+input[type="range"]::-moz-slider-thumb
+{
+  -moz-appearance: none;
+  background-color: #888;
+  width: 10px;
+  height: 20px;
+  border-radius:5px;
+  -moz-border-radius:5px;
+}
+
+input[type="range"]:hover
+{
+  height:20px;
+  width:200px;
+  border-radius:5px;
+  -moz-border-radius:5px;
+  background:#271900;
+  border:1px #ffa500;
+  box-shadow:0px 0px 2px 2px rgba(255, 165, 0, 0.5);
+}
+
+/* chrome and safari only, apparently FF doesn't work, and IE... Well... Lol */
+::-webkit-scrollbar
+{
+  width:10px;
+  height:10px;
+}
+::-webkit-scrollbar-track
+{
+  background-color: #999;
+}
+::-webkit-scrollbar-track-piece
+{
+  background-color: #999;
+}
+::-webkit-scrollbar-thumb
+{
+  height:50px;
+  background-color:#ffa500;
+}
+
+hr
+{
+  border:0;
+  height:2px;
+  background:#ffa500;
+  background-image:-webkit-linear-gradient(left, #444, #ffa500, #444);
+  background-image:-moz-linear-gradient(left, #444, #ffa500, #444);
+  background-image:-ms-linear-gradient(left, #444, #ffa500, #444);
+  background-image:-o-linear-gradient(left, #444, #ffa500, #444);
+  background-image:linear-gradient(left, #444, #ffa500, #444);
+  margin:2px;
+}
+
+#content
+{
+  margin:auto;
+  padding:0px;
+}
+
+#game
+{
+  position:relative;
+}
+
+canvas
+{
+  position:relative;
+  outline:0;
+  float:left;
+}
+
+#footer
+{
+  background:#444;
+  width:80%;
+  border-radius:5px;
+  margin:auto 1px;
+  font-size:14px;
+  border:0;
+  padding:0;
+}
+
+#footerleft
+{
+  float:left;
+  text-align:left;
+  margin:2px;
+  padding:2px;
+  display:inline;
+  color:#ffa500;
+}
+
+#footerright
+{
+  float:right;
+  text-align:right;
+  margin:2px;
+  padding:2px;
+  display:inline;
+  color:#ffa500;
+}

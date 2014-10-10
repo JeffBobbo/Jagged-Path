@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <!--
+    Jagged Path, javascript browser game
+    Copyright (C) 2014 Jeff Bobbo
+    All rights reserved
+  -->
+  <head>
+    <meta charset="utf-8"/>
+
+    <title>Jagged Path</title>
+    <meta name="description" content="Jagged Path javascript browser game"/>
+    <meta name="keywords" content=""/>
+
+    <link rel="stylesheet" href="style.css" />
+
+    <script src="main.js"></script>
+    <script src="misc.js"></script>
+    <script src="player.js"></script>
+    <script src="world.js"></script>
+    <script src="tile.js"></script>
+    <script src="entity.js"></script>
+    <script src="item.js"></script>
+    <script src="event.js"></script>
+    <script src="gaussian.js"></script>
+
+    <script src="perlin.js"></script>
+    <script src="lz-string.js"></script>
+  </head>
+
+  <body onload="pageLoad()">
+    <div id="content">
+      <!--div id="footer">
+        <div id="footerleft">
+          VERSION
+          <a href="changelog" target="_blank">Change log</a>
+        </div>
+        <div id="footerright">
+          <a id="textSave" href="" onclick="textSaveOverlay(); return false;">Text save</a>
+          <a id="textLoad" href="" onclick="textLoadOverlay(); return false;">Load save</a>
+          <a id="reset" href="" onclick="resetDataOverlay();return false;">Reset save</a>
+          <a id="credits" href="" onclick="creditOverlay();return false;">Credits</a>
+        </div>
+      </div>
+      <br/-->
+      <div id="game">
+        <noscript>
+          <h2>
+            This page requires JavaScript to be enabled, sorry!
+          <h2>
+        </noscript>
+        <button id="start" onclick="start()" style="float:bottom;">Start</button>
+        <canvas id="canvas" tabindex="1" onkeydown="JP.ProcessKey(event)" onmousemove="JP.ProcessMouse(event)" onmousedown="JP.ProcessMouse(event)">
+          <h2>Your browser doesn't support HTML5's canvas element. Please get a better browser such as Google Chrome, Mozilla Firefox or Opera.</h2>
+        </canvas>
+        <!--div id="eventLog" style="display:none;">
+        </div>
+        <div id="menu" style="display:none;">
+          <h3>Inventory</h3>
+          <table id="inventTable" style="width:280px">
+            <tr>
+              <th>Item</th>
+              <th>Quant</th>
+            </tr>
+          </table>
+        </div-->
+      </div>
+    </div><!-- content -->
+  </body>
+</html>
