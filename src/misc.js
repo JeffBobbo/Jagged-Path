@@ -259,13 +259,23 @@ Object.prototype.merge = function(other)
   {
     if (other[keys[i]] === undefined && this[keys[i]] !== undefined) // this is a new value, but it already exists so skip
       continue;
-    if (other[keys[i]] === NaN) // don't copy NaNs
+    if (other[keys[i]] === NaN) // don't copy NaN values
       continue;
     if (this[keys[i]] === undefined) // it doesn't exist in our target, so don't add it
       continue;
-    if (typeof(this[keys[i]]) === "object" || typeof(other[keys[i]]) === "object") // deep copy
-      this[keys[i]].merge(other[keys[i]]);
+    if (other[keys[i]] !== null && typeof(other[keys[i]]) === "object") // deep copy
+    {
+      if (other[keys[i]].isArray() === true)
+        this[keys[i]] = other[keys[i]];
+      else 
+        this[keys[i]].merge(other[keys[i]]);
+    }
     else
       this[keys[i]] = other[keys[i]];
   };
+};
+
+Object.prototype.isArray = function()
+{
+  return Object.prototype.toString.call(this) === '[object Array]';
 };
