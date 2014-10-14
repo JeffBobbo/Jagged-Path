@@ -62,7 +62,7 @@ JP.Generate = function()
   else
   {
     clearInterval(JP.intervalID);
-    setInterval(JP.Idle, 20);    
+    JP.intervalID = setInterval(function() {JP.Idle();}, 20);    
   }
 }
 
@@ -147,7 +147,7 @@ JP.ProcessMouse = function(event)
   }
   JP.MouseState.button = (event.type === "mousedown" ? event.button : -1); // LM: 0, MM: 1, RM: 2
   var evt = new JP.GUI.Event();
-  evt.merge(JP.MouseState);
+  evt.MouseState = JP.MouseState;
   evt.type = "mouse";
   JP.guimgr.OnEvent(evt);
   JP.needDraw = true;
@@ -218,35 +218,41 @@ window.onresize = JP.SetResolution;
 
 function start()
 {
-  var element = document.getElementById("start");
-  element.parentNode.removeChild(element);
-  
+  // remove the splash screen
+  JP.guimgr.RemoveWindow(JP.splash);
 
   // create the world
   JP.world = new JP.World();
-  JP.world.Load();
+  JP.world.Load(); // this'll handle if there's no data
 
   // load player data
   JP.player = new JP.Player();
-  JP.player.Load();
+  JP.player.Load(); // this'll handle if there's no data
 
   JP.Logger.logNode = document.getElementById('eventLog');
-  JP.canvas.focus();
 
-  JP.intervalID = setInterval(JP.Generate, 5);
+  clearInterval(JP.intervalID);
+  JP.intervalID = setInterval(function() {JP.Generate();}, 5);
 }
 
 function pageLoad()
 {
+  if (JP.canvas === document.getElementById('canvas')) // dirty hack to make sure we don't execute this twice and break something
+    return;
   // setup the canvas
   JP.canvas = document.getElementById('canvas');
   JP.context = JP.canvas.getContext("2d");
   JP.SetResolution();
 
   JP.guimgr = new JP.GUI.Manager();
-  var win = JP.guimgr.CreateWindow();
-  JP.guimgr.windowList[win].visible = true;
+  JP.splash = JP.guimgr.CreateWindow();
+  JP.guimgr.windowList[JP.splash].visible = true;
   var cb = {};
   cb[JP.CallbackType.MOUSE1] = start;
-  JP.guimgr.windowList[win].CreateElement("Start", 50, 60, 100, 100, cb);
+  var btn = JP.guimgr.windowList[JP.splash].CreateElement("Start", JP.canvas.width * 0.4, JP.canvas.height * 0.4, JP.canvas.width * 0.2, JP.canvas.height * 0.2, cb);
+  JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New");
+  JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEIN, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("22px Courier New")});
+  JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEOUT, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New")});
+  // draw the gui until we start
+  JP.intervalID = setInterval(function() {JP.guimgr.Draw();}, 5);
 }
