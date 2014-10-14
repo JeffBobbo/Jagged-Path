@@ -44,6 +44,14 @@ JP.MouseState = JP.MouseState || {
   button: -1,
 };
 
+JP.CallbackType = {
+  MOUSE1:   0, // LM
+  MOUSE2:   1, // RM
+  MOUSE3:   2, // MM
+  MOUSEIN:  3, // inside the elem
+  MOUSEOUT: 4  // outside the elem
+};
+
 JP.Generate = function()
 {
   if (JP.world.generationLevel < JP.World.Gen.DONE)
@@ -93,7 +101,10 @@ JP.Save = function()
 JP.Draw = function()
 {
   if (JP.needDraw === false)
+  {
+    JP.guimgr.Draw();
     return;
+  }
 
   JP.context = JP.canvas.getContext("2d");
   JP.world.Draw();
@@ -121,6 +132,7 @@ JP.Draw = function()
     JP.context.fillText(JP.player.inventory[i].quant + "x " + JP.player.inventory[i--].name, w, h);
 
   //JP.player.Draw(); // this draws the players inventory
+  JP.guimgr.Draw();
   JP.needDraw = false;
 }
 
@@ -134,7 +146,8 @@ JP.ProcessMouse = function(event)
     JP.MouseState.vy = JP.MouseState.y;
   }
   JP.MouseState.button = (event.type === "mousedown" ? event.button : -1); // LM: 0, MM: 1, RM: 2
-  var evt = (new JP.GUI.Event()).merge(JP.MouseState);
+  var evt = new JP.GUI.Event();
+  evt.merge(JP.MouseState);
   evt.type = "mouse";
   JP.guimgr.OnEvent(evt);
   JP.needDraw = true;
@@ -208,7 +221,6 @@ function start()
   var element = document.getElementById("start");
   element.parentNode.removeChild(element);
   
-  JP.guimgr = new JP.GUI.Manager();
 
   // create the world
   JP.world = new JP.World();
@@ -230,4 +242,11 @@ function pageLoad()
   JP.canvas = document.getElementById('canvas');
   JP.context = JP.canvas.getContext("2d");
   JP.SetResolution();
+
+  JP.guimgr = new JP.GUI.Manager();
+  var win = JP.guimgr.CreateWindow();
+  JP.guimgr.windowList[win].visible = true;
+  var cb = {};
+  cb[JP.CallbackType.MOUSE1] = start;
+  JP.guimgr.windowList[win].CreateElement("Start", 50, 60, 100, 100, cb);
 }
