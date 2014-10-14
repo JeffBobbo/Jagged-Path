@@ -134,6 +134,9 @@ JP.ProcessMouse = function(event)
     JP.MouseState.vy = JP.MouseState.y;
   }
   JP.MouseState.button = (event.type === "mousedown" ? event.button : -1); // LM: 0, MM: 1, RM: 2
+  var evt = (new JP.GUI.Event()).merge(JP.MouseState);
+  evt.type = "mouse";
+  JP.guimgr.OnEvent(evt);
   JP.needDraw = true;
   return false;
 };
@@ -205,6 +208,8 @@ function start()
   var element = document.getElementById("start");
   element.parentNode.removeChild(element);
   
+  JP.guimgr = new JP.GUI.Manager();
+
   // create the world
   JP.world = new JP.World();
   JP.world.Load();

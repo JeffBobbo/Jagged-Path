@@ -4,112 +4,89 @@
   All rights reserved
 */
 
-JP.Logger = JP.Logger || {};
-JP.Logger.events = [];
+JP.GUI = JP.GUI || {};
 
-JP.Logger.LoadData = function(text)
+
+JP.GUI.Event = function()
 {
-  var logs = undefined;
-  if (typeof text === "string")
-    logs = JSON.parse(text);
-  else
-    logs = JSON.parse(localStorage.getItem("JP.events"));
-  if (logs === undefined || logs === null)
-    return;
-  
-  logs.sort(function (a, b) {
-    if (a.when < b.when)
-      return 1;
-    if (a.when > b.when)
-      return -1;
-    return 0;
-  });
-
-  for (var i = 0; i < logs.length; i++)
-  {
-    var log = new LogItem();
-    log.merge(logs[i]);
-    log.post();
-  }
-};
-
-JP.Logger.DeleteData = function()
-{
-  localStorage.removeItem("JP.events");
-
-  JP.Logger.events.clear();
-};
-
-JP.Logger.Draw = function()
-{
-  JP.context.fillStyle = "#FFFFFF";
-  JP.context.textAlign = "left";
-  var font = "12pt Courier New"; // need this later for bold/italics
-  JP.context.font = font;
-  var w = JP.canvas.width - JP.ui_width + 8;
-  var h = (JP.ui_height >> 1) + 8;
-  // event log
-  var i = JP.Logger.events.length - 1;
-  var h2 = 16;
-  while (i >= 0 && h2 < h - 16)
-  {
-    var words = JP.Logger.events[i].msg.split(" ");
-    JP.context.font = (JP.Logger.events[i].italic === true ? "italic " : "") + (JP.Logger.events[i].bold === true ? "bold " : "") + font;
-    var line = "";
-    for (var j = 0; j < words.length; ++j)
-    {
-      var test = line + words[j] + " ";
-      var width = JP.context.measureText(test).width;
-      if (width > JP.ui_width && j > 0)
-      {
-        JP.context.fillText(line, w, h2);
-        line = " " + words[j] + " ";
-        h2 += 16;
-      }
-      else
-      {
-        line = test;
-      }
-    }
-    JP.context.fillText(line, w, h2);
-    i--;
-    h2 += 16;
-  }
+  this.MouseState = {x: -1, y: -1, button: -1};
+  this.KeyState = []; // ?
 }
 
-JP.Logger.LogItem = function(text, save, bold, italic)
+JP.GUI.Manager = function()
 {
-  this.msg  = text || "";
-  this.save = save || false;
-  this.bold = bold || false;
-  this.italic = italic || false;
+  this.windowList = [];
+}
+
+JP.GUI.prototype.OnEvent = function(event)
+{
+  for (var i = this.windowList.length - 1; i >= 0; i--)
+    this.windowList[i].OnEvent(event);
 };
 
-JP.Logger.LogItem.prototype.Post = function()
+JP.GUI.Window = function()
 {
-  if (this.msg.length === 0)
+  this.enabled = true;
+  this.visible = false;
+  this.childList = [];
+}
+
+JP.GUI.Window.prototype.OnEvent = function(event)
+{
+  if ((this.enabled | this.visible) === false)
     return;
-  if (this.when === -1)
-    this.when = JP.getTickCount();
 
-  JP.Logger.events.push(this);
-/*
-  var p = document.createElement("P");
-  if (this.bold)
-    p.style.fontWeight = "bold";
-  if (this.italic)
-    p.style.fontStyle = "italic";
-  p.appendChild(document.createTextNode(this.msg));
+  for (var i = this.childList.length - 1; i >= 0; i--)
+    this.childList[i].OnEvent(event);
+};
 
-  JP.Logger.logNode.insertBefore(p, JP.Logger.logNode.firstChild);
-*/
-  if (this.save === true) // save it
+JP.GUI.CallbackType = {
+  MOUSE1:   0, // LM
+  MOUSE2:   1, // RM
+  MOUSE3:   2, // MM
+  MOUSEIN:  3, // inside the elem
+  MOUSEOUT: 4  // outside the elem
+};
+
+JP.GUI.Element = function()
+{
+  this.posx = -1;
+  this.posy = -1;
+  this.width  = -1;
+  this.height = -1;
+
+  this.enabled = true;
+  this.visible = false;
+  this.eventCallbacks = {}; // type, function()
+}
+
+JP.GUI.Element.prototype.OnEvent = function(event)
+{
+  if (event.type === "mouse")
   {
-    var tmp = JSON.parse(localStorage.getItem("JP.events"));
-    if (tmp === undefined || tmp === null)
-      tmp = new Array();
-    tmp.push(this);
-    localStorage.setItem("JP.events", JSON.stringify(tmp));
+    if (InRange(this.posx, this.posx+this.width,  event.MouseState.x) === false && InRange(this.posy, this.posy+this.height, event.MouseState.y) === false)
+    {
+      if (this.eventCallbacks[MOUSEOUT] !== undefined)
+        this.eventCallbacks[MOUSEOUT]();
+    }
+    else if (event.MouseState.button === -1)
+    {
+      if (this.eventCallbacks[MOUSEIN] !== undefined)
+        this.eventCallbacks[MOUSEIN]();
+    }
+    else
+    {
+      if (this.eventCallbacks[])
+    }
   }
-  JP.needDraw = true;
+};
+
+JP.GUI.Element.prototype.RegisterEvent = function(event, callback)
+{
+  this.eventCallbacks.event = callback;
+};
+
+JP.GUI.Element.prototype.DeregisterEvent = function(event)
+{
+  delete this.eventCallbacks.event;
 };
