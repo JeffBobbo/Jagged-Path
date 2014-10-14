@@ -49,6 +49,8 @@ JP.Player = function()
   this.canClimb = false;
   this.canSwim = false;
 
+  // array of {name, status}
+  this.quests = [];
 
   // end data
   // saveKeys -- This is what gets saved or loaded -- key names of the JP.Player object
@@ -59,6 +61,7 @@ JP.Player = function()
     "gold",
     "canClimb",    
     "canSwim",
+    "quests"
   ];
 };
 
@@ -143,6 +146,17 @@ JP.Player.prototype.ItemClass = function(itemClass)
     }
   }
   return best;
+};
+
+JP.Player.prototype.ItemQuantOfClass = function(itemClass)
+{
+  var quant = 0;
+  for (var i = this.inventory.length - 1; i >= 0; i--)
+  {
+    if (this.inventory[i].class === itemClass)
+      quant += this.inventory[i].quant;
+  }
+  return quant;
 };
 
 JP.Player.prototype.ItemDelta = function(name, quant, absolute)
