@@ -30,9 +30,41 @@ JP.Item.Create = function(name, quant)
   return undefined;
 };
 
-JP.Item.Register = function(name, item)
+JP.Item.Load = function(data)
 {
-  JP.Item.registry.push({name: name, item: item});
+  if (data === undefined || data === null)
+    return;
+
+  var o = undefined;
+  if (typeof(data) === "string")
+    o = JSON.parse(data);
+  else
+    o = data;
+  if (o === undefined || o === null)
+    return;
+
+  var item;
+  switch (o.type)
+  {
+    case "axe":
+      item = new JP.Item.Axe();
+    break;
+    case "log":
+      item = new JP.Item.Log();
+    break;
+    case "tinderbox":
+      item = new JP.Item.Tinderbox();
+    break;
+    default:
+      item = new JP.Item.Item();
+    break;
+  }
+  JP.Item.Register(item);
+};
+
+JP.Item.Register = function(item)
+{
+  JP.Item.registry.push({name: name, reg: JP.Item.ID++, item: item});
 };
 
 JP.Item.Spec = function(name, spec)
@@ -268,10 +300,3 @@ JP.Item.Tinderbox.prototype.Use = function()
   new JP.Logger.LogItem("You started a fire.", false, false, false).Post();
   JP.needDraw = true;
 };
-
-
-// all items must be registered here using their name and constructor for JP.Item.Create()
-JP.Item.Register("Axe", JP.Item.Axe);
-JP.Item.Register("Oak Log", JP.Item.OakLog);
-JP.Item.Register("Evergreen Log", JP.Item.EvergreenLog);
-JP.Item.Register("Tinderbox", JP.Item.Tinderbox);

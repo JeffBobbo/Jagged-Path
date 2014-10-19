@@ -25,7 +25,28 @@ JP.Data.Request = function(url, callback)
 
 JP.Data.Load = function()
 {
+  JP.Data.Request("data/itemIndex.json", JP.Data.LoadItems);
   JP.Data.Request("data/questIndex.json", JP.Data.LoadQuests);
+};
+
+JP.Data.LoadItems = function(fileList)
+{
+  if (fileList === undefined || fileList === null)
+    return;
+  
+  for (var i = 0; i < fileList.length; ++i)
+    JP.Data.Request("data/items/" + fileList[i], JP.Data.LoadItemFile);
+};
+
+JP.Data.LoadItemFile = function(data)
+{
+  if (data === undefined || data === null)
+    return;
+
+  for (var i = 0; i < data.length; ++i)
+  {
+    //JP.Item.Load(data[i]);
+  }
 };
 
 JP.Data.LoadQuests = function(fileList)

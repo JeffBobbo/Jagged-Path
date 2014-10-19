@@ -19,7 +19,7 @@ JP.Quest.Status = {
 JP.Quest.Create = function(src)
 {
   // src should be JSON data to parse into our quest structure
-  if (src === undefined || src === null || src.length === 0)
+  if (src === undefined || src === null)
     return;
 
   var o = undefined;
