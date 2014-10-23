@@ -17,6 +17,7 @@ JP.getTickCount = function(update)
   if (update === true)
   {
     JP.getTickCount.last = getTime();
+    JP.getFPS(true);
     JP.getTickDelta(true);
   }
   return JP.getTickCount.tick; 
@@ -25,14 +26,31 @@ JP.getTickCount = function(update)
 JP.getTickDelta = function(update)
 {
   if (JP.getTickDelta.last === undefined)
-  {
     JP.getTickDelta.last = JP.getTickCount();
-  }
   if (update === true)
     JP.getTickDelta.last = JP.getTickCount();
   var ret = JP.getTickCount() - JP.getTickDelta.last;
   return ret;
 };
+
+JP.getFPS = function(update)
+{
+  if (JP.getFPS.cache === undefined)
+    JP.getFPS.cache = [];
+
+  if (update === true)
+  {
+    var fps = 1000 / JP.getTickDelta();
+    JP.getFPS.cache.push(fps);
+    if (JP.getFPS.cache.length > 20)
+      JP.getFPS.cache.shift(); // shift off first
+    JP.getFPS.last = 0;
+    for (var i = JP.getFPS.cache.length - 1; i >= 0; i--)
+      JP.getFPS.last += JP.getFPS.cache[i];
+    JP.getFPS.last /= JP.getFPS.cache.length;
+  }
+  return JP.getFPS.last;
+}
 
 function randRange(min, max)
 {
