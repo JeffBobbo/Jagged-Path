@@ -93,7 +93,15 @@ JP.Save = function()
 JP.Draw = function()
 {
   if (JP.needDraw === false)
+  {
+    JP.context.fillStyle = "#000000";
+    JP.context.fillRect(JP.canvas.width - JP.ui_width, JP.canvas.height - 26, 14*10, 26);
+    JP.context.fillStyle = "#FFFFFF";
+    var fps = (1000 / JP.getTickDelta()).toFixed(0) + "fps";
+    JP.context.font = "10pt Courier New";
+    JP.context.fillText(fps, JP.canvas.width - JP.ui_width + 10, JP.canvas.height - 24)
     return;
+  }
 
   JP.context = JP.canvas.getContext("2d");
   JP.world.Draw();
@@ -120,6 +128,13 @@ JP.Draw = function()
   while (i >= 0 && (h += 16) < JP.ui_height) // figure out something if this is longer than can be shown
     JP.context.fillText(JP.player.inventory[i].quant + "x " + JP.player.inventory[i--].name, w, h);
 
+
+  if (JP.Draw.FPS === undefined)
+    JP.Draw.FPS = [];
+
+  var fps = JP.getFPS().toFixed(0) + "fps";
+  JP.context.font = "10pt Courier New";
+  JP.context.fillText(fps, JP.canvas.width - JP.ui_width + 10, JP.canvas.height - 24)
   //JP.player.Draw(); // this draws the players inventory
   JP.needDraw = false;
 }
@@ -224,5 +239,9 @@ function pageLoad()
   // setup the canvas
   JP.canvas = document.getElementById('canvas');
   JP.context = JP.canvas.getContext("2d");
+
+  JP.canvas.onkeydown   = function() {JP.ProcessKey(event); };
+  JP.canvas.onmousemove = function() {JP.ProcessMouse(event); };
+  JP.canvas.onmousedown = function() {JP.ProcessMouse(event); };
   JP.SetResolution();
 }
