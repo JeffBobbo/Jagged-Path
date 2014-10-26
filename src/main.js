@@ -7,8 +7,8 @@
 "use strict";
 
 var JP = JP || {
-  canvas: null,
-  context: null,
+  gameview: null,
+  gamecontext: null,
   world: null,
   // how big is our world in tiles
   WIDTH:  920,
@@ -100,36 +100,39 @@ JP.Save = function()
 
 JP.Draw = function()
 {
-  if (JP.needDraw === false)
-  {
-    JP.guimgr.Draw();
-    return;
-  }
-
-  JP.context = JP.canvas.getContext("2d");
-  JP.world.Draw();
+  JP.gamecontext = JP.gameview.getContext("2d");
+  JP.guicontext = JP.guiview.getContext("2d");
 
   // draw ui stuff
   // clear this bit
-  //JP.context.clearRect(JP.canvas.width - JP.ui_width, 0, JP.canvas.width, JP.canvas.height);
-  JP.context.fillStyle = "#000000";
-  JP.context.fillRect(JP.canvas.width - JP.ui_width, 0, JP.canvas.width, JP.canvas.height);
+  //JP.guicontext.clearRect(JP.guiview.width - JP.ui_width, 0, JP.guiview.width, JP.guiview.height);
+  JP.guicontext.fillStyle = "#000000";
+  JP.guicontext.fillRect(JP.guiview.width - JP.ui_width, 0, JP.guiview.width, JP.guiview.height);
 
+  JP.guicontext.fillStyle = "#FFFFFF";
   JP.Logger.Draw();
-  var w = JP.canvas.width - JP.ui_width + 8;
+  var w = JP.guiview.width - JP.ui_width + 8;
   var h = (JP.ui_height >> 1) + 8;
   // inventory
-  JP.context.font = '14pt Courier New';
-  JP.context.fillText(SIfy(JP.player.gold) + " Gold Coins", w, h);
+  JP.guicontext.font = '10pt Courier New';
+  JP.guicontext.fillText(SIfy(JP.player.gold) + " Gold Coins", w, h);
   h += 24;
-  JP.context.fillText("Inventory", w, h);
+  JP.guicontext.fillText("Inventory", w, h);
   
-  JP.context.font = '12pt Courier New';
+  JP.guicontext.font = '8pt Courier New';
   h += 4;
 
   var i = JP.player.inventory.length - 1;
   while (i >= 0 && (h += 16) < JP.ui_height) // figure out something if this is longer than can be shown
-    JP.context.fillText(JP.player.inventory[i].quant + "x " + JP.player.inventory[i--].name, w, h);
+    JP.guicontext.fillText(JP.player.inventory[i].quant + "x " + JP.player.inventory[i--].name, w, h);
+  var fps = (1000 / JP.getTickDelta()).toFixed(0) + "fps";
+  JP.guicontext.font = "10pt Courier New";
+  JP.guicontext.fillText(fps, JP.guiview.width - JP.ui_width + 10, JP.guiview.height - 24)
+  
+  if (JP.needDraw === false)
+    return;
+
+  JP.world.Draw();
 
   //JP.player.Draw(); // this draws the players inventory
   JP.guimgr.Draw();
@@ -138,9 +141,9 @@ JP.Draw = function()
 
 JP.ProcessMouse = function(event)
 {
-  JP.MouseState.x = event.clientX || JP.MouseState.x; // - (document.documentElement.clientWidth - JP.canvas.width) / 2;
-  JP.MouseState.y = event.clientY || JP.MouseState.y; // - (document.documentElement.clientHeight - JP.canvas.height) / 2;
-  if (JP.MouseState.x < JP.canvas.width - JP.ui_width)
+  JP.MouseState.x = event.clientX || JP.MouseState.x; // - (document.documentElement.clientWidth - JP.gameview.width) / 2;
+  JP.MouseState.y = event.clientY || JP.MouseState.y; // - (document.documentElement.clientHeight - JP.gameview.height) / 2;
+  if (JP.MouseState.x < JP.gameview.width - JP.ui_width)
   {
     JP.MouseState.vx = JP.MouseState.x; // special one for view
     JP.MouseState.vy = JP.MouseState.y;
@@ -202,16 +205,20 @@ JP.SetResolution = function()
   var h = document.documentElement.clientHeight - JP.PIXEL_SIZE*2;
   if (h > w)
   {
-    JP.canvas.width  = TruncateTo(w, JP.PIXEL_SIZE);
-    JP.canvas.height = TruncateTo(w / JP.ratio, JP.PIXEL_SIZE);
+    JP.gameview.width  = TruncateTo(w, JP.PIXEL_SIZE);
+    //JP.gameview.width  = TruncateTo(JP.gameview.width * 0.25, JP.PIXEL_SIZE);
+    JP.gameview.height = TruncateTo(w / JP.ratio, JP.PIXEL_SIZE);
   }
   else
   {
-    JP.canvas.width  = TruncateTo(h * JP.ratio, JP.PIXEL_SIZE);
-    JP.canvas.height = TruncateTo(h, JP.PIXEL_SIZE);
+    JP.gameview.width  = TruncateTo(h * JP.ratio, JP.PIXEL_SIZE);
+    //JP.gameview.width  = TruncateTo(JP.gameview.width * 0.25, JP.PIXEL_SIZE);
+    JP.gameview.height = TruncateTo(h, JP.PIXEL_SIZE);
   }
-  JP.ui_height = JP.canvas.height;
-  JP.ui_width  = TruncateTo(JP.canvas.width * (1 / 4), JP.PIXEL_SIZE);
+  JP.ui_height = JP.gameview.height;
+  JP.ui_width  = TruncateTo(JP.gameview.width * (1 / 4), JP.PIXEL_SIZE);
+  JP.guiview.width = JP.gameview.width;
+  JP.guiview.height = JP.gameview.height;
   JP.needDraw = true;
 };
 window.onresize = JP.SetResolution;
@@ -230,6 +237,7 @@ function start()
   JP.player.Load(); // this'll handle if there's no data
 
   JP.Logger.logNode = document.getElementById('eventLog');
+  JP.gameview.focus();
 
   clearInterval(JP.intervalID);
   JP.intervalID = setInterval(function() {JP.Generate();}, 5);
@@ -237,11 +245,15 @@ function start()
 
 function pageLoad()
 {
-  if (JP.canvas === document.getElementById('canvas')) // dirty hack to make sure we don't execute this twice and break something
-    return;
-  // setup the canvas
-  JP.canvas = document.getElementById('canvas');
-  JP.context = JP.canvas.getContext("2d");
+  // setup the gameview
+  JP.gameview = document.getElementById('gameview');
+  JP.gamecontext = JP.gameview.getContext("2d");
+  JP.guiview = document.getElementById('guiview');
+  JP.guicontext = JP.guiview.getContext("2d");
+
+  JP.guiview.onkeydown   = function() {JP.ProcessKey(event); };
+  JP.guiview.onmousemove = function() {JP.ProcessMouse(event); };
+  JP.guiview.onmousedown = function() {JP.ProcessMouse(event); };
   JP.SetResolution();
 
   JP.guimgr = new JP.GUI.Manager();

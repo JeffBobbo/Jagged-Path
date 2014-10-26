@@ -7,51 +7,13 @@
 body
 {
   background-color:#222;
-  background-size:100%;
   font-family:"Courier New", Courier, monospace;
   color:#fff;
   font-size:14px;
   margin:0;
+  padding:0;
   min-height:100%;
-  position:relative;
-}
-
-h1,h2,h3,h4
-{
-  font-weight:400;
-  color:#ffa500;
-  margin:0;
-}
-
-h1
-{
-  font-size:36px;
-  margin:0;
-  padding:14px 0 15px;
-}
-
-*.loading
-{
-  text-align:center;
-}
-
-h2
-{
-  font-size:24px;
-  font-weight:bold;
-}
-
-h4
-{
-  font-weight:bold;
-}
-
-p
-{
-  margin-top:0;
-  line-height:120%;
-  text-align:inherit;
-  color:#fff;
+  position:absolute;
 }
 
 a
@@ -85,48 +47,6 @@ button:disabled
   box-shadow:0px 0px 3px 2px rgba(200, 0, 0, 0.5);
 }
 
-input[type="range"]
-{
-  height:20px;
-  width:200px;
-  border-radius:5px;
-  -moz-border-radius:5px;
-  background:#271900;
-  border:1px #ffa500;
-  box-shadow:0px 0px 0px 0px rgba(255, 165, 0, 0.0);
-}
-
-input[type="range"]::-webkit-slider-thumb
-{
-  -webkit-appearance: none;
-  background-color: #888;
-  width: 10px;
-  height: 20px;
-  border-radius:5px;
-  -moz-border-radius:5px;
-}
-
-input[type="range"]::-moz-slider-thumb
-{
-  -moz-appearance: none;
-  background-color: #888;
-  width: 10px;
-  height: 20px;
-  border-radius:5px;
-  -moz-border-radius:5px;
-}
-
-input[type="range"]:hover
-{
-  height:20px;
-  width:200px;
-  border-radius:5px;
-  -moz-border-radius:5px;
-  background:#271900;
-  border:1px #ffa500;
-  box-shadow:0px 0px 2px 2px rgba(255, 165, 0, 0.5);
-}
-
 /* chrome and safari only, apparently FF doesn't work, and IE... Well... Lol */
 ::-webkit-scrollbar
 {
@@ -147,35 +67,13 @@ input[type="range"]:hover
   background-color:#ffa500;
 }
 
-hr
-{
-  border:0;
-  height:2px;
-  background:#ffa500;
-  background-image:-webkit-linear-gradient(left, #444, #ffa500, #444);
-  background-image:-moz-linear-gradient(left, #444, #ffa500, #444);
-  background-image:-ms-linear-gradient(left, #444, #ffa500, #444);
-  background-image:-o-linear-gradient(left, #444, #ffa500, #444);
-  background-image:linear-gradient(left, #444, #ffa500, #444);
-  margin:2px;
-}
-
-#content
-{
-  margin:auto;
-  padding:0px;
-}
-
-#game
-{
-  position:relative;
-}
-
 canvas
 {
-  position:relative;
+  position:absolute;
   outline:0;
-  float:left;
+  top:0px;
+  left:0px;
+  display:inline;
 }
 
 #footer

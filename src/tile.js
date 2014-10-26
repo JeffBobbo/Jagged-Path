@@ -23,7 +23,7 @@ JP.Tile.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
       this.img = new Image();
       this.img.src = 'img/' + this.imgPath;
     }
-    JP.context.drawImage(this.img, 
+    JP.gamecontext.drawImage(this.img, 
       (x - xoffset) * JP.PIXEL_SIZE,
       (y - yoffset) * JP.PIXEL_SIZE
     );
