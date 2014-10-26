@@ -40,14 +40,14 @@ JP.getFPS = function(update)
 
   if (update === true)
   {
-    var fps = 1000 / JP.getTickDelta();
-    JP.getFPS.cache.push(fps);
+    JP.getFPS.cache.push(JP.getTickDelta());
     if (JP.getFPS.cache.length > 20)
       JP.getFPS.cache.shift(); // shift off first
     JP.getFPS.last = 0;
     for (var i = JP.getFPS.cache.length - 1; i >= 0; i--)
       JP.getFPS.last += JP.getFPS.cache[i];
     JP.getFPS.last /= JP.getFPS.cache.length;
+    JP.getFPS.last = 1000 / JP.getFPS.last;
   }
   return JP.getFPS.last;
 }
@@ -201,17 +201,17 @@ function wrapText(text, x, y, xwrap, height)
   if (text.length === 0)
     return 0;
   
-  xwrap = xwrap || JP.canvas.width;
+  xwrap = xwrap || JP.gameview.width;
   height = height || 16;
   var words = text.split(' ');
   var line = "";
   for (var n = 0; n < words.length; n++)
   {
     var testLine = line + words[n] + ' ';
-    var metrics = JP.context.measureText(testLine);
+    var metrics = JP.gamecontext.measureText(testLine);
     if (metrics.width > xwrap && n > 0)
     {
-      JP.context.fillText(line, x, y);
+      JP.gamecontext.fillText(line, x, y);
       line = ' ' + words[n] + ' ';
       y += height;
     }
@@ -220,7 +220,7 @@ function wrapText(text, x, y, xwrap, height)
       line = testLine;
     }
   }
-  JP.context.fillText(line, x, y);
+  JP.gamecontext.fillText(line, x, y);
   return y;
 }
 

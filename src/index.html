@@ -29,42 +29,40 @@
   </head>
 
   <body onload="pageLoad()">
-    <div id="content">
-      <!--div id="footer">
-        <div id="footerleft">
-          VERSION
-          <a href="changelog" target="_blank">Change log</a>
-        </div>
-        <div id="footerright">
-          <a id="textSave" href="" onclick="textSaveOverlay(); return false;">Text save</a>
-          <a id="textLoad" href="" onclick="textLoadOverlay(); return false;">Load save</a>
-          <a id="reset" href="" onclick="resetDataOverlay();return false;">Reset save</a>
-          <a id="credits" href="" onclick="creditOverlay();return false;">Credits</a>
-        </div>
+    <!--div id="footer">
+      <div id="footerleft">
+        VERSION
+        <a href="changelog" target="_blank">Change log</a>
       </div>
-      <br/-->
-      <div id="game">
-        <noscript>
-          <h2>
-            This page requires JavaScript to be enabled, sorry!
-          <h2>
-        </noscript>
-        <button id="start" onclick="start()" style="float:bottom;">Start</button>
-        <canvas id="canvas" tabindex="1">
-          <h2>Your browser doesn't support HTML5's canvas element. Please get a better browser such as Google Chrome, Mozilla Firefox or Opera.</h2>
-        </canvas>
-        <!--div id="eventLog" style="display:none;">
-        </div>
-        <div id="menu" style="display:none;">
-          <h3>Inventory</h3>
-          <table id="inventTable" style="width:280px">
-            <tr>
-              <th>Item</th>
-              <th>Quant</th>
-            </tr>
-          </table>
-        </div-->
+      <div id="footerright">
+        <a id="textSave" href="" onclick="textSaveOverlay(); return false;">Text save</a>
+        <a id="textLoad" href="" onclick="textLoadOverlay(); return false;">Load save</a>
+        <a id="reset" href="" onclick="resetDataOverlay();return false;">Reset save</a>
+        <a id="credits" href="" onclick="creditOverlay();return false;">Credits</a>
       </div>
-    </div><!-- content -->
+    </div>
+    <br/-->
+    <noscript>
+      <h2>
+        This page requires JavaScript to be enabled, sorry!
+      <h2>
+    </noscript>
+    <canvas id="gameview" tabindex="1" style="z-index:1;">
+      <h2>Your browser doesn't support HTML5's canvas element. Please get a better browser such as Google Chrome, Mozilla Firefox or Opera.</h2>
+    </canvas>
+    <canvas id="guiview" tabindex="2" style="z-index:2;">
+    </canvas>
+    <button id="start" onclick="start()" style="position:absolute; float:right; bottom:10px;">Start</button>
+    <!--div id="eventLog" style="display:none;">
+    </div>
+    <div id="menu" style="display:none;">
+      <h3>Inventory</h3>
+      <table id="inventTable" style="width:280px">
+        <tr>
+          <th>Item</th>
+          <th>Quant</th>
+        </tr>
+      </table>
+    </div-->
   </body>
 </html>

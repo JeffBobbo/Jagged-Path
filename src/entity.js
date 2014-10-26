@@ -49,9 +49,9 @@ JP.Entity.Entity = function(x, y, lifespan)
 
 JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
 {
-  if (this.posx < Math.floor(xoffset) || this.posx > (JP.canvas.width - JP.ui_width) / JP.PIXEL_SIZE + xoffset)
+  if (this.posx < Math.floor(xoffset) || this.posx > (JP.gameview.width - JP.ui_width) / JP.PIXEL_SIZE + xoffset)
     return;
-  if (this.posy < Math.floor(yoffset) || this.posy > (JP.canvas.height) / JP.PIXEL_SIZE + yoffset)
+  if (this.posy < Math.floor(yoffset) || this.posy > (JP.gameview.height) / JP.PIXEL_SIZE + yoffset)
     return;
   if (this.imgPath !== undefined)
   {
@@ -60,7 +60,7 @@ JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
       this.img = new Image();
       this.img.src = 'img/' + this.imgPath;
     }
-    JP.context.drawImage(this.img, 
+    JP.gamecontext.drawImage(this.img,
       (this.posx - xoffset) * JP.PIXEL_SIZE,
       (this.posy - yoffset) * JP.PIXEL_SIZE,
       this.size,
@@ -69,8 +69,8 @@ JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
   }
   else
   {
-    JP.context.fillStyle = this.colour;
-    JP.context.fillRect(
+    JP.gamecontext.fillStyle = this.colour;
+    JP.gamecontext.fillRect(
       (this.posx - xoffset) * JP.PIXEL_SIZE,
       (this.posy - yoffset) * JP.PIXEL_SIZE,
       JP.PIXEL_SIZE,
