@@ -229,18 +229,18 @@ JP.Entity.Lumberjack.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.Lumberjack.prototype.constructor = JP.Entity.Lumberjack;
 JP.Entity.Lumberjack.prototype.Talk = function()
 {
-  if (JP.player.ItemClass(JP.Item.Class.AXE) === -1)
+  if (JP.player.ItemClass(JP.Item.Class.AXE) === undefined)
   {
     new JP.Logger.LogItem("\"Well there, it looks like you could use an axe!\"", false, false, false).Post();
     JP.player.ItemDelta("Axe");
     return true;
   }
-  else if (JP.player.ItemClass(JP.Item.Class.WOOD) === -1)
+  else if (JP.player.ItemClass(JP.Item.Class.WOOD) === undefined)
   {
     new JP.Logger.LogItem("\"Use 'C' to chop at trees and collect wood!\"", false, false, false).Post();
     return true;
   }
-  else if (JP.player.ItemClass(JP.Item.Class.TINDERBOX) === -1)
+  else if (JP.player.ItemClass(JP.Item.Class.TINDERBOX) === undefined)
   {
     new JP.Logger.LogItem("\"Here's a Tinderbox, find a clear area and press 'F' to start a fire.\"", false, false, false).Post();
     JP.player.ItemDelta("Tinderbox");

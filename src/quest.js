@@ -16,7 +16,7 @@ JP.Quest.Status = {
   FINISHED:   3
 };
 
-JP.Quest.Create = function(src)
+JP.Quest.Load = function(src)
 {
   // src should be JSON data to parse into our quest structure
   if (src === undefined || src === null)

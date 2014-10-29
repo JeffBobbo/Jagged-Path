@@ -44,9 +44,7 @@ JP.Data.LoadItemFile = function(data)
     return;
 
   for (var i = 0; i < data.length; ++i)
-  {
-    //JP.Item.Load(data[i]);
-  }
+    JP.Item.Load(data[i]);
 };
 
 JP.Data.LoadQuests = function(fileList)
@@ -64,5 +62,5 @@ JP.Data.LoadQuestFile = function(data)
     return;
 
   for (var i = 0; i < data.length; ++i)
-    JP.Quest.Create(data[i]);
+    JP.Quest.Load(data[i]);
 }

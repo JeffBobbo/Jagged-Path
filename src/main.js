@@ -122,9 +122,10 @@ JP.Draw = function()
   JP.guicontext.font = '8pt Courier New';
   h += 4;
 
-  var i = JP.player.inventory.length - 1;
+  var keys = Object.keys(JP.player.inventory);
+  var i = keys.length - 1;
   while (i >= 0 && (h += 16) < JP.ui_height) // figure out something if this is longer than can be shown
-    JP.guicontext.fillText(JP.player.inventory[i].quant + "x " + JP.player.inventory[i--].name, w, h);
+    JP.guicontext.fillText(JP.player.inventory[keys[i]] + "x " + keys[i--], w, h);
   var fps = (1000 / JP.getTickDelta()).toFixed(0) + "fps";
   JP.guicontext.font = "10pt Courier New";
   JP.guicontext.fillText(fps, JP.guiview.width - JP.ui_width + 10, JP.guiview.height - 24)
@@ -228,6 +229,8 @@ function start()
   // remove the splash screen
   JP.guimgr.RemoveWindow(JP.splash);
 
+  JP.Data.Load(); // load all data
+
   // create the world
   JP.world = new JP.World();
   JP.world.Load(); // this'll handle if there's no data
@@ -241,6 +244,15 @@ function start()
 
   clearInterval(JP.intervalID);
   JP.intervalID = setInterval(function() {JP.Generate();}, 5);
+}
+
+JP.Delete = function()
+{
+  JP.world = JP.world || new JP.World();
+  JP.player = JP.player || new JP.Player();
+
+  JP.world.Delete();
+  JP.player.Delete();
 }
 
 function pageLoad()
@@ -261,7 +273,7 @@ function pageLoad()
   JP.guimgr.windowList[JP.splash].visible = true;
   var cb = {};
   cb[JP.CallbackType.MOUSE1] = start;
-  var btn = JP.guimgr.windowList[JP.splash].CreateElement("Start", JP.canvas.width * 0.4, JP.canvas.height * 0.4, JP.canvas.width * 0.2, JP.canvas.height * 0.2, cb);
+  var btn = JP.guimgr.windowList[JP.splash].CreateElement("Start", JP.guicontext.width * 0.4, JP.guicontext.height * 0.4, JP.guicontext.width * 0.2, JP.guicontext.height * 0.2, cb);
   JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New");
   JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEIN, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("22px Courier New")});
   JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEOUT, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New")});

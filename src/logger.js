@@ -42,11 +42,10 @@ JP.Logger.DeleteData = function()
 
 JP.Logger.Draw = function()
 {
-  JP.context.fillStyle = "#FFFFFF";
-  JP.context.textAlign = "left";
-  var font = "12pt Courier New"; // need this later for bold/italics
-  JP.context.font = font;
-  var w = JP.canvas.width - JP.ui_width + 8;
+  JP.guicontext.fillStyle = "#FFFFFF";
+  var font = "8pt Courier New"; // need this later for bold/italics
+  JP.guicontext.font = font;
+  var w = JP.guiview.width - JP.ui_width + 8;
   var h = (JP.ui_height >> 1) + 8;
   // event log
   var i = JP.Logger.events.length - 1;
@@ -54,15 +53,15 @@ JP.Logger.Draw = function()
   while (i >= 0 && h2 < h - 16)
   {
     var words = JP.Logger.events[i].msg.split(" ");
-    JP.context.font = (JP.Logger.events[i].italic === true ? "italic " : "") + (JP.Logger.events[i].bold === true ? "bold " : "") + font;
+    JP.guicontext.font = (JP.Logger.events[i].italic === true ? "italic " : "") + (JP.Logger.events[i].bold === true ? "bold " : "") + font;
     var line = "";
     for (var j = 0; j < words.length; ++j)
     {
       var test = line + words[j] + " ";
-      var width = JP.context.measureText(test).width;
+      var width = JP.guicontext.measureText(test).width;
       if (width > JP.ui_width && j > 0)
       {
-        JP.context.fillText(line, w, h2);
+        JP.guicontext.fillText(line, w, h2);
         line = " " + words[j] + " ";
         h2 += 16;
       }
@@ -71,7 +70,7 @@ JP.Logger.Draw = function()
         line = test;
       }
     }
-    JP.context.fillText(line, w, h2);
+    JP.guicontext.fillText(line, w, h2);
     i--;
     h2 += 16;
   }

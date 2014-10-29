@@ -94,11 +94,11 @@ JP.GUI.Element = function()
 
 JP.GUI.Element.prototype.Draw = function()
 {
-  JP.context.fillStyle = "#AAAAAA";
-  JP.context.fillRect(this.posx, this.width, this.posy, this.height);
-  JP.context.fillStyle = "#FF0000";
-  JP.context.font = this.font || '12pt Courier New';
-  JP.context.fillText(this.title, this.posx+8, this.posy+8/*this.height/2-15*/); // should fix this
+  JP.guicontext.fillStyle = "#AAAAAA";
+  JP.guicontext.fillRect(this.posx, this.width, this.posy, this.height);
+  JP.guicontext.fillStyle = "#FF0000";
+  JP.guicontext.font = this.font || '12pt Courier New';
+  JP.guicontext.fillText(this.title, this.posx+8, this.posy+8/*this.height/2-15*/); // should fix this
 }
 
 JP.GUI.Element.prototype.OnEvent = function(event)

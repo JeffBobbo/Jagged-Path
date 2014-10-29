@@ -34,7 +34,7 @@ JP.Player = function()
 
   // inventory stuff
   this.gold = 0; // monies
-  this.inventory = [];
+  this.inventory = {}; // name: quant
   // ? -- need climbing gear and boat for mountains/water
 
   // skill stuff -- unimplemented
@@ -49,8 +49,7 @@ JP.Player = function()
   this.canClimb = false;
   this.canSwim = false;
 
-  // array of {name, status}
-  this.quests = [];
+  this.quests = {}; // name: status
 
   // end data
   // saveKeys -- This is what gets saved or loaded -- key names of the JP.Player object
@@ -61,7 +60,8 @@ JP.Player = function()
     "gold",
     "canClimb",    
     "canSwim",
-    "quests"
+    "quests",
+    "inventory"
   ];
 };
 
@@ -73,15 +73,6 @@ JP.Player.prototype.Save = function()
     var key = this.saveKeys[i]; 
     o[key] = this[key];
   }
-  o["inventory"] = [];
-  for (var i = this.inventory.length - 1; i >= 0; i--)
-  {
-    var item = {};
-    item.name = this.inventory[i].name;
-    item.quant = this.inventory[i].quant;
-    o["inventory"].push(item);
-  };
-
   localStorage.setItem("JP.Player", JSON.stringify(o));
 };
 
@@ -91,12 +82,12 @@ JP.Player.prototype.Load = function()
   if (tmp === undefined || tmp === null)
     return;
 
-  var invent = tmp.inventory;
-  tmp.inventory = undefined; // so we don't overwrite it in merge
+//  var invent = tmp.inventory;
+//  tmp.inventory = undefined; // so we don't overwrite it in merge
   this.merge(tmp);
 
-  for (var i = invent.length - 1; i >= 0; i--)
-    this.ItemDelta(invent[i].name, invent[i].quant);
+//  for (var i = invent.length - 1; i >= 0; i--)
+//    this.ItemDelta(invent[i].name, invent[i].quant, true);
   // this inventory handling is HORRIBLE and I should fix it, but that's for another day
 
   this.posx = Math.floor(this.relx);
@@ -110,10 +101,6 @@ JP.Player.prototype.Delete = function()
 
 JP.Player.prototype.CanClimb = function(snow)
 {
-  if (snow)
-    return this.ItemClass(JP.Item.Class.SNOW_GEAR) != -1;
-  else
-    return this.ItemClass(JP.Item.Class.CLIMBING_GEAR) != -1;
   return this.canClimb;
 }
 
@@ -124,38 +111,35 @@ JP.Player.prototype.ItemOwn  = function(name)
 
 JP.Player.prototype.ItemQuant = function(name)
 {
-  for (var i = this.inventory.length - 1; i >= 0; --i)
-  {
-    if (this.inventory[i].name === name)
-      return this.inventory[i].quant;
-  }
-  return 0;
+  return this.inventory[name] || 0;
 };
 
 JP.Player.prototype.ItemClass = function(itemClass)
 {
   var best = -1;
-  for (var i = this.inventory.length - 1; i >= 0; i--)
+  var keys = Object.keys(this.inventory);
+  for (var i = keys.length - 1; i >= 0; i--)
   {
-    if (this.inventory[i].class === itemClass)
+    if (JP.Item.Spec(keys[i], "class") === itemClass)
     {
-      if (best === -1)
-        best = i;
-      if (this.inventory[i].power > this.inventory[best].power)
+      if (best === -1 || JP.Item.Spec(keys[i], "power") > JP.Item.Spec(keys[best], "power"))
         best = i;
     }
   }
-  return best;
+  if (best === -1)
+    return undefined;
+  return keys[best];
 };
 
 JP.Player.prototype.ItemQuantOfClass = function(itemClass)
 {
   var quant = 0;
-  for (var i = this.inventory.length - 1; i >= 0; i--)
+  var keys = Object.keys(this.inventory);
+  for (var i = keys.length - 1; i >= 0; i--)
   {
-    if (this.inventory[i].class === itemClass)
-      quant += this.inventory[i].quant;
-  }
+    if (JP.Item.Spec(keys[i], "class") === itemClass)
+      quant += this.inventory[keys[i]];
+  };
   return quant;
 };
 
@@ -164,28 +148,17 @@ JP.Player.prototype.ItemDelta = function(name, quant, absolute)
   quant = quant || 1;
   absolute = absolute || false;
 
-  var index = -1; // find the item
-  for (var i = this.inventory.length - 1; i >= 0; --i)
-  {
-    if (this.inventory[i].name !== name)
-      continue;
-    index = i;
-    break;
-  }
-  if (index === -1) // if it doesn't exist, add it
-  {
-    this.inventory.unshift(JP.Item.Create(name, quant)); // absol doesn't matter, cause we have 0 already
-    index = 0;
-  }
-  else // otherwise, update quant
-  {
-    if (absolute === true)
-      this.inventory[index].quant = quant;
-    else
-      this.inventory[index].quant += quant;
-  }
-  if (this.inventory[index].quant <= 0) // remove if none left
-    this.inventory.splice(index, 1);
+  //make sure the item exists
+  if (JP.Item.Spec(name, "name") === undefined)
+    throw "Item '" + name + "' does not exist in JP.Player.ItemDelta()";
+
+  if (absolute === true || this.inventory[name] === undefined)
+    this.inventory[name] = quant;
+  else
+    this.inventory[name] += quant;
+
+  if (this.inventory[name] <= 0)
+    delete this.inventory[name];
   JP.needDraw = true;
 };
 
@@ -355,21 +328,21 @@ JP.Player.prototype.Talk = function()
 JP.Player.prototype.ChopTree = function()
 {
   var axe = this.ItemClass(JP.Item.Class.AXE);
-  if (axe === -1)
+  if (axe === undefined)
   {
     new JP.Logger.LogItem("You have no axe.", false, false, true).Post();
     return; // no axe, no dice
   }
-  this.inventory[axe].Use();
+  JP.Item.Use(axe);
 };
 
 JP.Player.prototype.Fire = function()
 {
   var tb = this.ItemClass(JP.Item.Class.TINDERBOX);
-  if (tb === -1)
+  if (tb === undefined)
   {
     new JP.Logger.LogItem("You have no tinder box.", false, false, true).Post();
     return;
   }
-  this.inventory[tb].Use();
+  JP.Item.Use(tb);
 }

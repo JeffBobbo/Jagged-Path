@@ -14,10 +14,12 @@ JP.Item.Class = {
   TINDERBOX: 3,
 };
 
-JP.Item.registry = new Array();
+JP.Item.registry = {};
 
 JP.Item.Create = function(name, quant)
 {
+  alert("JP.Item.Create called");
+  return;
   for (var i = JP.Item.registry.length - 1; i >= 0; i--)
   {
     if (JP.Item.registry[i].name === name)
@@ -44,7 +46,7 @@ JP.Item.Load = function(data)
     return;
 
   var item;
-  switch (o.type)
+  switch (o.class)
   {
     case "axe":
       item = new JP.Item.Axe();
@@ -56,21 +58,36 @@ JP.Item.Load = function(data)
       item = new JP.Item.Tinderbox();
     break;
     default:
-      item = new JP.Item.Item();
+      alert("Unknown item class for " + o.name + ". Class: " + o.class);
     break;
   }
+  delete o.class;
+  item.merge(o);
   JP.Item.Register(item);
 };
 
 JP.Item.Register = function(item)
 {
-  JP.Item.registry.push({name: name, reg: JP.Item.ID++, item: item});
+  if (JP.Item.registry[item.name] === undefined)
+    JP.Item.registry[item.name] =  item;
+  else
+    alert(name + " used more than once items");
 };
 
-JP.Item.Spec = function(name, spec)
+JP.Item.Spec = function(item, spec)
 {
-  var item = JP.Item.Create(name);
-  return item !== undefined ? item[spec] : undefined;
+  if (JP.Item.registry[item] === undefined)
+    return undefined;
+
+  return JP.Item.registry[item][spec];
+}
+
+JP.Item.Use = function(item)
+{
+  if (JP.Item.registry[item] === undefined)
+    return;
+
+  return JP.Item.registry[item].Use();
 }
 
 JP.Item.Item = function()
@@ -190,7 +207,7 @@ JP.Item.Axe.prototype.Use = function()
 };
 
 
-JP.Item.OakLog = function()
+JP.Item.Log = function()
 {
   JP.Item.Item.apply(this, arguments);
   this.name = "Oak Log";
@@ -200,21 +217,8 @@ JP.Item.OakLog = function()
   // burn time = this * 10s
   this.power = 3;
 };
-JP.Item.OakLog.prototype = Object.create(JP.Item.Item.prototype);
-JP.Item.OakLog.prototype.constructor = JP.Item.OakLog;
-JP.Item.EvergreenLog = function()
-{
-  JP.Item.Item.apply(this, arguments);
-  this.name = "Evergreen Log";
-  this.class = JP.Item.Class.WOOD;
-
-  this.value = 25;
-  // burn time = this * 10s
-  this.power = 2.5;
-};
-JP.Item.EvergreenLog.prototype = Object.create(JP.Item.Item.prototype);
-JP.Item.EvergreenLog.prototype.constructor = JP.Item.EvergreenLog;
-
+JP.Item.Log.prototype = Object.create(JP.Item.Item.prototype);
+JP.Item.Log.prototype.constructor = JP.Item.Log;
 
 JP.Item.Tinderbox = function()
 {
@@ -229,7 +233,7 @@ JP.Item.Tinderbox.prototype.constructor = JP.Item.Tinderbox;
 JP.Item.Tinderbox.prototype.Use = function()
 {
   var wood = JP.player.ItemClass(JP.Item.Class.WOOD);
-  if (wood === -1)
+  if (wood === undefined)
   {
     new JP.Logger.LogItem("You have no wood.", false, false, false).Post();
     return;
@@ -295,8 +299,8 @@ JP.Item.Tinderbox.prototype.Use = function()
     return false;
   }
 
-  JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * JP.player.inventory[wood].power));
-  JP.player.ItemDelta(JP.player.inventory[wood].name, -1);
+  JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * JP.Item.Spec(wood, "power")));
+  JP.player.ItemDelta(wood, -1);
   new JP.Logger.LogItem("You started a fire.", false, false, false).Post();
   JP.needDraw = true;
 };
