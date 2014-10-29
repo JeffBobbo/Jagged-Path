@@ -60,8 +60,7 @@ JP.Player = function()
     "gold",
     "canClimb",    
     "canSwim",
-    "quests",
-    "inventory"
+    "quests"
   ];
 };
 
@@ -73,6 +72,7 @@ JP.Player.prototype.Save = function()
     var key = this.saveKeys[i]; 
     o[key] = this[key];
   }
+  o.inventory = this.inventory;
   localStorage.setItem("JP.Player", JSON.stringify(o));
 };
 
@@ -82,13 +82,21 @@ JP.Player.prototype.Load = function()
   if (tmp === undefined || tmp === null)
     return;
 
-//  var invent = tmp.inventory;
-//  tmp.inventory = undefined; // so we don't overwrite it in merge
+  this.inventory = tmp.inventory;
+  tmp.inventory = undefined; // so we don't overwrite it in merge
   this.merge(tmp);
 
-//  for (var i = invent.length - 1; i >= 0; i--)
-//    this.ItemDelta(invent[i].name, invent[i].quant, true);
-  // this inventory handling is HORRIBLE and I should fix it, but that's for another day
+/*  var keys = Object.keys(invent);
+  for (var i = keys.length - 1; i >= 0; i--)
+  {
+    try
+    {
+      this.ItemDelta(keys[i], invent[keys[i]], true);
+    }
+    catch(msg)
+    {
+    }
+  }*/
 
   this.posx = Math.floor(this.relx);
   this.posy = Math.floor(this.rely);
