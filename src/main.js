@@ -15,7 +15,7 @@ var JP = JP || {
   HEIGHT: 480,
 
   // how big each tile is
-  PIXEL_SIZE: 16,
+  PIXEL_SIZE: 32,
 
   ratio: 16/9, // for display
   // ui-side pane height
@@ -245,6 +245,15 @@ JP.ProcessKey = function(event)
 
 JP.SetResolution = function()
 {
+  JP.gameview.width = document.documentElement.clientWidth;
+  JP.guiview.width  = document.documentElement.clientWidth;
+  JP.gameview.height = document.documentElement.clientHeight;
+  JP.guiview.height  = document.documentElement.clientHeight;
+  JP.ui_height = JP.guiview.height;
+  JP.ui_width = TruncateTo(JP.guiview.width / 4, JP.PIXEL_SIZE);
+  JP.needDraw = true;
+  return;
+
   var w = document.documentElement.clientWidth - JP.PIXEL_SIZE*2;
   var h = document.documentElement.clientHeight - JP.PIXEL_SIZE*2;
   if (h > w)
@@ -269,6 +278,7 @@ window.onresize = JP.SetResolution;
 
 function start()
 {
+  JP.SetResolution();
   // remove the splash screen
   JP.guimgr.RemoveWindow(JP.splash);
 
@@ -304,7 +314,6 @@ function pageLoad()
   JP.guiview.onkeydown   = function() {JP.ProcessKey(event); };
   JP.guiview.onmousemove = function() {JP.ProcessMouse(event); };
   JP.guiview.onmousedown = function() {JP.ProcessMouse(event); };
-  JP.SetResolution();
 
   JP.guimgr = new JP.GUI.Manager();
   JP.splash = JP.guimgr.CreateWindow();
