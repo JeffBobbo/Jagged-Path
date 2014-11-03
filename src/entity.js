@@ -194,11 +194,11 @@ JP.Entity.Oak = function()
   this.imgPath = 'tree.png';
   this.canChop = true;
   this.hpMax = 4;
-  this.hp = randIntRange(2, 4); // how many hits to farm/kill
+  this.hp = randIntRange(3, 5); // how many hits to farm/kill
   this.drops = [{name: "Oak Log", chance: 1.0}];
 
   // reposition slightly so trees don't sit uniformly
-  this.size = randIntRange(6, 8) << 1; //JP.PIXEL_SIZE - ((this.hpMax - this.hp) * 2);
+  this.size = randIntRange((JP.PIXEL_SIZE >> 1) - 2, (JP.PIXEL_SIZE >> 1) + 2) << 1;
  // this.posx += 1 / randRange(0, JP.PIXEL_SIZE - this.size);
  // this.posy += 1 / randRange(0, JP.PIXEL_SIZE - this.size);
 };
@@ -210,7 +210,7 @@ JP.Entity.Evergreen = function()
   this.type = JP.Entity.Type.EVERGREEN;
   this.imgPath = 'evergreen.png';
   this.hpMax = 5;
-  this.hp = randIntRange(3, 5); // how many hits to farm/kill
+  this.hp = randIntRange(2, 4); // how many hits to farm/kill
   this.drops = [{name: "Evergreen Log", chance: 1.0}];
 };
 JP.Entity.Evergreen.prototype = Object.create(JP.Entity.Oak.prototype);
@@ -269,7 +269,7 @@ JP.Entity.Lumberjack.prototype.Talk = function()
   }
   else if (JP.player.ItemQuant("Oak Log") < 5)
   {
-    new JP.Logger.LogItem("\"Bring me five Oak Logs and I'll pay you " + JP.Item.Spec("Oak Log", "value") + " for them!\"").Post();
+    new JP.Logger.LogItem("\"Bring me five Oak Logs and I'll pay you " + JP.Item.Spec("Oak Log", "value") + " Gold each for them!\"").Post();
     return true;
   }
   else if (JP.player.ItemQuant("Oak Log") >= 5)
