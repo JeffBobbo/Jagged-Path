@@ -82,11 +82,11 @@ JP.Player.prototype.Load = function()
   if (tmp === undefined || tmp === null)
     return;
 
-  this.inventory = tmp.inventory;
+  var invent = tmp.inventory;
   tmp.inventory = undefined; // so we don't overwrite it in merge
   this.merge(tmp);
 
-/*  var keys = Object.keys(invent);
+  var keys = Object.keys(invent);
   for (var i = keys.length - 1; i >= 0; i--)
   {
     try
@@ -96,7 +96,7 @@ JP.Player.prototype.Load = function()
     catch(msg)
     {
     }
-  }*/
+  }
 
   this.posx = Math.floor(this.relx);
   this.posy = Math.floor(this.rely);
