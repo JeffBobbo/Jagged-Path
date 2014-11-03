@@ -14,6 +14,9 @@ var JP = JP || {
   WIDTH:  920,
   HEIGHT: 480,
 
+  // how big each tile is
+  PIXEL_SIZE: 16,
+
   ratio: 16/9, // for display
   // ui-side pane height
   ui_width: -1,
@@ -51,6 +54,46 @@ JP.CallbackType = {
   MOUSEIN:  3, // inside the elem
   MOUSEOUT: 4  // outside the elem
 };
+
+JP.Initialize = function()
+{
+  if (JP.Data.filesReq === 0)
+    JP.Data.Load(); // start the load process
+
+  if (JP.Data.filesReq > JP.Data.filesRec)
+  {
+    JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
+    var x = JP.guiview.width  / 2;
+    var y = JP.guiview.height / 2;
+
+    JP.guicontext.font = '30pt Courier New';
+    JP.guicontext.textAlign = 'center';
+    JP.guicontext.fillStyle = '#ffa500';
+    JP.guicontext.fillText("Retreiving game data", x, y-50);
+    JP.guicontext.fillText(Commify(JP.Data.filesRec) + " of " + Commify(JP.Data.filesReq) + " received", x, y);
+    JP.guicontext.fillText('Please Wait', x, y+70);
+    return;
+  }
+
+  var prog = JP.world.Load();
+  if (prog !== false && prog !== true) // I know this looks weird, but prog being false means no world loaded
+  {
+    JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
+    var x = JP.guiview.width  / 2;
+    var y = JP.guiview.height / 2;
+
+    JP.guicontext.font = '30pt Courier New';
+    JP.guicontext.textAlign = 'center';
+    JP.guicontext.fillStyle = '#ffa500';
+    JP.guicontext.fillText("Loading world data", x, y-50);
+    JP.guicontext.fillText((prog * 100).toFixed(0) + '%', x, y);
+    JP.guicontext.fillText('Please Wait', x, y+70);
+    return;
+  }
+  JP.player.Load();
+  clearInterval(JP.intervalID);
+  JP.intervalID = setInterval(function() {JP.Generate();}, 5);
+}
 
 JP.Generate = function()
 {
@@ -105,7 +148,7 @@ JP.Draw = function()
 
   // draw ui stuff
   // clear this bit
-  //JP.guicontext.clearRect(JP.guiview.width - JP.ui_width, 0, JP.guiview.width, JP.guiview.height);
+  JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
   JP.guicontext.fillStyle = "#000000";
   JP.guicontext.fillRect(JP.guiview.width - JP.ui_width, 0, JP.guiview.width, JP.guiview.height);
 
@@ -229,21 +272,16 @@ function start()
   // remove the splash screen
   JP.guimgr.RemoveWindow(JP.splash);
 
-  JP.Data.Load(); // load all data
-
   // create the world
   JP.world = new JP.World();
-  JP.world.Load(); // this'll handle if there's no data
-
   // load player data
   JP.player = new JP.Player();
-  JP.player.Load(); // this'll handle if there's no data
 
   JP.Logger.logNode = document.getElementById('eventLog');
   JP.gameview.focus();
 
   clearInterval(JP.intervalID);
-  JP.intervalID = setInterval(function() {JP.Generate();}, 5);
+  JP.intervalID = setInterval(function() {JP.Initialize();}, 5);
 }
 
 JP.Delete = function()

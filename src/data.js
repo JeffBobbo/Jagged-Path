@@ -6,6 +6,9 @@
 
 JP.Data = JP.Data || {};
 
+JP.Data.filesReq = 0; // how many files we've requested
+JP.Data.filesRec = 0; // and how many we've got back
+
 JP.Data.Request = function(url, callback)
 {
   if (url === undefined || url === null || url.length === 0)
@@ -17,10 +20,14 @@ JP.Data.Request = function(url, callback)
   xmlhttp.onreadystatechange = function()
   {
     if (xmlhttp.readyState === 4 && xmlhttp.status === 200)
+    {
+      JP.Data.filesRec++;
       callback(JSON.parse(xmlhttp.responseText));
+    }
   }
   xmlhttp.open("GET", url, true);
   xmlhttp.send();
+  JP.Data.filesReq++;
 };
 
 JP.Data.Load = function()

@@ -72,26 +72,42 @@ JP.World.prototype.Save = function()
 JP.World.prototype.Load = function()
 {
   if (localStorage.getItem("JP.World.Saved") === null)
-    return;
-  // don't care about blocking here
-  var x = 0;
-  var arr = undefined;
+    return false;
   if (localStorage.getItem("JP.World.mapData.0") === null)
   {
     console.error("'JP.World.Saved' wasn't null but no mapData found to load.");
-    return; // if we return here something bad is happening
+    return false; // if we return here something bad is happening
   }
-  while (this.CreateMap() !== true);
-  while (true)
+
+  if (JP.World.prototype.Load.x === undefined)
   {
-    arr = localStorage.getItem("JP.World.mapData." + x);
-    if (arr === null)
-      break;
-    this.mapData[x] = JSON.parse(LZString.decompressFromUTF16(arr));
-    x++;
+    JP.World.prototype.Load.x = 0;
+    this.terrain = [];
+    this.mapData = [];
+    this.tmpData = [];
+    this.entities = [];
+  }
+  var x = JP.World.prototype.Load.x++;
+
+  if (JP.World.prototype.Load.max === undefined)
+  {
+    var max = 0;
+    while (localStorage.getItem("JP.World.mapData." + max++));
+    JP.World.prototype.Load.max = max - 1;
+  }
+  var arr = localStorage.getItem("JP.World.mapData." + x);
+  if (arr !== null)
+  {
+    arr = JSON.parse(LZString.decompressFromUTF16(arr));
+    this.terrain[x] = [];
+    for (var y = this.terrain.length - 1; y >= 0; y--)
+      this.terrain[x][y] = {};
+    this.mapData[x] = arr;
+    return x / JP.World.prototype.Load.max;
   }
   // need to do entity loading
   this.generationLevel = JP.World.Gen.TILING;
+  return true;
 };
 
 JP.World.prototype.Delete = function()
@@ -198,16 +214,16 @@ JP.World.prototype.GenerationTasks = function()
   }
   if (ret !== true)
   {
-    JP.gamecontext.clearRect(0, 0, JP.gameview.width, JP.gameview.height);
-    var x = JP.gameview.width / 2;
-    var y = JP.gameview.height / 2;
+    JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
+    var x = JP.guiview.width / 2;
+    var y = JP.guiview.height / 2;
 
-    JP.gamecontext.font = '30pt Courier New';
-    JP.gamecontext.textAlign = 'center';
-    JP.gamecontext.fillStyle = '#ffa500';
-    JP.gamecontext.fillText(str, x, y-50);
-    JP.gamecontext.fillText((ret * 100).toFixed(0) + '%', x, y);
-    JP.gamecontext.fillText('Please Wait', x, y+70);
+    JP.guicontext.font = '30pt Courier New';
+    JP.guicontext.textAlign = 'center';
+    JP.guicontext.fillStyle = '#ffa500';
+    JP.guicontext.fillText(str, x, y-50);
+    JP.guicontext.fillText((ret * 100).toFixed(0) + '%', x, y);
+    JP.guicontext.fillText('Please Wait', x, y+70);
   }
 };
 
@@ -216,23 +232,23 @@ JP.World.prototype.CreateMap = function()
   if (JP.World.prototype.CreateMap.x === undefined)
   {
     JP.World.prototype.CreateMap.x = 0;
-    this.terrain = new Array(JP.WIDTH);
-    this.mapData = new Array(JP.WIDTH); // this stores data while we generate the map
-    this.tmpData = new Array(JP.WIDTH); // this stores raw data
-    this.entities = new Array();
+    this.terrain = [];
+    this.mapData = []; // this stores data while we generate the map
+    this.tmpData = []; // this stores raw data
+    this.entities = [];
   }
   else
     JP.World.prototype.CreateMap.x++;
 
   var x = JP.World.prototype.CreateMap.x;
 
-  if (x === this.tmpData.length)
+  if (x === JP.WIDTH)
     return true; // return true when we're done
 
-  this.terrain[x] = new Array(JP.HEIGHT);
-  this.mapData[x] = new Array(JP.HEIGHT);
-  this.tmpData[x] = new Array(JP.HEIGHT);
-  for (var y = 0; y < this.terrain[x].length; ++y)
+  this.terrain[x] = [];
+  this.mapData[x] = [];
+  this.tmpData[x] = [];
+  for (var y = 0; y < JP.HEIGHT; ++y)
   {
     this.terrain[x][y] = {};
     this.mapData[x][y] = {};
@@ -467,8 +483,6 @@ JP.World.prototype.EntityMap = function()
   return i / entsToPlace;
 };
 
-
-JP.PIXEL_SIZE = 16;
 JP.World.prototype.Draw = function() 
 {
   var start = getTime();
