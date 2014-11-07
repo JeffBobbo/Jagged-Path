@@ -100,12 +100,12 @@ JP.Generate = function()
   if (JP.world.generationLevel < JP.World.Gen.DONE)
   {
     JP.world.GenerationTasks();
-    return; 
+    return;
   }
   else
   {
     clearInterval(JP.intervalID);
-    JP.intervalID = setInterval(function() {JP.Idle();}, 20);    
+    JP.intervalID = setInterval(function() {JP.Idle();}, 20);
   }
 }
 
@@ -161,7 +161,7 @@ JP.Draw = function()
   JP.guicontext.fillText(SIfy(JP.player.gold) + " Gold Coins", w, h);
   h += 24;
   JP.guicontext.fillText("Inventory", w, h);
-  
+
   JP.guicontext.font = '8pt Courier New';
   h += 4;
 
@@ -172,7 +172,7 @@ JP.Draw = function()
   var fps = (1000 / JP.getTickDelta()).toFixed(0) + "fps";
   JP.guicontext.font = "10pt Courier New";
   JP.guicontext.fillText(fps, JP.guiview.width - JP.ui_width + 10, JP.guiview.height - 24)
-  
+
   if (JP.needDraw === false)
     return;
 
@@ -278,6 +278,9 @@ window.onresize = JP.SetResolution;
 
 function start()
 {
+  if (JP.world !== null)
+    return; // don't do this twice
+
   JP.SetResolution();
   // remove the splash screen
   JP.guimgr.RemoveWindow(JP.splash);
