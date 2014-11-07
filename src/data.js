@@ -9,11 +9,9 @@ JP.Data = JP.Data || {};
 JP.Data.filesReq = 0; // how many files we've requested
 JP.Data.filesRec = 0; // and how many we've got back
 
-JP.Data.Request = function(url, callback)
+JP.Data.Request = function(url, listcb, filecb)
 {
   if (url === undefined || url === null || url.length === 0)
-    return null;
-  if (callback === undefined || callback === null)
     return null;
 
   var xmlhttp = new XMLHttpRequest();
@@ -22,7 +20,7 @@ JP.Data.Request = function(url, callback)
     if (xmlhttp.readyState === 4 && xmlhttp.status === 200)
     {
       JP.Data.filesRec++;
-      callback(JSON.parse(xmlhttp.responseText));
+      listcb(JSON.parse(xmlhttp.responseText), filecb);
     }
   }
   xmlhttp.open("GET", url, true);
@@ -32,17 +30,31 @@ JP.Data.Request = function(url, callback)
 
 JP.Data.Load = function()
 {
-  JP.Data.Request("data/itemIndex.json", JP.Data.LoadItems);
-  JP.Data.Request("data/questIndex.json", JP.Data.LoadQuests);
+  JP.Data.Request("data/tile.json", JP.Data.LoadTileFile);
+  JP.Data.Request("data/worldGen.json", JP.Data.LoadWorldGen);
+  JP.Data.Request("data/itemIndex.json", JP.Data.LoadListFile, JP.Data.LoadItemFile);
+  JP.Data.Request("data/questIndex.json", JP.Data.LoadListFile, JP.Data.LoadQuestFile);
+  JP.Data.Request("data/entityIndex.json", JP.Data.LoadListFile, JP.Data.LoadEntityFile);
 };
 
-JP.Data.LoadItems = function(fileList)
+JP.Data.LoadWorldGen = function(data)
 {
-  if (fileList === undefined || fileList === null)
+  JP.World.generationSettings = data;
+};
+
+JP.Data.LoadTileFile = function(data)
+{
+  for (var i = data.length - 1; i >= 0; i--)
+    JP.Tile.Load(data[i]);
+};
+
+JP.Data.LoadListFile = function(list, callback)
+{
+  if (list === undefined || list === null)
     return;
   
-  for (var i = 0; i < fileList.length; ++i)
-    JP.Data.Request("data/items/" + fileList[i], JP.Data.LoadItemFile);
+  for (var i = list.length - 1; i >= 0; i--)
+    JP.Data.Request("data/" + list[i], callback);  
 };
 
 JP.Data.LoadItemFile = function(data)
@@ -50,24 +62,24 @@ JP.Data.LoadItemFile = function(data)
   if (data === undefined || data === null)
     return;
 
-  for (var i = 0; i < data.length; ++i)
+  for (var i = data.length - 1; i >= 0; i--)
     JP.Item.Load(data[i]);
-};
-
-JP.Data.LoadQuests = function(fileList)
-{
-  if (fileList === undefined || fileList === null)
-    return;
-
-  for (var i = 0; i < fileList.length; ++i)
-    JP.Data.Request("data/quests/" + fileList[i], JP.Data.LoadQuestFile);
 };
 
 JP.Data.LoadQuestFile = function(data)
 {
   if (data === undefined || data === null)
+      return;
+
+  for (var i = data.length - 1; i >= 0; i--)
+    JP.Quest.Load(data[i]);
+};
+
+JP.Data.LoadEntityFile = function(data)
+{
+  if (data === undefined || data === null)
     return;
 
-  for (var i = 0; i < data.length; ++i)
-    JP.Quest.Load(data[i]);
-}
+//  for (var i = list.length - 1; i >= 0; i--)
+//    JP.Entity.Create(data[i]);
+};

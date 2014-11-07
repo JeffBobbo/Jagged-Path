@@ -1,5 +1,5 @@
 [
-  "axe.json",
-  "log.json",
-  "tinderbox.json"
+  "items/axe.json",
+  "items/log.json",
+  "items/tinderbox.json"
 ]
