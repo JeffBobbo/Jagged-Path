@@ -6,36 +6,69 @@
 
 JP.Tile = JP.Tile || {};
 
+JP.Tile.registry = {};
+
+JP.Tile.Load = function(data)
+{
+  var tile = new JP.Tile.Tile();
+  var img = data.imgPath;
+  delete data.imgPath;
+  tile.merge(data);
+  if (img !== undefined)
+  {
+    this.img = new Image();
+    this.img.src = 'img/' + img;
+  }
+  if (JP.Tile.registry[data.name] === undefined)
+    JP.Tile.registry[data.name] = tile;
+  else
+    alert(data.name + " was used for multiple tiles");
+};
+
+JP.Tile.Create = function(tile)
+{
+  return JP.Tile.registry[tile] || null;
+}
+
 JP.Tile.Tile = function()
 {
-  this.colour = "#000000";
-  this.img = undefined;
-  this.imgPath = undefined;
+  this.colour = null;
+  this.img = null;
+  this.imgPath = null;
   this.spawnSafe = false;
+  this.swimmable = false;
+  this.climbable = false;
 };
 
 JP.Tile.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
 {
-  if (this.imgPath !== undefined)
+  if (this.colour !== null)
   {
-    if (this.img === undefined)
-    {
-      this.img = new Image();
-      this.img.src = 'img/' + this.imgPath;
-    }
-    JP.gamecontext.drawImage(this.img, 
+    JP.gamecontext.fillStyle = this.colour;
+    JP.gamecontext.fillRect(
       (x - xoffset) * JP.PIXEL_SIZE,
-      (y - yoffset) * JP.PIXEL_SIZE
+      (y - yoffset) * JP.PIXEL_SIZE,
+      JP.PIXEL_SIZE,
+      JP.PIXEL_SIZE
     );
   }
+  JP.gamecontext.drawImage(this.img, 
+    (x - xoffset) * JP.PIXEL_SIZE,
+    (y - yoffset) * JP.PIXEL_SIZE
+  );
 };
 
 JP.Tile.Tile.prototype.IsPassable = function()
 {
+  if (this.swimmable === true)
+    return JP.player.canSwim;
+  if (this.climbable === true)
+    return JP.player.CanClimb();
+
   return true;
 };
 
-
+/*
 JP.Tile.Dirt = function()
 {
   JP.Tile.Tile.apply(this, arguments);
@@ -125,3 +158,4 @@ JP.Tile.SnowyMountain.prototype.IsPassable = function()
 {
   return JP.player.CanClimb(1);
 };
+*/

@@ -396,56 +396,46 @@ JP.World.prototype.TileMap = function()
 
   for (var y = 0; y < this.mapData[x].length; ++y)
   {
-    if (this.mapData[x][y] === null || this.mapData[x][y].height < JP.World.Gen.HEIGHT_SEA)
+    var height = this.mapData[x][y].height;
+    var heat = this.mapData[x][y].heat;
+    var tile = undefined;
+
+    for (var i = JP.World.generationSettings.length - 1; i >= 0; i--)
     {
-      if (this.mapData[x][y].heat < JP.World.Gen.TEMP_FROZEN)
-        this.terrain[x][y] = new JP.Tile.Ice();
-      else if (this.mapData[x][y].heat < JP.World.Gen.TEMP_DESERT)
-        this.terrain[x][y] = new JP.Tile.Water();
-      else
-        this.terrain[x][y] = new JP.Tile.Desert();
+      // data about where one particular tile should appear
+      var setting = JP.World.generationSettings[i];
+      if (setting.minHeight !== -1 && height < setting.minHeight)
+        continue;
+      if (setting.maxHeight !== -1 && height >= setting.maxHeight)
+        continue;
+      if (setting.minHeat !== -1 && heat < setting.minHeat)
+        continue;
+      if (setting.maxHeat !== -1 && heat >= setting.maxHeat)
+        continue;
+      tile = setting.tile;
+      break;
     }
-    else if (this.mapData[x][y].height < JP.World.Gen.HEIGHT_DIRT)
+    this.terrain[x][y] = tile === undefined ? JP.Tile.Create("Water") : JP.Tile.Create(tile);
+
+    switch (tile)
     {
-      if (this.mapData[x][y].heat < JP.World.Gen.TEMP_FROZEN)
-        this.terrain[x][y] = new JP.Tile.Snow();
-      else if (this.mapData[x][y].heat < JP.World.Gen.TEMP_DESERT)
-        this.terrain[x][y] = new JP.Tile.Dirt();
-      else
-        this.terrain[x][y] = new JP.Tile.Desert();
-    }
-    else if (this.mapData[x][y].height < JP.World.Gen.HEIGHT_GRASS)
-    {
-      if (this.mapData[x][y].heat < JP.World.Gen.TEMP_FROZEN)
-      {
-        this.terrain[x][y] = new JP.Tile.Snow();
+      case "Snow":
         if (Math.random() < 0.15)
           this.entities.push(new JP.Entity.Evergreen(x, y));
-      }
-      else if (this.mapData[x][y].heat < JP.World.Gen.TEMP_DESERT)
-      {
-        this.terrain[x][y] = new JP.Tile.Grass();
-        if (Math.random() < 0.35)
+      break;
+      case "Grass":
+        if (Math.random() < 0.30)
         {
           if (Math.random() < 0.80)
             this.entities.push(new JP.Entity.Oak(x, y));
           else
             this.entities.push(new JP.Entity.Evergreen(x, y));
         }
-      }
-      else
-      {
-        this.terrain[x][y] = new JP.Tile.Savanna();
+      break;
+      case "Savanna":
         if (Math.random() < 0.05)
           this.entities.push(new JP.Entity.Oak(x, y));
-      }
-    }
-    else
-    {
-      if (this.mapData[x][y].heat < JP.World.Gen.TEMP_FROZEN)
-        this.terrain[x][y] = new JP.Tile.SnowyMountain();
-      else
-        this.terrain[x][y] = new JP.Tile.Mountain();
+      break;
     }
   }
   return x / this.mapData.length;
@@ -499,10 +489,10 @@ JP.World.prototype.Draw = function()
   {
     for (var y = Math.floor(yoffset); y < ymax; ++y)
     {
-      if (this.terrain[x][y].imgPath === undefined)
+      if (this.terrain[x][y].img === null)
       {
         var group = 1;
-        while ((y + group) < ymax && this.terrain[x][y].constructor === this.terrain[x][y+group].constructor)
+        while ((y + group) < ymax && this.terrain[x][y].colour === this.terrain[x][y+group].colour)
           group++;
         JP.gamecontext.fillStyle = this.terrain[x][y].colour;
         JP.gamecontext.fillRect(

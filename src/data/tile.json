@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Dirt",
+    "colour": "#836539",
+    "spawnSafe": true
+  },
+  {
+    "name": "Grass",
+    "colour": "#35672D",
+    "spawnSafe": true
+  },
+  {
+    "name": "Snow",
+    "colour": "#FFFFFF",
+    "spawnSafe": true
+  },
+  {
+    "name": "Ice",
+    "colour": "#A5F2F3",
+    "spawnSafe": true
+  },
+  {
+    "name": "Desert",
+    "colour": "#C19A6B"
+  },
+  {
+    "name": "Savanna",
+    "colour": "#97C16B",
+    "spawnSafe": false
+  },
+  {
+    "name": "Water",
+    "colour": "#003FFF",
+    "spawnSafe": false,
+    "swimmable": true
+  },
+  {
+    "name": "Mountain",
+    "colour": "#999999",
+    "climbable": true
+  },
+  {
+    "name": "SnowyMountain",
+    "imgPath": "snowyMountain.png",
+    "climbable": true
+  }
+]
