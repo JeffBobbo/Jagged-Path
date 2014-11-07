@@ -29,8 +29,8 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.img = undefined;
   this.imgPath = undefined;
   this.colour = "#ffffff";
-  this.hp = 10;
   this.hpMax = 10;
+  this.hp = this.hpMax;
   this.canTalk = false;
   this.canMove = false;
   this.canChop = false;
@@ -193,7 +193,7 @@ JP.Entity.Oak = function()
   this.type = JP.Entity.Type.OAK;
   this.imgPath = 'tree.png';
   this.canChop = true;
-  this.hpMax = 4;
+  this.hpMax = 5;
   this.hp = randIntRange(3, 5); // how many hits to farm/kill
   this.drops = [{name: "Oak Log", chance: 1.0}];
 
@@ -209,7 +209,7 @@ JP.Entity.Evergreen = function()
   JP.Entity.Oak.apply(this, arguments);
   this.type = JP.Entity.Type.EVERGREEN;
   this.imgPath = 'evergreen.png';
-  this.hpMax = 5;
+  this.hpMax = 4;
   this.hp = randIntRange(2, 4); // how many hits to farm/kill
   this.drops = [{name: "Evergreen Log", chance: 1.0}];
 };
@@ -323,3 +323,17 @@ JP.Entity.Fire = function()
 };
 JP.Entity.Fire.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.Fire.prototype.constructor = JP.Entity.Fire;
+
+JP.Entity.Load = function(data)
+{
+/*
+  if (data === undefined || data === null)
+    return;
+
+  var ent;
+  switch (data.class)
+  {
+    case ""
+  }
+*/
+};
