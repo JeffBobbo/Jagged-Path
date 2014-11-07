@@ -5,7 +5,6 @@
 */
 
 JP.Item = JP.Item || {};
-JP.Item.ID = 0;
 
 JP.Item.Class = {
   NO_CLASS: 0,
@@ -15,22 +14,6 @@ JP.Item.Class = {
 };
 
 JP.Item.registry = {};
-
-JP.Item.Create = function(name, quant)
-{
-  alert("JP.Item.Create called");
-  return;
-  for (var i = JP.Item.registry.length - 1; i >= 0; i--)
-  {
-    if (JP.Item.registry[i].name === name)
-    {
-      var ret = new JP.Item.registry[i].item;
-      ret.quant = quant || 1;
-      return ret;
-    }
-  }
-  return undefined;
-};
 
 JP.Item.Load = function(data)
 {
