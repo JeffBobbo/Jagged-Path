@@ -167,7 +167,7 @@ JP.Draw = function()
 
   var keys = Object.keys(JP.player.inventory);
   var i = keys.length - 1;
-  while (i >= 0 && (h += 16) < JP.ui_height) // figure out something if this is longer than can be shown
+  while (i >= 0 && (h += 16) < JP.ui_height) // can we see it?
     JP.guicontext.fillText(JP.player.inventory[keys[i]] + "x " + keys[i--], w, h);
   var fps = (1000 / JP.getTickDelta()).toFixed(0) + "fps";
   JP.guicontext.font = "10pt Courier New";
@@ -245,33 +245,12 @@ JP.ProcessKey = function(event)
 
 JP.SetResolution = function()
 {
-  JP.gameview.width = document.documentElement.clientWidth;
-  JP.guiview.width  = document.documentElement.clientWidth;
+  JP.gameview.width  = document.documentElement.clientWidth;
   JP.gameview.height = document.documentElement.clientHeight;
-  JP.guiview.height  = document.documentElement.clientHeight;
-  JP.ui_height = JP.guiview.height;
-  JP.ui_width = TruncateTo(JP.guiview.width / 4, JP.PIXEL_SIZE);
-  JP.needDraw = true;
-  return;
-
-  var w = document.documentElement.clientWidth - JP.PIXEL_SIZE*2;
-  var h = document.documentElement.clientHeight - JP.PIXEL_SIZE*2;
-  if (h > w)
-  {
-    JP.gameview.width  = TruncateTo(w, JP.PIXEL_SIZE);
-    //JP.gameview.width  = TruncateTo(JP.gameview.width * 0.25, JP.PIXEL_SIZE);
-    JP.gameview.height = TruncateTo(w / JP.ratio, JP.PIXEL_SIZE);
-  }
-  else
-  {
-    JP.gameview.width  = TruncateTo(h * JP.ratio, JP.PIXEL_SIZE);
-    //JP.gameview.width  = TruncateTo(JP.gameview.width * 0.25, JP.PIXEL_SIZE);
-    JP.gameview.height = TruncateTo(h, JP.PIXEL_SIZE);
-  }
-  JP.ui_height = JP.gameview.height;
-  JP.ui_width  = TruncateTo(JP.gameview.width * (1 / 4), JP.PIXEL_SIZE);
-  JP.guiview.width = JP.gameview.width;
+  JP.guiview.width  = JP.gameview.width;
   JP.guiview.height = JP.gameview.height;
+  JP.ui_height = JP.guiview.height;
+  JP.ui_width = TruncateTo(JP.guiview.width * (1 / 4), JP.PIXEL_SIZE);
   JP.needDraw = true;
 };
 window.onresize = JP.SetResolution;
