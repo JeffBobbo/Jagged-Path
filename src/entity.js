@@ -191,7 +191,7 @@ JP.Entity.Oak = function()
 {
   JP.Entity.Entity.apply(this, arguments);
   this.type = JP.Entity.Type.OAK;
-  this.imgPath = 'tree.png';
+  this.imgPath = 'oak.png';
   this.canChop = true;
   this.hpMax = 5;
   this.hp = randIntRange(3, 5); // how many hits to farm/kill
