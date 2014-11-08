@@ -16,8 +16,8 @@ JP.Tile.Load = function(data)
   tile.merge(data);
   if (img !== undefined)
   {
-    this.img = new Image();
-    this.img.src = 'img/' + img;
+    tile.img = new Image();
+    tile.img.src = 'img/' + img;
   }
   if (JP.Tile.registry[data.name] === undefined)
     JP.Tile.registry[data.name] = tile;

@@ -41,6 +41,7 @@
   },
   {
     "name": "SnowyMountain",
+    "colour": "#999999",
     "imgPath": "snowyMountain.png",
     "climbable": true
   }
