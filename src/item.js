@@ -20,16 +20,8 @@ JP.Item.Load = function(data)
   if (data === undefined || data === null)
     return;
 
-  var o = undefined;
-  if (typeof(data) === "string")
-    o = JSON.parse(data);
-  else
-    o = data;
-  if (o === undefined || o === null)
-    return;
-
   var item;
-  switch (o.class)
+  switch (data.class)
   {
     case "axe":
       item = new JP.Item.Axe();
@@ -41,11 +33,11 @@ JP.Item.Load = function(data)
       item = new JP.Item.Tinderbox();
     break;
     default:
-      alert("Unknown item class for " + o.name + ". Class: " + o.class);
+      alert("Unknown item class for " + data.name + ". Class: " + data.class);
     break;
   }
-  delete o.class;
-  item.merge(o);
+  delete data.class;
+  item.merge(data);
   JP.Item.Register(item);
 };
 
@@ -54,7 +46,7 @@ JP.Item.Register = function(item)
   if (JP.Item.registry[item.name] === undefined)
     JP.Item.registry[item.name] =  item;
   else
-    alert(name + " used more than once items");
+    alert(item.name + " used more than once for items");
 };
 
 JP.Item.Spec = function(item, spec)
