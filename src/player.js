@@ -11,7 +11,7 @@ JP.Player = function()
   this.relx = -1; // floats
   this.rely = -1; // floats
 
-  this.speed = 10 / 1000;
+  this.speed = 0.0025; //10 / 1000;
   this.direction;
   this.imgBase = 'img/player';
 
