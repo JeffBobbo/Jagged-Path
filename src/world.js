@@ -12,6 +12,8 @@ JP.World = function()
   this.generationLevel = 0;
 };
 
+JP.World.Generation = {};
+
 JP.World.prototype.Save = function()
 {
   var savePerRun = 100; // ents
@@ -399,11 +401,12 @@ JP.World.prototype.TileMap = function()
     var height = this.mapData[x][y].height;
     var heat = this.mapData[x][y].heat;
     var tile = undefined;
+    var entity = undefined;
 
-    for (var i = JP.World.generationSettings.length - 1; i >= 0; i--)
+    for (var i = JP.World.Generation.tiles.length - 1; i >= 0; i--)
     {
       // data about where one particular tile should appear
-      var setting = JP.World.generationSettings[i];
+      var setting = JP.World.Generation.tiles[i];
       if (setting.minHeight !== -1 && height < setting.minHeight)
         continue;
       if (setting.maxHeight !== -1 && height >= setting.maxHeight)
@@ -415,33 +418,21 @@ JP.World.prototype.TileMap = function()
       tile = setting.tile;
       break;
     }
-    this.terrain[x][y] = tile === undefined ? JP.Tile.Create("Water") : JP.Tile.Create(tile);
+    this.terrain[x][y] = (tile === undefined ? JP.Tile.Create("Water") : JP.Tile.Create(tile));
 
-    switch (tile)
+    var possibleEntities = [];
+    for (var i = JP.World.Generation.entities.length - 1; i >= 0; i--)
     {
-      case "Snow":
-        if (Math.random() < 0.15)
-          this.entities.push(JP.Entity.Create("Evergreen Tree", x, y));
-      break;
-      case "Grass":
-        if (Math.random() < 0.30)
-        {
-          if (Math.random() < 0.80)
-            this.entities.push(JP.Entity.Create("Oak Tree", x, y));
-          else
-            this.entities.push(JP.Entity.Create("Evergreen Tree", x, y));
-        }
-      break;
-      case "Savanna":
-        if (Math.random() < 0.10)
-        {
-          if (Math.random() < 0.10)
-            this.entities.push(JP.Entity.Create("Oak Tree", x, y));
-          else
-            this.entities.push(JP.Entity.Create("Baobab Tree", x, y));
-        }
-      break;
+      var setting = JP.World.Generation.entities[i];
+      var tiles = Object.keys(setting.tiles);
+      for (var i = tiles.length - 1; i >= 0; i--)
+      {
+        if (tiles[i] === tile && setting.tiles[tiles[i]] > Math.random())
+          possibleEntities.push(setting.entity);
+      }
     }
+    if (possibleEntities.length > 0)
+      this.entities.push(JP.Entity.Create(possibleEntities[randIntRange(0, possibleEntities.length - 1)], x, y));
   }
   return x / this.mapData.length;
 };
@@ -472,7 +463,7 @@ JP.World.prototype.EntityMap = function()
     var y = randIntRange(0, JP.HEIGHT - 1);
     if (JP.world.terrain[x][y].spawnSafe === false)
       continue;
-    this.entities.unshift(JP.Entity.Create("Lumberjack", x, y)); // cheap hack to make woodsmen render above trees
+//    this.entities.unshift(JP.Entity.Create("Lumberjack", x, y)); // cheap hack to make woodsmen render above trees
     break;
   }
   return i / entsToPlace;

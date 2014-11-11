@@ -31,15 +31,24 @@ JP.Data.Request = function(url, listcb, filecb)
 JP.Data.Load = function()
 {
   JP.Data.Request("data/tile.json", JP.Data.LoadTileFile);
-  JP.Data.Request("data/worldGen.json", JP.Data.LoadWorldGen);
   JP.Data.Request("data/itemIndex.json", JP.Data.LoadListFile, JP.Data.LoadItemFile);
   JP.Data.Request("data/entityIndex.json", JP.Data.LoadListFile, JP.Data.LoadEntityFile);
   JP.Data.Request("data/questIndex.json", JP.Data.LoadListFile, JP.Data.LoadQuestFile);
+  JP.Data.RequestWorldGen();
 };
 
-JP.Data.LoadWorldGen = function(data)
+JP.Data.RequestWorldGen = function(worldType)
 {
-  JP.World.generationSettings = data;
+  worldType = worldType || "normal";
+  JP.Data.Request("data/generation/" + worldType + "_tiles.json", JP.Data.LoadWorldGen, "tiles");
+  JP.Data.Request("data/generation/" + worldType + "_entities.json", JP.Data.LoadWorldGen, "entities");
+};
+JP.Data.LoadWorldGen = function(data, which)
+{
+  if (which === "tiles")
+    JP.World.Generation.tiles = data;
+  else
+    JP.World.Generation.entities = data;
 };
 
 JP.Data.LoadListFile = function(list, callback)

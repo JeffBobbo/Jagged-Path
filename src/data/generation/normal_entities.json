@@ -1,0 +1,41 @@
+[
+  {
+    "entity": "Oak Tree",
+    "tiles":
+    {
+      "Dirt": 0.10,
+      "Grass": 0.10,
+      "Snow": 0.05,
+      "Savanna": 0.05
+    }
+  },
+  {
+    "entity": "Evergreen Tree",
+    "tiles":
+    {
+      "Dirt": 0.05,
+      "Grass": 0.15,
+      "Snow": 0.15,
+      "Mountain": 0.05
+    }
+  },
+  {
+    "entity": "Baobab Tree",
+    "tiles":
+    {
+      "Grass": 0.05,
+      "Savanna": 0.20,
+      "Desert": 0.10
+    }
+  },
+  {
+    "entity": "Lumberjack",
+    "tiles":
+    {
+      "Grass": 0.05,
+      "Snow": 0.05,
+      "Savanna": 0.05,
+      "Desert": 0.05
+    }
+  }
+]
