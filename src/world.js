@@ -22,7 +22,7 @@ JP.World.prototype.Save = function()
     var x = 0;
     while (this.mapData[x] !== undefined)
     {
-      localStorage.setItem("JP.World.mapData." + x, LZString.compressToUTF16(JSON.stringify(this.mapDatap[x])));
+      localStorage.setItem("JP.World.mapData." + x, LZString.compressToUTF16(JSON.stringify(this.mapData[x])));
       x++;
     }
 
@@ -401,8 +401,8 @@ JP.World.prototype.TileMap = function()
     var height = this.mapData[x][y].height;
     var heat = this.mapData[x][y].heat;
     var tile = undefined;
-    var entity = undefined;
 
+    var possibleTiles = [];
     for (var i = JP.World.Generation.tiles.length - 1; i >= 0; i--)
     {
       // data about where one particular tile should appear
@@ -415,24 +415,11 @@ JP.World.prototype.TileMap = function()
         continue;
       if (setting.maxHeat !== -1 && heat >= setting.maxHeat)
         continue;
-      tile = setting.tile;
-      break;
+      possibleTiles.push(setting.tile);
     }
+    if (possibleTiles.length > 0)
+      tile = possibleTiles[randIntRange(0, possibleTiles.length-1)];
     this.terrain[x][y] = (tile === undefined ? JP.Tile.Create("Water") : JP.Tile.Create(tile));
-
-    var possibleEntities = [];
-    for (var i = JP.World.Generation.entities.length - 1; i >= 0; i--)
-    {
-      var setting = JP.World.Generation.entities[i];
-      var tiles = Object.keys(setting.tiles);
-      for (var i = tiles.length - 1; i >= 0; i--)
-      {
-        if (tiles[i] === tile && setting.tiles[tiles[i]] > Math.random())
-          possibleEntities.push(setting.entity);
-      }
-    }
-    if (possibleEntities.length > 0)
-      this.entities.push(JP.Entity.Create(possibleEntities[randIntRange(0, possibleEntities.length - 1)], x, y));
   }
   return x / this.mapData.length;
 };
@@ -445,11 +432,9 @@ JP.World.prototype.EntityMap = function()
   else
     JP.World.prototype.EntityMap.x++;
 
-  var i = JP.World.prototype.EntityMap.x;
-  var entsToPlace = 100;
-
+  var x = JP.World.prototype.EntityMap.x;
   
-  if (i === entsToPlace)
+  if (x === this.mapData.length)
   {
     JP.player.Place();
     if (this.terrain[JP.player.posx][JP.player.posy].spawnSafe === true)
@@ -457,16 +442,23 @@ JP.World.prototype.EntityMap = function()
     return true; // return true when we're done
   }
 
-  while (true)
+  for (var y = 0; y < this.mapData[x].length; ++y)
   {
-    var x = randIntRange(0, JP.WIDTH - 1);
-    var y = randIntRange(0, JP.HEIGHT - 1);
-    if (JP.world.terrain[x][y].spawnSafe === false)
-      continue;
-//    this.entities.unshift(JP.Entity.Create("Lumberjack", x, y)); // cheap hack to make woodsmen render above trees
-    break;
+    var possibleEntities = [];
+    for (var i = JP.World.Generation.entities.length - 1; i >= 0; i--)
+    {
+      var setting = JP.World.Generation.entities[i];
+      var tiles = Object.keys(setting.tiles);
+      for (var j = tiles.length - 1; j >= 0; j--)
+      {
+        if (tiles[j] === this.terrain[x][y].name && setting.tiles[tiles[j]] >= Math.random())
+          possibleEntities.push(setting.entity);
+      }
+    }
+    if (possibleEntities.length > 0)
+      this.entities.push(JP.Entity.Create(possibleEntities[randIntRange(0, possibleEntities.length - 1)], x, y));
   }
-  return i / entsToPlace;
+  return x / this.mapData.length;
 };
 
 JP.World.prototype.Draw = function() 

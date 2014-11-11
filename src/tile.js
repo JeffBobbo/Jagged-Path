@@ -15,7 +15,6 @@ JP.Tile.Load = function(data)
 
   var tile = {};
   tile.name = data.name;
-  delete data.name;
   tile.data = data;
   JP.Tile.Register(tile);
 };
@@ -40,6 +39,7 @@ JP.Tile.Create = function(tile)
 
 JP.Tile.Tile = function()
 {
+  this.name = null;
   this.colour = null;
   this.img = null;
   this.imgPath = null;

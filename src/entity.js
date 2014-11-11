@@ -62,7 +62,7 @@ JP.Entity.Create = function(entity, x, y, lifespan)
 {
   var reg = JP.Entity.registry[entity];
   if (reg === undefined)
-    return undefined;
+    throw "No such entity: " + entity;
   var ent = new reg.cstruct(x, y, lifespan);
   ent.merge(reg.data);
   return ent;
