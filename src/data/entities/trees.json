@@ -1,0 +1,42 @@
+[
+  {
+    "class": "tree",
+    "name": "Oak Tree",
+    "imgPath": "oak.png",
+    "hpMax": 5,
+    "drops": [
+      {
+        "name": "Oak Log",
+        "chance": 1.0
+      }
+    ]
+  },
+  {
+    "class": "tree",
+    "name": "Evergreen Tree",
+    "imgPath": "evergreen.png",
+    "hpMax": 4,
+    "drops": [
+      {
+        "name": "Evergreen Log",
+        "chance": 1.0
+      }
+    ]
+  },
+  {
+    "class": "tree",
+    "name": "Baobab Tree",
+    "imgPath": "baobab.png",
+    "hpMax": 7,
+    "drops": [
+      {
+        "name": "Baobab Log",
+        "chance": 1.0
+      },
+      {
+        "name": "Baobab Log",
+        "chance": 0.5
+      }
+    ]
+  }
+]

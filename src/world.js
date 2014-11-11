@@ -421,20 +421,25 @@ JP.World.prototype.TileMap = function()
     {
       case "Snow":
         if (Math.random() < 0.15)
-          this.entities.push(new JP.Entity.Evergreen(x, y));
+          this.entities.push(JP.Entity.Create("Evergreen Tree", x, y));
       break;
       case "Grass":
         if (Math.random() < 0.30)
         {
           if (Math.random() < 0.80)
-            this.entities.push(new JP.Entity.Oak(x, y));
+            this.entities.push(JP.Entity.Create("Oak Tree", x, y));
           else
-            this.entities.push(new JP.Entity.Evergreen(x, y));
+            this.entities.push(JP.Entity.Create("Evergreen Tree", x, y));
         }
       break;
       case "Savanna":
-        if (Math.random() < 0.05)
-          this.entities.push(new JP.Entity.Oak(x, y));
+        if (Math.random() < 0.10)
+        {
+          if (Math.random() < 0.10)
+            this.entities.push(JP.Entity.Create("Oak Tree", x, y));
+          else
+            this.entities.push(JP.Entity.Create("Baobab Tree", x, y));
+        }
       break;
     }
   }
@@ -452,12 +457,12 @@ JP.World.prototype.EntityMap = function()
   var i = JP.World.prototype.EntityMap.x;
   var entsToPlace = 100;
 
-  JP.player.Place();
-  this.entities.unshift(new JP.Entity.Lumberjack(JP.player.posx, JP.player.posy)); // place a woodsman with the player
   
   if (i === entsToPlace)
   {
     JP.player.Place();
+    if (this.terrain[JP.player.posx][JP.player.posy].spawnSafe === true)
+      this.entities.unshift(JP.Entity.Create("Lumberjack", JP.player.posx, JP.player.posy)); // place a woodsman with the player
     return true; // return true when we're done
   }
 
@@ -467,7 +472,7 @@ JP.World.prototype.EntityMap = function()
     var y = randIntRange(0, JP.HEIGHT - 1);
     if (JP.world.terrain[x][y].spawnSafe === false)
       continue;
-    this.entities.unshift(new JP.Entity.Lumberjack(x, y)); // cheap hack to make woodsmen render above trees
+    this.entities.unshift(JP.Entity.Create("Lumberjack", x, y)); // cheap hack to make woodsmen render above trees
     break;
   }
   return i / entsToPlace;

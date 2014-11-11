@@ -10,24 +10,32 @@ JP.Tile.registry = {};
 
 JP.Tile.Load = function(data)
 {
-  var tile = new JP.Tile.Tile();
-  var img = data.imgPath;
-  delete data.imgPath;
-  tile.merge(data);
-  if (img !== undefined)
-  {
-    tile.img = new Image();
-    tile.img.src = 'img/' + img;
-  }
-  if (JP.Tile.registry[data.name] === undefined)
-    JP.Tile.registry[data.name] = tile;
+  if (data === undefined || data === null)
+    return;
+
+  var tile = {};
+  tile.name = data.name;
+  delete data.name;
+  tile.data = data;
+  JP.Tile.Register(tile);
+};
+
+JP.Tile.Register = function(tile)
+{
+  if (JP.Tile.registry[tile.name] === undefined)
+    JP.Tile.registry[tile.name] = tile;
   else
-    alert(data.name + " was used for multiple tiles");
+    throw tile.name + " used more than once for tiles";
 };
 
 JP.Tile.Create = function(tile)
 {
-  return JP.Tile.registry[tile] || null;
+  var reg = JP.Tile.registry[tile];
+  if (reg === undefined)
+    return undefined;
+  var tile = new JP.Tile.Tile();
+  tile.merge(reg.data);
+  return tile;
 }
 
 JP.Tile.Tile = function()

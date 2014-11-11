@@ -113,16 +113,19 @@ JP.Idle = function()
 {
   JP.getTickCount(true); // update the tickcount
   //JP.player.Idle();
-  for (var i = 0; i < JP.world.entities.length; ++i)
+  for (var i = JP.world.entities.length - 1; i >= 0; i--)
   {
-    if (JP.world.entities[i].Idle() === false) // entity removed during idle, so deal with it properly
-    {
-      i--;
-      continue;
-    }
+    JP.world.entities[i].Idle();
     JP.world.entities[i].Move();
   }
   JP.Draw();
+
+  // remove any seppuku'd entities
+  for (var i = JP.world.entities.length - 1; i >= 0; i--)
+  {
+    if (JP.world.entities[i].seppuku === true)
+      JP.world.entities.splice(i, 1);
+  };
 
   JP.Save();
 };
@@ -139,7 +142,7 @@ JP.Save = function()
     JP.world.Save(); // also saves entities
     JP.Save.next = JP.getTickCount() + interval;
   }
-}
+};
 
 JP.Draw = function()
 {
@@ -181,7 +184,7 @@ JP.Draw = function()
   //JP.player.Draw(); // this draws the players inventory
   JP.guimgr.Draw();
   JP.needDraw = false;
-}
+};
 
 JP.ProcessMouse = function(event)
 {
@@ -274,7 +277,7 @@ function start()
 
   clearInterval(JP.intervalID);
   JP.intervalID = setInterval(function() {JP.Initialize();}, 5);
-}
+};
 
 JP.Delete = function()
 {
@@ -283,7 +286,7 @@ JP.Delete = function()
 
   JP.world.Delete();
   JP.player.Delete();
-}
+};
 
 function pageLoad()
 {
@@ -308,4 +311,4 @@ function pageLoad()
   JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEOUT, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New")});
   // draw the gui until we start
   JP.intervalID = setInterval(function() {JP.guimgr.Draw();}, 5);
-}
+};
