@@ -32,30 +32,30 @@
   </head>
 
   <body onload="pageLoad()">
-    <!--div id="footer">
-      <div id="footerleft">
-        VERSION
-        <a href="changelog" target="_blank">Change log</a>
-      </div>
-      <div id="footerright">
-        <a id="textSave" href="" onclick="textSaveOverlay(); return false;">Text save</a>
-        <a id="textLoad" href="" onclick="textLoadOverlay(); return false;">Load save</a>
-        <a id="reset" href="" onclick="resetDataOverlay();return false;">Reset save</a>
-        <a id="credits" href="" onclick="creditOverlay();return false;">Credits</a>
-      </div>
-    </div>
-    <br/-->
     <noscript>
       <h2>
         This page requires JavaScript to be enabled, sorry!
       <h2>
     </noscript>
+    <div id="view">
     <canvas id="gameview" tabindex="1" style="z-index:1;">
-      <h2>Your browser doesn't support HTML5's canvas element. Please get a better browser such as Google Chrome, Mozilla Firefox or Opera.</h2>
-    </canvas>
-    <canvas id="guiview" tabindex="2" style="z-index:2;">
-    </canvas>
-    <button id="start" onclick="start()" style="position:absolute; float:right; bottom:10px;">Start</button>
+        <h2>Your browser doesn't support HTML5's canvas element. Please get a better browser such as Google Chrome, Mozilla Firefox or Opera.</h2>
+      </canvas>
+      <canvas id="guiview" tabindex="2" style="z-index:2;">
+      </canvas>
+
+      <div id="splash">
+        <h1 style="text-align:center;">Jagged Path</h1>
+        <br/>
+        <div style="position:relative; left:calc(50% - 60px); max-width:120px">
+          <button id="load" onclick="start()" style="width:120px">Load World</button>
+          <br/>
+          <button id="delete" onclick="JP.Delete()" style="width:120px" title="Delets current save, irrevesible">Delete World</button>
+        </div>
+      </div>
+    </div>
+    <div id="rightPanel">
+    </div>
     <!--div id="eventLog" style="display:none;">
     </div>
     <div id="menu" style="display:none;">

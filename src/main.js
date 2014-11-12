@@ -265,7 +265,9 @@ function start()
 
   JP.SetResolution();
   // remove the splash screen
-  JP.guimgr.RemoveWindow(JP.splash);
+  var element = document.getElementById("splash");
+  element.parentNode.removeChild(element);
+//  JP.guimgr.RemoveWindow(JP.splash);
 
   // create the world
   JP.world = new JP.World();

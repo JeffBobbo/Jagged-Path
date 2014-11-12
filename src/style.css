@@ -1,5 +1,5 @@
 /*
-  WorldExplorer, javascript browser game
+  Jagged Path, javascript browser game
   Copyright (C) 2014 Jeff Bobbo
   All rights reserved
 */
@@ -9,11 +9,62 @@ body
   background-color:#222;
   font-family:"Courier New", Courier, monospace;
   color:#fff;
-  font-size:14px;
+  font-size:12px;
   margin:0;
   padding:0;
   min-height:100%;
-  position:absolute;
+  min-width:100%;
+  position:fixed;
+}
+
+canvas
+{
+  position:fixed;
+  outline:0;
+  top:0px;
+  left:0px;
+  min-height:100%;
+  min-width:100%;
+  display:inline;
+}
+
+div
+{
+  z-index:3;
+  position:fixed;
+  margin:0px;
+  padding:0px;
+  background-color:#444;
+}
+
+div#view
+{
+  position:fixed;
+  width:calc(100% - 300px);
+  height:100%;
+  background-color:rgba(0, 0, 0, 0.0);
+}
+
+div#rightPanel
+{
+  position:fixed;
+  left:calc(100% - 300px);
+  width:300px;
+  height:100%;
+  background-color:rgba(0, 0, 0, 0.5);
+}
+
+div#splash
+{
+  position:relative;
+  border-width:1px;
+  border-radius:5px;
+  border:3px #7f7f7f;
+
+  top:calc(50% - 150px);
+  left:calc(50% - 200px);
+  height:300px;
+  width:400px;
 }
 
 a
@@ -65,44 +116,4 @@ button:disabled
 {
   height:50px;
   background-color:#ffa500;
-}
-
-canvas
-{
-  position:absolute;
-  outline:0;
-  top:0px;
-  left:0px;
-  display:inline;
-}
-
-#footer
-{
-  background:#444;
-  width:80%;
-  border-radius:5px;
-  margin:auto 1px;
-  font-size:14px;
-  border:0;
-  padding:0;
-}
-
-#footerleft
-{
-  float:left;
-  text-align:left;
-  margin:2px;
-  padding:2px;
-  display:inline;
-  color:#ffa500;
-}
-
-#footerright
-{
-  float:right;
-  text-align:right;
-  margin:2px;
-  padding:2px;
-  display:inline;
-  color:#ffa500;
 }
