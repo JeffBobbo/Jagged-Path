@@ -56,6 +56,10 @@ JP.Item.Spec = function(item, spec)
 
   return JP.Item.registry[item][spec];
 }
+JP.Item.StatString = function(item)
+{
+  return JP.Item.registry[item].GetStatString();
+}
 
 JP.Item.Use = function(item)
 {
@@ -88,6 +92,25 @@ JP.Item.Item.prototype.Use = function()
 {
   return true;
 };
+JP.Item.Item.prototype.GetStatString = function()
+{
+  var str = "";
+  str + this.name;
+
+  var attributes = Object.keys(this);
+  var len = attributes.length;
+  for (var i = 0; i < len; ++i)
+  {
+    if (this[attributes[i]] === 0 || this[attributes[i]] === "") // skip empty/0 values
+      continue;
+
+    if (str.length > 0)
+      str += "\n";
+    str += attributes[i].toTitleCase() + ": " + Commify(this[attributes[i]]);
+  }
+  return str;
+}
+
 
 JP.Item.Axe = function()
 {

@@ -85,7 +85,7 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.posx = Math.floor(this.relx);
   this.rely = y || -1;
   this.posy = Math.floor(this.rely);
-  this.size = JP.PIXEL_SIZE;
+  this.size = 1.0;
   this.moveGoal = {x: x, y: y, cx: x, cy: y};
   this.timeToLive = JP.getTickCount() + lifespan || -1;
 
@@ -120,8 +120,8 @@ JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
     JP.context.drawImage(this.img,
       (this.relx - xoffset) * JP.PIXEL_SIZE,
       (this.rely - yoffset) * JP.PIXEL_SIZE,
-      this.size,
-      this.size
+      Math.floor(JP.PIXEL_SIZE * this.size),
+      Math.floor(JP.PIXEL_SIZE * this.size)
     );
   }
   else
@@ -278,40 +278,10 @@ JP.Entity.Tree = function()
   this.drops = [{name: "Oak Log", chance: 1.0}];
 
   // reposition slightly so trees don't sit uniformly
-  this.size = randIntRange((JP.PIXEL_SIZE >> 1) - 2, (JP.PIXEL_SIZE >> 1) + 2) << 1;
+  this.size = (randIntRange((JP.PIXEL_SIZE >> 1) - 2, (JP.PIXEL_SIZE >> 1) + 2) << 1) / JP.PIXEL_SIZE;
 };
 JP.Entity.Tree.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.Tree.prototype.constructor = JP.Entity.Tree;
-
-JP.Entity.Oak = function()
-{
-  JP.Entity.Entity.apply(this, arguments);
-  this.type = JP.Entity.Type.OAK;
-  this.imgPath = 'oak.png';
-  this.canChop = true;
-  this.hpMax = 5;
-  this.hp = randIntRange(3, 5); // how many hits to farm/kill
-  this.drops = [{name: "Oak Log", chance: 1.0}];
-
-  // reposition slightly so trees don't sit uniformly
-  this.size = randIntRange((JP.PIXEL_SIZE >> 1) - 2, (JP.PIXEL_SIZE >> 1) + 2) << 1;
- // this.posx += 1 / randRange(0, JP.PIXEL_SIZE - this.size);
- // this.posy += 1 / randRange(0, JP.PIXEL_SIZE - this.size);
-};
-JP.Entity.Oak.prototype = Object.create(JP.Entity.Entity.prototype);
-JP.Entity.Oak.prototype.constructor = JP.Entity.Oak;
-JP.Entity.Evergreen = function()
-{
-  JP.Entity.Oak.apply(this, arguments);
-  this.type = JP.Entity.Type.EVERGREEN;
-  this.imgPath = 'evergreen.png';
-  this.hpMax = 4;
-  this.hp = randIntRange(2, 4); // how many hits to farm/kill
-  this.drops = [{name: "Evergreen Log", chance: 1.0}];
-};
-JP.Entity.Evergreen.prototype = Object.create(JP.Entity.Oak.prototype);
-JP.Entity.Evergreen.prototype.constructor = JP.Entity.Evergreen;
-
 
 JP.Entity.NPC = function()
 {
@@ -377,73 +347,7 @@ JP.Entity.NPC.prototype.Talk = function()
   }
   return false;
 };
-
-JP.Entity.Lumberjack = function()
-{
-  JP.Entity.Entity.apply(this, arguments);
-  this.type = JP.Entity.Type.LUMBERJACK;
-  this.imgPath ='lumberjack.png';
-  this.canTalk = true;
-  this.canMove = true;
-};
-JP.Entity.Lumberjack.prototype = Object.create(JP.Entity.Entity.prototype);
-JP.Entity.Lumberjack.prototype.constructor = JP.Entity.Lumberjack;
-JP.Entity.Lumberjack.prototype.Talk = function()
-{
-  if (JP.player.ItemClass(JP.Item.Class.AXE) === undefined)
-  {
-    new JP.Logger.LogItem("\"Well there, it looks like you could use an axe!\"", false, false, false).Post();
-    JP.player.ItemDelta("Axe");
-    return true;
-  }
-  else if (JP.player.ItemClass(JP.Item.Class.WOOD) === undefined)
-  {
-    new JP.Logger.LogItem("\"Use 'C' to chop at trees and collect wood!\"", false, false, false).Post();
-    return true;
-  }
-  else if (JP.player.ItemClass(JP.Item.Class.TINDERBOX) === undefined)
-  {
-    new JP.Logger.LogItem("\"Here's a Tinderbox, find a clear area and press 'F' to start a fire.\"", false, false, false).Post();
-    JP.player.ItemDelta("Tinderbox");
-    return true;
-  }
-  else if (JP.player.canSwim === false && JP.player.ItemQuant("Evergreen Log") < 25 && JP.player.ItemQuant("Oak Log") < 20)
-  {
-    new JP.Logger.LogItem("\"Bring me 25 Evergreen Logs or 20 Oak Logs and I'll teach you to swim.\"", false, false, false).Post();
-    return true;
-  }
-  else if (JP.player.canSwim === false && JP.player.ItemQuant("Evergreen Log") >= 25)
-  {
-    new JP.Logger.LogItem("\"... Row row row your boat, gently down the stream, belts off trousers down, isn't life a scream?!\"", false, false, false).Post();
-    new JP.Logger.LogItem("You now know how to swim", false, false, true).Post();
-    JP.player.canSwim = true;
-    JP.player.ItemDelta("Evergreen Log", -25);
-    return true;
-  }
-  else if (JP.player.canSwim === false && JP.player.ItemQuant("Oak Log") >= 20)
-  {
-    new JP.Logger.LogItem("\"... Row row row your boat, gently down the stream, belts off trousers down, isn't life a scream?!\"", false, false, false).Post();
-    new JP.Logger.LogItem("You now know how to swim", false, false, true).Post();
-    JP.player.ItemDelta("Oak Log", -20);
-    JP.player.canSwim = true;
-    return true;
-  }
-  else if (JP.player.ItemQuant("Oak Log") < 5)
-  {
-    new JP.Logger.LogItem("\"Bring me five Oak Logs and I'll pay you " + JP.Item.Spec("Oak Log", "value") + " Gold each for them!\"").Post();
-    return true;
-  }
-  else if (JP.player.ItemQuant("Oak Log") >= 5)
-  {
-    JP.player.ItemDelta("Oak Log", -5);
-    new JP.Logger.LogItem("\"'Ere you go.\"").Post();
-    JP.player.DeltaGold(JP.Item.Spec("Oak Log", "value") * 5);
-    return true;
-  }
-  return false;
-};
-
-JP.Entity.Lumberjack.prototype.Move = function()
+JP.Entity.NPC.prototype.Move = function()
 {
   return; // this works but it's too fast and cba to work on this atm
 

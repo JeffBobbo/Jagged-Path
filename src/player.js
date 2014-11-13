@@ -190,7 +190,7 @@ JP.Player.prototype.Draw = function()
 {
 
   var table = document.getElementById('inventTable');
-  while (table.rows.length > 1)
+  while (table.rows.length > 0)
     table.deleteRow(-1);
 
   var keys = Object.keys(this.inventory);
@@ -201,6 +201,7 @@ JP.Player.prototype.Draw = function()
     var name = row.insertCell(0);
     quant.textContent = this.inventory[keys[i]];
     name.textContent = keys[i];
+    name.title = JP.Item.StatString(keys[i]);
   }
 };
 

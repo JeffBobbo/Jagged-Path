@@ -70,10 +70,34 @@ div#rightPanel>*
 div#eventLog
 {
   height:calc(50% - 16px);
+  overflow-y:auto;
 }
 div#inventory
 {
   height:calc(50% - 16px);
+  text-align:center;
+}
+span.inventHeader
+{
+  font-weight:bold;
+  margin:50px;
+  text-align:left;
+}
+div#inventory>div
+{
+  position:relative;
+  height:100%;
+  overflow-y:auto;
+}
+table#inventTable
+{
+  position:relative;
+  width:100%;
+  text-align:left;
+}
+table#inventTable>tr>*
+{
+  width:50%;
 }
 p#fpsCounter
 {
@@ -94,15 +118,6 @@ div#splash,div#loading
   left:calc(50% - 200px);
   height:300px;
   width:400px;
-}
-
-table,th,tr
-{
-  width:100%;
-}
-th,tr
-{
-  width:50%;
 }
 
 a
@@ -142,16 +157,16 @@ button:disabled
   width:10px;
   height:10px;
 }
-::-webkit-scrollbar-track
+::-webkit-scrollbar-track /* these two seem to be the same? */
 {
-  background-color: #999;
+  background-color: #444;
 }
-::-webkit-scrollbar-track-piece
+::-webkit-scrollbar-track-piece /* these two seem to be the same? */
 {
-  background-color: #999;
+  background-color: #444;
 }
 ::-webkit-scrollbar-thumb
 {
   height:50px;
-  background-color:#ffa500;
+  background-color:#999;
 }
