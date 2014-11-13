@@ -42,38 +42,6 @@ JP.Logger.DeleteData = function()
 
 JP.Logger.Draw = function()
 {
-  JP.guicontext.fillStyle = "#FFFFFF";
-  var font = "8pt Courier New"; // need this later for bold/italics
-  JP.guicontext.font = font;
-  var w = JP.guiview.width - JP.ui_width + 8;
-  var h = (JP.ui_height >> 1) + 8;
-  // event log
-  var i = JP.Logger.events.length - 1;
-  var h2 = 16;
-  while (i >= 0 && h2 < h - 16)
-  {
-    var words = JP.Logger.events[i].msg.split(" ");
-    JP.guicontext.font = (JP.Logger.events[i].italic === true ? "italic " : "") + (JP.Logger.events[i].bold === true ? "bold " : "") + font;
-    var line = "";
-    for (var j = 0; j < words.length; ++j)
-    {
-      var test = line + words[j] + " ";
-      var width = JP.guicontext.measureText(test).width;
-      if (width > JP.ui_width && j > 0)
-      {
-        JP.guicontext.fillText(line, w, h2);
-        line = " " + words[j] + " ";
-        h2 += 16;
-      }
-      else
-      {
-        line = test;
-      }
-    }
-    JP.guicontext.fillText(line, w, h2);
-    i--;
-    h2 += 16;
-  }
 }
 
 JP.Logger.LogItem = function(text, save, bold, italic)
@@ -91,17 +59,16 @@ JP.Logger.LogItem.prototype.Post = function()
   if (this.when === -1)
     this.when = JP.getTickCount();
 
-  JP.Logger.events.push(this);
-/*
+//  JP.Logger.events.push(this);
+
   var p = document.createElement("P");
   if (this.bold)
     p.style.fontWeight = "bold";
   if (this.italic)
     p.style.fontStyle = "italic";
   p.appendChild(document.createTextNode(this.msg));
-
   JP.Logger.logNode.insertBefore(p, JP.Logger.logNode.firstChild);
-*/
+
   if (this.save === true) // save it
   {
     var tmp = JSON.parse(localStorage.getItem("JP.events"));

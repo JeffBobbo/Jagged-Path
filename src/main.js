@@ -7,8 +7,8 @@
 "use strict";
 
 var JP = JP || {
-  gameview: null,
-  gamecontext: null,
+  canvas: null,
+  context: null,
   world: null,
   // how big is our world in tiles
   WIDTH:  920,
@@ -62,35 +62,19 @@ JP.Initialize = function()
 
   if (JP.Data.filesReq > JP.Data.filesRec)
   {
-    JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
-    var x = JP.guiview.width  / 2;
-    var y = JP.guiview.height / 2;
-
-    JP.guicontext.font = '30pt Courier New';
-    JP.guicontext.textAlign = 'center';
-    JP.guicontext.fillStyle = '#ffa500';
-    JP.guicontext.fillText("Retreiving game data", x, y-50);
-    JP.guicontext.fillText(Commify(JP.Data.filesRec) + " of " + Commify(JP.Data.filesReq) + " received", x, y);
-    JP.guicontext.fillText('Please Wait', x, y+70);
+    document.getElementById('loadingTitle').textContent = "Retreiving game data";
+    document.getElementById('loadingDetail').textContent = Commify(JP.Data.filesRec) + " of " + Commify(JP.Data.filesReq) + " received";
+    document.getElementById('loadingExtra').textContent = 'Please Wait';
     return;
   }
 
   var prog = JP.world.Load();
   if (prog !== false && prog !== true) // I know this looks weird, but prog being false means no world loaded
   {
-    JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
-    var x = JP.guiview.width  / 2;
-    var y = JP.guiview.height / 2;
-
-    JP.guicontext.font = '30pt Courier New';
-    JP.guicontext.textAlign = 'center';
-    JP.guicontext.fillStyle = '#ffa500';
-    JP.guicontext.fillText("Loading world data", x, y-50);
-    JP.guicontext.fillText((prog * 100).toFixed(0) + '%', x, y);
-    JP.guicontext.fillText('Please Wait', x, y+70);
+    document.getElementById('loadingTitle').textContent = "Loading world data";
+    document.getElementById('loadingDetail').textContent = (prog * 100).toFixed(0) + '%';
     return;
   }
-  JP.player.Load();
   clearInterval(JP.intervalID);
   JP.intervalID = setInterval(function() {JP.Generate();}, 5);
 }
@@ -104,6 +88,8 @@ JP.Generate = function()
   }
   else
   {
+    document.getElementById('loading').style.display = "none";
+    JP.player.Load();
     clearInterval(JP.intervalID);
     JP.intervalID = setInterval(function() {JP.Idle();}, 20);
   }
@@ -118,6 +104,7 @@ JP.Idle = function()
     JP.world.entities[i].Idle();
     JP.world.entities[i].Move();
   }
+  JP.player.Draw();
   JP.Draw();
 
   // remove any seppuku'd entities
@@ -146,51 +133,24 @@ JP.Save = function()
 
 JP.Draw = function()
 {
-  JP.gamecontext = JP.gameview.getContext("2d");
-  JP.guicontext = JP.guiview.getContext("2d");
+  JP.context = JP.canvas.getContext("2d");
 
-  // draw ui stuff
-  // clear this bit
-  JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
-  JP.guicontext.fillStyle = "#000000";
-  JP.guicontext.fillRect(JP.guiview.width - JP.ui_width, 0, JP.guiview.width, JP.guiview.height);
-
-  JP.guicontext.fillStyle = "#FFFFFF";
-  JP.Logger.Draw();
-  var w = JP.guiview.width - JP.ui_width + 8;
-  var h = (JP.ui_height >> 1) + 8;
-  // inventory
-  JP.guicontext.font = '10pt Courier New';
-  JP.guicontext.fillText(SIfy(JP.player.gold) + " Gold Coins", w, h);
-  h += 24;
-  JP.guicontext.fillText("Inventory", w, h);
-
-  JP.guicontext.font = '8pt Courier New';
-  h += 4;
-
-  var keys = Object.keys(JP.player.inventory);
-  var i = keys.length - 1;
-  while (i >= 0 && (h += 16) < JP.ui_height) // can we see it?
-    JP.guicontext.fillText(JP.player.inventory[keys[i]] + "x " + keys[i--], w, h);
   var fps = (1000 / JP.getTickDelta()).toFixed(0) + "fps";
-  JP.guicontext.font = "10pt Courier New";
-  JP.guicontext.fillText(fps, JP.guiview.width - JP.ui_width + 10, JP.guiview.height - 24)
+  document.getElementById('fpsCounter').textContent = fps;
 
   if (JP.needDraw === false)
     return;
 
   JP.world.Draw();
 
-  //JP.player.Draw(); // this draws the players inventory
-  JP.guimgr.Draw();
   JP.needDraw = false;
 };
 
 JP.ProcessMouse = function(event)
 {
-  JP.MouseState.x = event.clientX || JP.MouseState.x; // - (document.documentElement.clientWidth - JP.gameview.width) / 2;
-  JP.MouseState.y = event.clientY || JP.MouseState.y; // - (document.documentElement.clientHeight - JP.gameview.height) / 2;
-  if (JP.MouseState.x < JP.gameview.width - JP.ui_width)
+  JP.MouseState.x = event.clientX || JP.MouseState.x; // - (document.documentElement.clientWidth - JP.canvas.width) / 2;
+  JP.MouseState.y = event.clientY || JP.MouseState.y; // - (document.documentElement.clientHeight - JP.canvas.height) / 2;
+  if (JP.MouseState.x < JP.canvas.width - JP.ui_width)
   {
     JP.MouseState.vx = JP.MouseState.x; // special one for view
     JP.MouseState.vy = JP.MouseState.y;
@@ -199,7 +159,7 @@ JP.ProcessMouse = function(event)
   var evt = new JP.GUI.Event();
   evt.MouseState = JP.MouseState;
   evt.type = "mouse";
-  JP.guimgr.OnEvent(evt);
+  //JP.guimgr.OnEvent(evt);
   JP.needDraw = true;
   return false;
 };
@@ -248,12 +208,8 @@ JP.ProcessKey = function(event)
 
 JP.SetResolution = function()
 {
-  JP.gameview.width  = document.documentElement.clientWidth;
-  JP.gameview.height = document.documentElement.clientHeight;
-  JP.guiview.width  = JP.gameview.width;
-  JP.guiview.height = JP.gameview.height;
-  JP.ui_height = JP.guiview.height;
-  JP.ui_width = TruncateTo(JP.guiview.width * (1 / 4), JP.PIXEL_SIZE);
+  JP.canvas.width  = document.documentElement.clientWidth;
+  JP.canvas.height = document.documentElement.clientHeight;
   JP.needDraw = true;
 };
 window.onresize = JP.SetResolution;
@@ -265,8 +221,8 @@ function start()
 
   JP.SetResolution();
   // remove the splash screen
-  var element = document.getElementById("splash");
-  element.parentNode.removeChild(element);
+  document.getElementById("splash").style.display = "none";
+  document.getElementById('loading').style.display = "";
 //  JP.guimgr.RemoveWindow(JP.splash);
 
   // create the world
@@ -275,7 +231,7 @@ function start()
   JP.player = new JP.Player();
 
   JP.Logger.logNode = document.getElementById('eventLog');
-  JP.gameview.focus();
+  JP.canvas.focus();
 
   clearInterval(JP.intervalID);
   JP.intervalID = setInterval(function() {JP.Initialize();}, 5);
@@ -292,17 +248,15 @@ JP.Delete = function()
 
 function pageLoad()
 {
-  // setup the gameview
-  JP.gameview = document.getElementById('gameview');
-  JP.gamecontext = JP.gameview.getContext("2d");
-  JP.guiview = document.getElementById('guiview');
-  JP.guicontext = JP.guiview.getContext("2d");
+  // setup the canvas
+  JP.canvas = document.getElementById('canvas');
+  JP.context = JP.canvas.getContext("2d");
 
-  JP.guiview.onkeydown   = function() {JP.ProcessKey(event); };
-  JP.guiview.onmousemove = function() {JP.ProcessMouse(event); };
-  JP.guiview.onmousedown = function() {JP.ProcessMouse(event); };
+  JP.canvas.onkeydown   = function() {JP.ProcessKey(event); };
+  JP.canvas.onmousemove = function() {JP.ProcessMouse(event); };
+  JP.canvas.onmousedown = function() {JP.ProcessMouse(event); };
 
-  JP.guimgr = new JP.GUI.Manager();
+/*  JP.guimgr = new JP.GUI.Manager();
   JP.splash = JP.guimgr.CreateWindow();
   JP.guimgr.windowList[JP.splash].visible = true;
   var cb = {};
@@ -313,4 +267,5 @@ function pageLoad()
   JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEOUT, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New")});
   // draw the gui until we start
   JP.intervalID = setInterval(function() {JP.guimgr.Draw();}, 5);
+  */
 };

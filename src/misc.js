@@ -201,17 +201,17 @@ function wrapText(text, x, y, xwrap, height)
   if (text.length === 0)
     return 0;
   
-  xwrap = xwrap || JP.gameview.width;
+  xwrap = xwrap || JP.canvas.width;
   height = height || 16;
   var words = text.split(' ');
   var line = "";
   for (var n = 0; n < words.length; n++)
   {
     var testLine = line + words[n] + ' ';
-    var metrics = JP.gamecontext.measureText(testLine);
+    var metrics = JP.context.measureText(testLine);
     if (metrics.width > xwrap && n > 0)
     {
-      JP.gamecontext.fillText(line, x, y);
+      JP.context.fillText(line, x, y);
       line = ' ' + words[n] + ' ';
       y += height;
     }
@@ -220,7 +220,7 @@ function wrapText(text, x, y, xwrap, height)
       line = testLine;
     }
   }
-  JP.gamecontext.fillText(line, x, y);
+  JP.context.fillText(line, x, y);
   return y;
 }
 

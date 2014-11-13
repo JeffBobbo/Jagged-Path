@@ -216,16 +216,9 @@ JP.World.prototype.GenerationTasks = function()
   }
   if (ret !== true)
   {
-    JP.guicontext.clearRect(0, 0, JP.guiview.width, JP.guiview.height);
-    var x = JP.guiview.width / 2;
-    var y = JP.guiview.height / 2;
-
-    JP.guicontext.font = '30pt Courier New';
-    JP.guicontext.textAlign = 'center';
-    JP.guicontext.fillStyle = '#ffa500';
-    JP.guicontext.fillText(str, x, y-50);
-    JP.guicontext.fillText((ret * 100).toFixed(0) + '%', x, y);
-    JP.guicontext.fillText('Please Wait', x, y+70);
+    document.getElementById('loadingTitle').textContent = str;
+    document.getElementById('loadingDetail').textContent = (ret * 100).toFixed(0) + '%';
+    document.getElementById('loadingExtra').textContent = 'Please Wait';
   }
 };
 
@@ -466,13 +459,13 @@ JP.World.prototype.Draw = function()
   var start = getTime();
 
   // draw terrain
-  var xoffset = JP.player.relx - (((JP.gameview.width - JP.ui_width) / JP.PIXEL_SIZE) >> 1);
-  var yoffset = JP.player.rely - ((JP.gameview.height / JP.PIXEL_SIZE) >> 1);
+  var xoffset = JP.player.relx - (((JP.canvas.width - 300) / JP.PIXEL_SIZE) >> 1);
+  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) >> 1);
   // set offsets to stay inside the map
-  xoffset = Bound(0, JP.WIDTH  - ((JP.gameview.width - JP.ui_width) / JP.PIXEL_SIZE), xoffset);
-  yoffset = Bound(0, JP.HEIGHT - (JP.gameview.height / JP.PIXEL_SIZE), yoffset);
-  var xmax = (JP.gameview.width - JP.ui_width) / JP.PIXEL_SIZE + xoffset;
-  var ymax = JP.gameview.height / JP.PIXEL_SIZE + yoffset;
+  xoffset = Bound(0, JP.WIDTH  - ((JP.canvas.width - 300) / JP.PIXEL_SIZE), xoffset);
+  yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
+  var xmax = JP.canvas.width / JP.PIXEL_SIZE + xoffset;
+  var ymax = JP.canvas.height / JP.PIXEL_SIZE + yoffset;
   for (var x = Math.floor(xoffset); x < xmax; ++x)
   {
     for (var y = Math.floor(yoffset); y < ymax; ++y)
@@ -482,8 +475,8 @@ JP.World.prototype.Draw = function()
         var group = 1;
         while ((y + group) < ymax && this.terrain[x][y].colour === this.terrain[x][y+group].colour)
           group++;
-        JP.gamecontext.fillStyle = this.terrain[x][y].colour;
-        JP.gamecontext.fillRect(
+        JP.context.fillStyle = this.terrain[x][y].colour;
+        JP.context.fillRect(
           (x - xoffset) * JP.PIXEL_SIZE,
           (y - yoffset) * JP.PIXEL_SIZE,
           JP.PIXEL_SIZE,
@@ -512,26 +505,26 @@ JP.World.prototype.Draw = function()
     switch (JP.player.direction)
     {
       case JP.Keys.W:
-        JP.gamecontext.drawImage(JP.player.imgUp,
+        JP.context.drawImage(JP.player.imgUp,
           (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
           (JP.player.rely - yoffset) * JP.PIXEL_SIZE
         );
       break;
       case JP.Keys.A:
-        JP.gamecontext.drawImage(JP.player.imgLeft,
+        JP.context.drawImage(JP.player.imgLeft,
           (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
           (JP.player.rely - yoffset) * JP.PIXEL_SIZE
         );
       break;
       case JP.Keys.D:
-        JP.gamecontext.drawImage(JP.player.imgRight,
+        JP.context.drawImage(JP.player.imgRight,
           (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
           (JP.player.rely - yoffset) * JP.PIXEL_SIZE
         );
       break;
       case JP.Keys.S:
       default:
-        JP.gamecontext.drawImage(JP.player.imgDown,
+        JP.context.drawImage(JP.player.imgDown,
           (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
           (JP.player.rely - yoffset) * JP.PIXEL_SIZE
         );
@@ -542,11 +535,11 @@ JP.World.prototype.Draw = function()
   {
     JP.player.direction = JP.atan(((JP.player.relx - xoffset) - mx), ((JP.player.rely - yoffset) - my));
 
-    JP.gamecontext.translate((JP.player.relx - xoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2, (JP.player.rely - yoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2);
-    JP.gamecontext.rotate(JP.player.direction);
-    JP.gamecontext.drawImage(JP.player.img, -(JP.PIXEL_SIZE / 2), -(JP.PIXEL_SIZE / 2), JP.PIXEL_SIZE, JP.PIXEL_SIZE);
-    JP.gamecontext.rotate(-(JP.player.direction));
-    JP.gamecontext.translate(-((JP.player.relx - xoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2), -((JP.player.rely - yoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2));
+    JP.context.translate((JP.player.relx - xoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2, (JP.player.rely - yoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2);
+    JP.context.rotate(JP.player.direction);
+    JP.context.drawImage(JP.player.img, -(JP.PIXEL_SIZE / 2), -(JP.PIXEL_SIZE / 2), JP.PIXEL_SIZE, JP.PIXEL_SIZE);
+    JP.context.rotate(-(JP.player.direction));
+    JP.context.translate(-((JP.player.relx - xoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2), -((JP.player.rely - yoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2));
   }
   //console.log("Render took " + (getTime() - start) + "ms");
 };

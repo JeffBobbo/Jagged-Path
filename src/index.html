@@ -38,14 +38,12 @@
       <h2>
     </noscript>
     <div id="view">
-    <canvas id="gameview" tabindex="1" style="z-index:1;">
+    <canvas id="canvas" tabindex="1" style="z-index:1;">
         <h2>Your browser doesn't support HTML5's canvas element. Please get a better browser such as Google Chrome, Mozilla Firefox or Opera.</h2>
-      </canvas>
-      <canvas id="guiview" tabindex="2" style="z-index:2;">
       </canvas>
 
       <div id="splash">
-        <h1 style="text-align:center;">Jagged Path</h1>
+        <h1>Jagged Path</h1>
         <br/>
         <div style="position:relative; left:calc(50% - 60px); max-width:120px">
           <button id="load" onclick="start()" style="width:120px">Load World</button>
@@ -53,19 +51,25 @@
           <button id="delete" onclick="JP.Delete()" style="width:120px" title="Delets current save, irrevesible">Delete World</button>
         </div>
       </div>
+      <div id="loading" style="display:none;">
+        <h1 id="loadingTitle"></h1>
+        <h2 id="loadingDetail"></h2>
+        <h2 id="loadingExtra"></h2>
+      </div>
     </div>
     <div id="rightPanel">
+      <div id="eventLog">
+      </div>
+      <div id="inventory">
+        <h3>Inventory</h3>
+        <table id="inventTable">
+          <tr>
+            <th>Item</th>
+            <th>Quant</th>
+          </tr>
+        </table>
+      </div>
+      <p id="fpsCounter">NaN fps</p>
     </div>
-    <!--div id="eventLog" style="display:none;">
-    </div>
-    <div id="menu" style="display:none;">
-      <h3>Inventory</h3>
-      <table id="inventTable" style="width:280px">
-        <tr>
-          <th>Item</th>
-          <th>Quant</th>
-        </tr>
-      </table>
-    </div-->
   </body>
 </html>

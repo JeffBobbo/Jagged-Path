@@ -109,15 +109,15 @@ JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
 {
   if (this.seppuku)
     return;
-  if (this.relx < Math.floor(xoffset) || this.relx > (JP.gameview.width - JP.ui_width) / JP.PIXEL_SIZE + xoffset)
+  if (this.relx < Math.floor(xoffset) || this.relx > JP.canvas.width / JP.PIXEL_SIZE + xoffset)
     return;
-  if (this.rely < Math.floor(yoffset) || this.rely > (JP.gameview.height) / JP.PIXEL_SIZE + yoffset)
+  if (this.rely < Math.floor(yoffset) || this.rely > JP.canvas.height / JP.PIXEL_SIZE + yoffset)
     return;
   if (this.imgPath !== undefined)
   {
     if (this.img === undefined)
       this.SetImage();
-    JP.gamecontext.drawImage(this.img,
+    JP.context.drawImage(this.img,
       (this.relx - xoffset) * JP.PIXEL_SIZE,
       (this.rely - yoffset) * JP.PIXEL_SIZE,
       this.size,
@@ -126,8 +126,8 @@ JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
   }
   else
   {
-    JP.gamecontext.fillStyle = this.colour;
-    JP.gamecontext.fillRect(
+    JP.context.fillStyle = this.colour;
+    JP.context.fillRect(
       (this.relx - xoffset) * JP.PIXEL_SIZE,
       (this.rely - yoffset) * JP.PIXEL_SIZE,
       JP.PIXEL_SIZE,

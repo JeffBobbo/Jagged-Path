@@ -188,20 +188,20 @@ JP.Player.prototype.DeltaGold = function(quant, absolute)
 
 JP.Player.prototype.Draw = function()
 {
-/*
+
   var table = document.getElementById('inventTable');
   while (table.rows.length > 1)
     table.deleteRow(-1);
 
-  for (var i = this.inventory.length - 1; i >= 0; --i)
+  var keys = Object.keys(this.inventory);
+  for (var i = keys.length - 1; i >= 0; --i)
   {
     var row = table.insertRow(-1);
     var quant = row.insertCell(0);
     var name = row.insertCell(0);
-    quant.textContent = this.inventory[i].quant;
-    name.textContent = this.inventory[i].name;
+    quant.textContent = this.inventory[keys[i]];
+    name.textContent = keys[i];
   }
-  */
 };
 
 JP.Player.prototype.Place = function()
