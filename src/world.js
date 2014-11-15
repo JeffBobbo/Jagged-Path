@@ -132,7 +132,7 @@ JP.World.Gen.PLACEMENT = 6;
 JP.World.Gen.SAVING    = 7;
 JP.World.Gen.DONE      = 8;
 
-JP.World.Gen.BLOB_SIZE = 2; // how big blobs to do, a blob is a square of this * this
+JP.World.Gen.BLOB_SIZE = 1; // how big blobs to do, a blob is a square of this * this
 
 JP.World.Gen.HEIGHT_SEA   = 15;
 JP.World.Gen.HEIGHT_DIRT  = 17;
@@ -292,7 +292,7 @@ JP.World.prototype.CreateHeightMap = function()
     for (var i = 0; i < JP.World.Gen.BLOB_SIZE; ++i)
     {
       for (var j = 0; j < JP.World.Gen.BLOB_SIZE; ++j)
-        this.tmpData[x + i][y + j].height = Math.abs(noise.perlin2((x + i) / 25, (y + j) / 25)) * 100;
+        this.tmpData[x + i][y + j].height = (noise.perlin2(((x + i) * 4) / this.tmpData.length, ((y + j) * 4) / this.tmpData[x+i].length)) * 100;
     }
   }
   return x / this.tmpData.length;
@@ -331,7 +331,6 @@ JP.World.prototype.CreateHeatMap = function()
 
 JP.World.prototype.FilterMap = function()
 {
-  // this function is really slow, so do a row and pass control back to the browser
   if (JP.World.prototype.FilterMap.x === undefined)
     JP.World.prototype.FilterMap.x = 0;
   else
@@ -419,7 +418,6 @@ JP.World.prototype.TileMap = function()
 
 JP.World.prototype.EntityMap = function()
 {
-  // this function is really slow, so do a row and pass control back to the browser
   if (JP.World.prototype.EntityMap.x === undefined)
     JP.World.prototype.EntityMap.x = 0;
   else
@@ -459,8 +457,8 @@ JP.World.prototype.Draw = function()
   var start = getTime();
 
   // draw terrain
-  var xoffset = JP.player.relx - (((JP.canvas.width - 300) / JP.PIXEL_SIZE) >> 1);
-  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) >> 1);
+  var xoffset = JP.player.relx - (((JP.canvas.width - 300) / JP.PIXEL_SIZE) / 2);
+  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) / 2);
   // set offsets to stay inside the map
   xoffset = Bound(0, JP.WIDTH  - ((JP.canvas.width - 300) / JP.PIXEL_SIZE), xoffset);
   yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
