@@ -21,7 +21,7 @@
     "maxHeat": 10
   },
   {
-    "tile": "Dirt",
+    "tile": "Sand",
     "minHeight": 15,
     "maxHeight": 17,
     "minHeat": 10,
@@ -30,6 +30,13 @@
   {
     "tile": "Grass",
     "minHeight": 17,
+    "maxHeight": 55,
+    "minHeat": 10,
+    "maxHeat": 60
+  },
+  {
+    "tile": "Dirt",
+    "minHeight": 53,
     "maxHeight": 55,
     "minHeat": 10,
     "maxHeat": 60
