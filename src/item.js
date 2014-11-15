@@ -103,6 +103,8 @@ JP.Item.Item.prototype.GetStatString = function()
   {
     if (this[attributes[i]] === 0 || this[attributes[i]] === "") // skip empty/0 values
       continue;
+    if (attributes[i] === "class") // ignore the class
+      continue;
 
     if (str.length > 0)
       str += "\n";
