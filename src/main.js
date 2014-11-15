@@ -104,7 +104,6 @@ JP.Idle = function()
     JP.world.entities[i].Idle();
     JP.world.entities[i].Move();
   }
-  JP.player.Draw();
   JP.Draw();
 
   // remove any seppuku'd entities

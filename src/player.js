@@ -167,26 +167,10 @@ JP.Player.prototype.ItemDelta = function(name, quant, absolute)
 
   if (this.inventory[name] <= 0)
     delete this.inventory[name];
-  JP.needDraw = true;
+  this.ItemUpdate();
 };
 
-JP.Player.prototype.DeltaGold = function(quant, absolute)
-{
-  absolute = absolute || false;
-  if (quant === undefined)
-    return false;
-
-  quant = Math.floor(quant);
-
-  var gold = absolute ? quant : this.gold + quant;
-
-  if (gold < 0)
-    return false;
-  this.gold = gold;
-  return true;
-}
-
-JP.Player.prototype.Draw = function()
+JP.Player.prototype.ItemUpdate = function()
 {
 
   var table = document.getElementById('inventTable');
@@ -203,6 +187,22 @@ JP.Player.prototype.Draw = function()
     name.textContent = keys[i];
     name.title = JP.Item.StatString(keys[i]);
   }
+};
+
+JP.Player.prototype.DeltaGold = function(quant, absolute)
+{
+  absolute = absolute || false;
+  if (quant === undefined)
+    return false;
+
+  quant = Math.floor(quant);
+
+  var gold = absolute ? quant : this.gold + quant;
+
+  if (gold < 0)
+    return false;
+  this.gold = gold;
+  return true;
 };
 
 JP.Player.prototype.Place = function()
