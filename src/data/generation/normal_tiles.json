@@ -23,13 +23,13 @@
   {
     "tile": "Sand",
     "minHeight": 15,
-    "maxHeight": 17,
+    "maxHeight": 20,
     "minHeat": 10,
     "maxHeat": 60
   },
   {
     "tile": "Grass",
-    "minHeight": 17,
+    "minHeight": 20,
     "maxHeight": 55,
     "minHeat": 10,
     "maxHeat": 60
@@ -43,7 +43,7 @@
   },
   {
     "tile": "Desert",
-    "minHeight": 17,
+    "minHeight": 20,
     "maxHeight": 55,
     "minHeat": 60,
     "maxHeat": -1
@@ -51,7 +51,7 @@
   {
     "tile": "Savanna",
     "minHeight": 15,
-    "maxHeight": 17,
+    "maxHeight": 20,
     "minHeat": 60,
     "maxHeat": -1
   },
