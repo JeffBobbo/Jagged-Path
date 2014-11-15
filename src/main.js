@@ -273,9 +273,9 @@ function pageLoad()
   JP.canvas = document.getElementById('canvas');
   JP.context = JP.canvas.getContext("2d");
 
-  JP.canvas.onkeydown   = function() {JP.ProcessKey(event); };
-  JP.canvas.onmousemove = function() {JP.ProcessMouse(event); };
-  JP.canvas.onmousedown = function() {JP.ProcessMouse(event); };
+  JP.canvas.onkeydown   = function(event) {JP.ProcessKey(event); };
+  JP.canvas.onmousemove = function(event) {JP.ProcessMouse(event); };
+  JP.canvas.onmousedown = function(event) {JP.ProcessMouse(event); };
 
 /*  JP.guimgr = new JP.GUI.Manager();
   JP.splash = JP.guimgr.CreateWindow();
