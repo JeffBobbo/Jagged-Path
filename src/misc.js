@@ -25,11 +25,17 @@ JP.getTickCount = function(update)
 
 JP.getTickDelta = function(update)
 {
-  if (JP.getTickDelta.last === undefined)
+  if (JP.getTickDelta.now === undefined)
+  {
     JP.getTickDelta.last = JP.getTickCount();
+    JP.getTickDelta.now  = JP.getTickCount();
+  }
   if (update === true)
-    JP.getTickDelta.last = JP.getTickCount();
-  var ret = JP.getTickCount() - JP.getTickDelta.last;
+  {
+    JP.getTickDelta.last = JP.getTickDelta.now;
+    JP.getTickDelta.now  = JP.getTickCount();
+  }
+  var ret = JP.getTickDelta.now - JP.getTickDelta.last;
   return ret;
 };
 
