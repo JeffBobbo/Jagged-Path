@@ -34,6 +34,11 @@ JP.Keys = JP.Keys || {
   C: 67, // chop wood
   T: 84, // talk
   F: 70, // fire
+
+  PLUS: 187, // zoom
+  MINUS: 189,
+  NUM_PLUS: 107,
+  NUM_MINUS: 109
 };
 
 JP.MouseState = JP.MouseState || {
@@ -193,6 +198,24 @@ JP.ProcessKey = function(event)
     break;
     case JP.Keys.F:
       JP.player.Fire();
+    break;
+
+    // map scaling
+    case JP.Keys.PLUS:
+    case JP.Keys.NUM_PLUS:
+      if (JP.world.generationLevel === JP.World.Gen.DONE)
+      {
+        JP.PIXEL_SIZE = Math.min(64, JP.PIXEL_SIZE + 8);
+        JP.needDraw = true;
+      }
+    break;
+    case JP.Keys.MINUS:
+    case JP.Keys.NUM_MINUS:
+      if (JP.world.generationLevel === JP.World.Gen.DONE)
+      {
+        JP.PIXEL_SIZE = Math.max(8 , JP.PIXEL_SIZE - 8);
+        JP.needDraw = true;
+      }
     break;
     default:
       console.log(keyCode);
