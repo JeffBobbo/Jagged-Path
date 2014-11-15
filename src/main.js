@@ -17,11 +17,6 @@ var JP = JP || {
   // how big each tile is
   PIXEL_SIZE: 32,
 
-  ratio: 16/9, // for display
-  // ui-side pane height
-  ui_width: -1,
-  ui_height: -1,
-
   needDraw: false,
 };
 
@@ -150,7 +145,7 @@ JP.ProcessMouse = function(event)
 {
   JP.MouseState.x = event.clientX || JP.MouseState.x; // - (document.documentElement.clientWidth - JP.canvas.width) / 2;
   JP.MouseState.y = event.clientY || JP.MouseState.y; // - (document.documentElement.clientHeight - JP.canvas.height) / 2;
-  if (JP.MouseState.x < JP.canvas.width - JP.ui_width)
+  if (JP.MouseState.x < JP.canvas.width)
   {
     JP.MouseState.vx = JP.MouseState.x; // special one for view
     JP.MouseState.vy = JP.MouseState.y;
