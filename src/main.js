@@ -244,6 +244,9 @@ JP.Delete = function()
 
   JP.world.Delete();
   JP.player.Delete();
+
+  JP.world = null;
+  JP.player = null;
 };
 
 function pageLoad()
