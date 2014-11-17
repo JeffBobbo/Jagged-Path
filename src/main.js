@@ -90,6 +90,7 @@ JP.Generate = function()
   {
     document.getElementById('loading').style.display = "none";
     JP.player.Load();
+    JP.world.Prerender();
     clearInterval(JP.intervalID);
     JP.intervalID = setInterval(function() {JP.Idle();}, 20);
   }
@@ -133,9 +134,9 @@ JP.Save = function()
 JP.Draw = function()
 {
   JP.context = JP.canvas.getContext("2d");
+  JP.tcontext = JP.tcanvas.getContext("2d");
 
-  var fps = (1000 / JP.getTickDelta()).toFixed(0) + "fps";
-  document.getElementById('fpsCounter').textContent = fps;
+  document.getElementById('fpsCounter').textContent = (1000 / JP.getFPS()).toFixed(0) + " fps";
 
   if (JP.needDraw === false)
     return;
@@ -147,8 +148,8 @@ JP.Draw = function()
 
 JP.ProcessMouse = function(event)
 {
-  JP.MouseState.x = event.clientX || JP.MouseState.x; // - (document.documentElement.clientWidth - JP.canvas.width) / 2;
-  JP.MouseState.y = event.clientY || JP.MouseState.y; // - (document.documentElement.clientHeight - JP.canvas.height) / 2;
+  JP.MouseState.x = event.clientX || JP.MouseState.x;
+  JP.MouseState.y = event.clientY || JP.MouseState.y;
   if (JP.MouseState.x < JP.canvas.width)
   {
     JP.MouseState.vx = JP.MouseState.x; // special one for view
@@ -226,7 +227,9 @@ JP.ProcessKey = function(event)
 JP.SetResolution = function()
 {
   JP.canvas.width  = document.documentElement.clientWidth;
+  JP.tcanvas.width  = document.documentElement.clientWidth;
   JP.canvas.height = document.documentElement.clientHeight;
+  JP.tcanvas.height = document.documentElement.clientHeight;
   JP.needDraw = true;
 };
 window.onresize = JP.SetResolution;
@@ -271,6 +274,9 @@ function pageLoad()
   // setup the canvas
   JP.canvas = document.getElementById('canvas');
   JP.context = JP.canvas.getContext("2d");
+  JP.tcanvas = document.getElementById('tcanvas');
+  JP.tcontext = JP.tcanvas.getContext("2d");
+  JP.SetResolution();
 
   JP.canvas.onkeydown   = function(event) {JP.ProcessKey(event); };
   JP.canvas.onmousemove = function(event) {JP.ProcessMouse(event); };
