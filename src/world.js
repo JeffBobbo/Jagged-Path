@@ -134,14 +134,6 @@ JP.World.Gen.DONE      = 8;
 
 JP.World.Gen.BLOB_SIZE = 1; // how big blobs to do, a blob is a square of this * this
 
-JP.World.Gen.HEIGHT_SEA   = 15;
-JP.World.Gen.HEIGHT_DIRT  = 17;
-JP.World.Gen.HEIGHT_GRASS = 55;
-JP.World.Gen.HEIGHT_TOP   = 60;
-
-JP.World.Gen.TEMP_FROZEN  = 10;
-JP.World.Gen.TEMP_DESERT  = 60;
-
 JP.World.prototype.GenerationTasks = function()
 {
   var ret;
@@ -452,11 +444,8 @@ JP.World.prototype.EntityMap = function()
   return x / this.mapData.length;
 };
 
-JP.World.prototype.Draw = function() 
+JP.World.prototype.Prerender = function()
 {
-  var start = getTime();
-
-  // draw terrain
   var xoffset = JP.player.relx - (((JP.canvas.width - 300) / JP.PIXEL_SIZE) / 2);
   var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) / 2);
   // set offsets to stay inside the map
@@ -464,17 +453,18 @@ JP.World.prototype.Draw = function()
   yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
   var xmax = JP.canvas.width / JP.PIXEL_SIZE + xoffset;
   var ymax = JP.canvas.height / JP.PIXEL_SIZE + yoffset;
-  for (var x = Math.floor(xoffset); x < xmax; ++x)
+  for (var x = xoffset | 0; x < xmax; ++x)
   {
-    for (var y = Math.floor(yoffset); y < ymax; ++y)
+    for (var y = yoffset | 0; y < ymax; ++y)
     {
-      if (this.terrain[x][y].img === null)
+      var tile = this.terrain[x][y];
+      if (tile.img === null)
       {
         var group = 1;
-        while ((y + group) < ymax && this.terrain[x][y].colour === this.terrain[x][y+group].colour)
+        while ((y + group) < ymax && tile.colour === this.terrain[x][y+group].colour)
           group++;
-        JP.context.fillStyle = this.terrain[x][y].colour;
-        JP.context.fillRect(
+        JP.tcontext.fillStyle = tile.colour;
+        JP.tcontext.fillRect(
           (x - xoffset) * JP.PIXEL_SIZE,
           (y - yoffset) * JP.PIXEL_SIZE,
           JP.PIXEL_SIZE,
@@ -485,12 +475,38 @@ JP.World.prototype.Draw = function()
       }
       else
       {
-        this.terrain[x][y].Draw(x, y, xoffset, yoffset);
+        if (tile.colour !== null)
+        {
+          JP.tcontext.fillStyle = tile.colour;
+          JP.tcontext.fillRect(
+            (x - xoffset) * JP.PIXEL_SIZE,
+            (y - yoffset) * JP.PIXEL_SIZE,
+            JP.PIXEL_SIZE,
+            JP.PIXEL_SIZE
+          );
+        }
+        JP.tcontext.drawImage(tile.img,
+          (x - xoffset) * JP.PIXEL_SIZE,
+          (y - yoffset) * JP.PIXEL_SIZE
+        );
       }
     }
   }
+};
 
-  // draw ents
+JP.World.prototype.Draw = function() 
+{
+  // draw terrain
+  var xoffset = JP.player.relx - (((JP.canvas.width - 300) / JP.PIXEL_SIZE) / 2);
+  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) / 2);
+  // set offsets to stay inside the map
+  xoffset = Bound(0, JP.WIDTH  - ((JP.canvas.width - 300) / JP.PIXEL_SIZE), xoffset);
+  yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
+  var xmax = JP.canvas.width / JP.PIXEL_SIZE + xoffset;
+  var ymax = JP.canvas.height / JP.PIXEL_SIZE + yoffset;
+
+  JP.context.drawImage(JP.tcanvas, 0, 0);
+  // prerender ents
   for (var i = this.entities.length - 1; i >= 0; i--)
     this.entities[i].Draw(xoffset, yoffset);
 

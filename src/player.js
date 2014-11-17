@@ -289,6 +289,7 @@ JP.Player.prototype.Move = function(dir)
   // update non-floats
   this.posx = Math.floor(this.relx);
   this.posy = Math.floor(this.rely);
+  JP.world.Prerender();
   JP.needDraw = true;
 };
 
