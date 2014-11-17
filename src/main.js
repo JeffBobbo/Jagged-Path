@@ -206,6 +206,7 @@ JP.ProcessKey = function(event)
       if (JP.world.generationLevel === JP.World.Gen.DONE)
       {
         JP.PIXEL_SIZE = Math.min(64, JP.PIXEL_SIZE + 8);
+        JP.world.Prerender();
         JP.needDraw = true;
       }
     break;
@@ -214,6 +215,7 @@ JP.ProcessKey = function(event)
       if (JP.world.generationLevel === JP.World.Gen.DONE)
       {
         JP.PIXEL_SIZE = Math.max(8 , JP.PIXEL_SIZE - 8);
+        JP.world.Prerender();
         JP.needDraw = true;
       }
     break;
