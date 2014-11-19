@@ -3,5 +3,11 @@
     "class": "npc",
     "name": "Lumberjack",
     "imgPath": "lumberjack.png"
+  },
+  {
+    "class": "npc",
+    "name": "TalkTest",
+    "imgPath": "player_front.png",
+    "conversation": "generic"
   }
 ]
