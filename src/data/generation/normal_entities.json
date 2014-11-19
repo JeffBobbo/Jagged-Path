@@ -25,15 +25,15 @@
     {
       "Grass": 0.001,
       "Savanna": 0.20,
-      "Desert": 0.10
+      "Desert": 0.002
     }
   },
   {
     "entity": "Lumberjack",
     "tiles":
     {
-      "Grass": 0.025,
-      "Snow": 0.025,
+      "Grass": 0.0125,
+      "Snow": 0.0025,
       "Savanna": 0.0025
     }
   }
