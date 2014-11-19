@@ -1,0 +1,10 @@
+[
+  {
+    "codename": "generic_greeting0",
+    "message": "Hello there!"
+  },
+  {
+    "codename": "generic_farewell0",
+    "message": "Good bye."
+  }
+]
