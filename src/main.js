@@ -236,7 +236,15 @@ JP.SetResolution = function()
 };
 window.onresize = JP.SetResolution;
 
-function start()
+
+function newWorld()
+{
+  JP.Delete();
+
+  loadWorld();
+}
+
+function loadWorld()
 {
   if (JP.world !== null)
     return; // don't do this twice
@@ -269,6 +277,9 @@ JP.Delete = function()
 
   JP.world = null;
   JP.player = null;
+
+  // just for the buttons
+  pageLoad();
 };
 
 function pageLoad()
@@ -279,6 +290,16 @@ function pageLoad()
   JP.tcanvas = document.getElementById('tcanvas');
   JP.tcontext = JP.tcanvas.getContext("2d");
   JP.SetResolution();
+
+  if (localStorage.getItem("JP.World.Saved") === null)
+  {
+    document.getElementById('loadWorld').disabled = true;
+    document.getElementById('deleteWorld').disabled = true;
+  }
+  else
+  {
+    document.getElementById('newWorld').disabled = true;
+  }
 
   JP.canvas.onkeydown   = function(event) {JP.ProcessKey(event); };
   JP.canvas.onmousemove = function(event) {JP.ProcessMouse(event); };

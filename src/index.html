@@ -47,9 +47,10 @@
         <h1>Jagged Path</h1>
         <br/>
         <div style="position:relative; left:calc(50% - 60px); max-width:120px">
-          <button id="load" onclick="start()" style="width:120px">Load World</button>
+          <button id="newWorld" onclick="newWorld()" style="width:120px">New World</button>
+          <button id="loadWorld" onclick="loadWorld()" style="width:120px">Load World</button>
           <br/>
-          <button id="delete" onclick="JP.Delete()" style="width:120px" title="Delets current save, irrevesible">Delete World</button>
+          <button id="deleteWorld" onclick="JP.Delete()" style="width:120px" title="Delets current save, irrevesible">Delete World</button>
         </div>
       </div>
       <div id="loading" style="display:none;">
