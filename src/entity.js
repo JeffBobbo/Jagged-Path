@@ -86,6 +86,7 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.rely = y || -1;
   this.posy = this.rely | 0;
   this.size = 1.0;
+  this.conversation = undefined;
   this.moveGoal = {x: x, y: y, cx: x, cy: y};
   this.timeToLive = JP.getTickCount() + lifespan || -1;
 

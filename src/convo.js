@@ -22,8 +22,6 @@ JP.Dialog.Register = function(dialog)
     alert(dialog.codename + " used more than once for dialogs");
 };
 
-
-
 JP.Convo = JP.Convo || {};
 JP.Convo.registry = {};
 
