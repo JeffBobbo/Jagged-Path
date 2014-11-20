@@ -101,5 +101,5 @@ JP.Data.LoadDialogsFile = function(data)
       return;
 
   for (var i = data.length - 1; i >= 0; i--)
-    JP.Quest.Load(data[i]);
+    JP.Dialog.Load(data[i]);
 };
