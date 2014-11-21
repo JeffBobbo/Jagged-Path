@@ -22,7 +22,6 @@ JP.Entity.Type.MISC       = JP.Entity.Type.FIRE;
 
 JP.Entity.Type.ITEM       = 0x10;
 
-
 JP.Entity.registry = {};
 
 JP.Entity.Load = function(data)
@@ -78,7 +77,6 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.colour = "#ffffff";
   this.hpMax = 10;
   this.hp = this.hpMax;
-  this.canTalk = false;
   this.canMove = false;
   this.canChop = false;
   this.relx = x || -1;
@@ -89,6 +87,10 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.conversation = undefined;
   this.moveGoal = {x: x, y: y, cx: x, cy: y};
   this.timeToLive = JP.getTickCount() + lifespan || -1;
+
+  // dialog stuff
+  this.conversation = undefined;
+  this.convoState = null;
 
   // item drops on death
   // array of objects like: {item, chance};
@@ -258,7 +260,15 @@ JP.Entity.FindAroundPlayer = function(type, range, st, et)
 
 JP.Entity.Entity.prototype.Talk = function()
 {
-  return false;
+  if (this.conversation === undefined)
+    return false;
+
+  var convo = JP.Convo.Get(this.conversation);
+
+  if (this.convoState === null)
+    this.convoState = convo.opening;
+
+  return true;
 };
 
 JP.Entity.Entity.prototype.Move = function()
@@ -289,7 +299,6 @@ JP.Entity.NPC = function()
   JP.Entity.Entity.apply(this, arguments);
   this.type = JP.Entity.Type.NPC;
   this.imgPath ='lumberjack.png';
-  this.canTalk = true;
   this.canMove = false;
 };
 JP.Entity.NPC.prototype = Object.create(JP.Entity.Entity.prototype);
@@ -384,7 +393,6 @@ JP.Entity.Fire = function()
   JP.Entity.Entity.apply(this, arguments);
   this.type = JP.Entity.Type.FIRE;
   this.imgPath = 'fire.png';
-  this.canTalk = false;
   this.canMove = false;
 };
 JP.Entity.Fire.prototype = Object.create(JP.Entity.Entity.prototype);
