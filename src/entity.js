@@ -64,13 +64,54 @@ JP.Entity.Create = function(entity, x, y, lifespan)
     throw "No such entity: " + entity;
   var ent = new reg.cstruct(x, y, lifespan);
   ent.merge(reg.data);
+  if (reg.data.giveName === true)
+  {
+    var name = JP.Entity.RandomName(randOne());
+    ent.givenFName = name.first;
+    ent.givenSName = name.last;
+  }
   return ent;
+}
+
+JP.Entity.RandomName = function(s)
+{
+  var firstNames = [];
+  if (s)
+    firstNames = [
+      "John",
+      "Wilberforce",
+      "Steven",
+      "Albert",
+      "Roger",
+      "Arthur"
+    ];
+  else
+    firstNames = [
+      "Mary",
+      "Wendy",
+      "Katrina",
+      "Susan",
+      "Joan"
+    ];
+
+  var lastNames = [
+    "Melvil",
+    "Smith",
+    "Richards",
+    "Page",
+    "Lucas"
+  ];
+
+  return {first: firstNames[randIntRange(0, firstNames.length-1)], last: lastNames[randIntRange(0, lastNames.length-1)]};
 }
 
 
 JP.Entity.Entity = function(x, y, lifespan)
 {
   this.name = "";
+  this.givenFName = "";
+  this.givenSName = "";
+  this.gender = randOne(); // 0 female, 1 male
   this.id = JP.Entity.ID++;
   this.img = undefined;
   this.imgPath = undefined;
@@ -84,7 +125,6 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.rely = y || -1;
   this.posy = this.rely | 0;
   this.size = 1.0;
-  this.conversation = undefined;
   this.moveGoal = {x: x, y: y, cx: x, cy: y};
   this.timeToLive = JP.getTickCount() + lifespan || -1;
 
@@ -258,6 +298,62 @@ JP.Entity.FindAroundPlayer = function(type, range, st, et)
   return -1;
 };
 
+JP.Entity.TalkPane = function(eid)
+{
+  const name = document.getElementById("convoName");
+  const message = document.getElementById("convoMessage");
+  const options = document.getElementById("convoOptions");
+  const ent = JP.Entity.FindByID(eid);
+  if (ent === undefined || ent.convoState === null) // reset the pane
+  {
+    name.textContent = "";
+    message.textContent = "";
+    options.textContent = "";
+  }
+  else
+  {
+    var str = ""; // probably a much cleaner way to do this, but cba to think logic atm
+    if (ent.givenFName === "" && ent.givenSName === "")
+      str = ent.name;
+    else if (ent.givenFName === "" && ent.givenSName !== "")
+      str = (ent.sex ? "Mr." : "Miss") + ent.givenSName;
+    else if (ent.givenFName !== "" && ent.givenSName === "")
+      str = ent.givenFName;
+    else
+      str = ent.givenFName + " " + ent.givenSName;
+    name.textContent = str;
+
+    const convo = JP.Convo.registry[ent.conversation];
+    // add the message
+    message.textContent = convo.message;
+
+    // add options
+    var keys = Object.keys(convo.options);
+    for (var i = keys.length - 1; i >= 0; i--)
+    {
+      var opt = document.createElement("a");
+      opt.textContent = convo.options[keys[i]];
+      opt.href = "#";
+      opt.setAttribute("data-option", keys[i]);
+      opt.onclick = "JP.Entity.TalkOption(" + eid + ", " + this + ")";
+      options.appendChild(opt);
+    }
+  }
+};
+
+JP.Entity.TalkOption = function(id, opt)
+{
+  const ent = JP.Entity.FindByID(id);
+
+  if (ent === undefined)
+    return;
+  const convo = JP.Convo.registry[ent.conversation];
+  const dialog = JP.Dialog.registry[opt.getAttribute("data-option")];
+
+  ent.convoState = dialog.codename;
+  JP.Entity.TalkPane(id);
+};
+
 JP.Entity.Entity.prototype.Talk = function()
 {
   if (this.conversation === undefined)
@@ -265,8 +361,11 @@ JP.Entity.Entity.prototype.Talk = function()
 
   var convo = JP.Convo.Get(this.conversation);
 
-  if (this.convoState === null)
-    this.convoState = convo.opening;
+  if (this.convoState !== null)
+    return;
+
+  this.convoState = convo.opening;
+  JP.Entity.TalkPane(this.id);
 
   return true;
 };
