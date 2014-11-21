@@ -7,7 +7,8 @@
 body
 {
   background-color:#222;
-  font-family:"Courier New", Courier, monospace;
+/*  font-family:"Courier New", Courier, monospace;*/
+  font-family:"planewalkerregular";
   color:#fff;
   font-size:12px;
   margin:0;
