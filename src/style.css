@@ -105,6 +105,15 @@ p#fpsCounter
   padding:0px;
 }
 
+div#convoPane
+{
+  background-color:rgba(0, 0, 0, 0.75);
+  position:fixed;
+  width:calc(100% - 300px);
+  height:120px;
+  left:0px;
+  bottom:0px;
+}
 
 div#splash,div#loading
 {

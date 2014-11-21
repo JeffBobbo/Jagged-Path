@@ -38,3 +38,8 @@ JP.Convo.Register = function(convo)
   else
     alert(convo.codename + " used more than once for convo");
 };
+
+JP.Convo.Get = function(convo)
+{
+  return JP.Convo.registry[convo];
+}

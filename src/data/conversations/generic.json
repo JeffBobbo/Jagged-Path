@@ -1,0 +1,10 @@
+[
+  {
+    "codename": "generic_convo0",
+    "opening": "generic_greeting0",
+    "options": {
+      "generic_comment0": "Nice weather today, isn't it?",
+      "generic_farewell0": "Goodbye."
+    }
+  }
+]

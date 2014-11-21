@@ -36,6 +36,7 @@ JP.Data.Load = function()
   JP.Data.Request("data/entities/index.json", "entities", JP.Data.LoadListFile, JP.Data.LoadEntityFile);
   JP.Data.Request("data/quests/index.json", "quests", JP.Data.LoadListFile, JP.Data.LoadQuestFile);
   JP.Data.Request("data/dialogs/index.json", "dialogs", JP.Data.LoadListFile, JP.Data.LoadDialogsFile);
+  JP.Data.Request("data/conversations/index.json", "conversations", JP.Data.LoadListFile, JP.Data.LoadConvoFile);
   JP.Data.RequestWorldGen();
 };
 
@@ -103,3 +104,12 @@ JP.Data.LoadDialogsFile = function(data)
   for (var i = data.length - 1; i >= 0; i--)
     JP.Dialog.Load(data[i]);
 };
+
+JP.Data.LoadConvoFile = function(data)
+{
+  if (data === undefined || data === null)
+      return;
+
+  for (var i = data.length - 1; i >= 0; i--)
+    JP.Convo.Load(data[i]);
+}

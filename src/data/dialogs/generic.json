@@ -4,7 +4,11 @@
     "message": "Hello there!"
   },
   {
+    "codename": "generic_comment0",
+    "message": "That it is, that it is."
+  },
+  {
     "codename": "generic_farewell0",
-    "message": "Good bye."
+    "message": "Goodbye."
   }
 ]
