@@ -1,11 +1,18 @@
 [
   {
     "codename": "generic_greeting0",
-    "message": "Hello there!"
+    "message": "Hello there!",
+    "options": {
+      "generic_comment0": "Nice weather today, isn't it?",
+      "generic_farewell0": "Goodbye."
+    }
   },
   {
     "codename": "generic_comment0",
-    "message": "That it is, that it is."
+    "message": "That it is, that it is.",
+    "options": {
+      "generic_farewell0": "Goodbye."
+    }
   },
   {
     "codename": "generic_farewell0",

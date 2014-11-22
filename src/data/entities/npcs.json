@@ -8,6 +8,7 @@
     "class": "npc",
     "name": "TalkTest",
     "imgPath": "player_front.png",
-    "conversation": "generic"
+    "conversation": "generic_convo0",
+    "giveName": true
   }
 ]
