@@ -176,34 +176,6 @@ JP.Item.Axe.prototype.Use = function()
     new JP.Logger.LogItem("There's nothing to cut.").Post();
     return false;
   }
-
-  /*
-  var a = [];
-  for (var i = 0; i < JP.world.entities.length; ++i)
-  {
-    if (JP.world.entities[i].InRangeOfPlayer() === true)
-      a.push(i);
-  }
-  for (var i = 0; i < a.length; ++i)
-  {
-    if (Object.getPrototypeOf(JP.world.entities[a[i]]) !== JP.Entity.Tree.prototype)
-      continue;
-
-    // so this is a tree, let's chop it
-    JP.world.entities[a[i]].hp--;
-    if (JP.world.entities[a[i]].hp <= 0)
-    {
-      JP.world.entities.splice(a[i], 1);
-      this.ItemDelta("Wood", 1);
-      JP.needDraw = true;
-      new JP.Logger.LogItem("You cut down the tree.", false, true, false).Post();
-    }
-    else
-      new JP.Logger.LogItem("You swing at the tree.", false, true, false).Post();
-    return;
-  }
-  new JP.Logger.LogItem("There's nothing to cut.", false, true, false).Post();
-  */
 };
 
 

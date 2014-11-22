@@ -43,7 +43,7 @@ JP.Entity.Load = function(data)
     break;  
   }
   entity.name = data.name
-  delete data.name;
+
   delete data.class;
   entity.data = data;
   JP.Entity.Register(entity);
@@ -66,7 +66,7 @@ JP.Entity.Create = function(entity, x, y, lifespan)
   ent.merge(reg.data);
   if (reg.data.giveName === true)
   {
-    var name = JP.Entity.RandomName(randOne());
+    var name = JP.Entity.RandomName(this.gender);
     ent.givenFName = name.first;
     ent.givenSName = name.last;
   }
@@ -111,7 +111,7 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.name = "";
   this.givenFName = "";
   this.givenSName = "";
-  this.gender = randOne(); // 0 female, 1 male
+  this.gender = randTrue(); // 0 female, 1 male
   this.id = JP.Entity.ID++;
   this.img = undefined;
   this.imgPath = undefined;
@@ -129,7 +129,7 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.timeToLive = JP.getTickCount() + lifespan || -1;
 
   // dialog stuff
-  this.conversation = undefined;
+  this.conversation = null;
   this.convoState = null;
 
   // item drops on death
@@ -301,45 +301,51 @@ JP.Entity.FindAroundPlayer = function(type, range, st, et)
   return -1;
 };
 
-JP.Entity.TalkPane = function(eid)
+JP.Entity.TalkPane = function(ent)
 {
+  ent = typeof ent === "number" ? JP.Entity.FindByID(ent) : ent;
+
   const name = document.getElementById("convoName");
   const message = document.getElementById("convoMessage");
   const options = document.getElementById("convoOptions");
-  const ent = JP.Entity.FindByID(eid);
-  if (ent === undefined || ent.convoState === null) // reset the pane
-  {
-    name.textContent = "";
-    message.textContent = "";
-    options.textContent = "";
-  }
-  else
+
+  // reset the pane before adding stuff
+  name.textContent = "";
+  message.textContent = "";
+  options.textContent = "";
+
+  if (ent !== undefined && ent.convoState !== null)
   {
     var str = ""; // probably a much cleaner way to do this, but cba to think logic atm
     if (ent.givenFName === "" && ent.givenSName === "")
       str = ent.name;
     else if (ent.givenFName === "" && ent.givenSName !== "")
-      str = (ent.sex ? "Mr." : "Miss") + ent.givenSName;
+      str = (ent.gender ? "Mr." : "Miss") + ent.givenSName;
     else if (ent.givenFName !== "" && ent.givenSName === "")
       str = ent.givenFName;
     else
       str = ent.givenFName + " " + ent.givenSName;
     name.textContent = str;
 
-    const convo = JP.Convo.registry[ent.conversation];
+    const dialog = JP.Dialog.registry[ent.convoState];
     // add the message
-    message.textContent = convo.message;
+    message.textContent = dialog.message;
 
     // add options
-    var keys = Object.keys(convo.options);
-    for (var i = keys.length - 1; i >= 0; i--)
+    if (dialog.options !== undefined)
     {
-      var opt = document.createElement("a");
-      opt.textContent = convo.options[keys[i]];
-      opt.href = "#";
-      opt.setAttribute("data-option", keys[i]);
-      opt.onclick = "JP.Entity.TalkOption(" + eid + ", " + this + ")";
-      options.appendChild(opt);
+      var keys = Object.keys(dialog.options);
+      var len = keys.length;
+      for (var i = 0; i < len; ++i)
+      {
+        var opt = document.createElement("a");
+        opt.textContent = dialog.options[keys[i]];
+        opt.href = "#";
+        opt.setAttribute("data-option", keys[i]);
+        opt.onclick = function() { JP.Entity.TalkOption(ent.id, this); };
+        options.appendChild(opt);
+        options.appendChild(document.createElement("br"));
+      }
     }
   }
 };
@@ -354,7 +360,7 @@ JP.Entity.TalkOption = function(id, opt)
   const dialog = JP.Dialog.registry[opt.getAttribute("data-option")];
 
   ent.convoState = dialog.codename;
-  JP.Entity.TalkPane(id);
+  JP.Entity.TalkPane(ent);
 };
 
 JP.Entity.Entity.prototype.Talk = function()
@@ -364,11 +370,12 @@ JP.Entity.Entity.prototype.Talk = function()
 
   var convo = JP.Convo.Get(this.conversation);
 
-  if (this.convoState !== null)
-    return;
+  // we want the conversation to start again if they hit T
+//  if (this.convoState !== null)
+//    return;
 
   this.convoState = convo.opening;
-  JP.Entity.TalkPane(this.id);
+  JP.Entity.TalkPane(this);
 
   return true;
 };
@@ -405,7 +412,7 @@ JP.Entity.NPC = function()
 };
 JP.Entity.NPC.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.NPC.prototype.constructor = JP.Entity.NPC;
-JP.Entity.NPC.prototype.Talk = function()
+/*JP.Entity.NPC.prototype.Talk = function()
 {
   if (JP.player.ItemClass(JP.Item.Class.AXE) === undefined)
   {
@@ -458,7 +465,7 @@ JP.Entity.NPC.prototype.Talk = function()
     return true;
   }
   return false;
-};
+};*/
 JP.Entity.NPC.prototype.Move = function()
 {
   return; // this works but it's too fast and cba to work on this atm

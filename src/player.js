@@ -289,6 +289,18 @@ JP.Player.prototype.Move = function(dir)
   // update non-floats
   this.posx = Math.floor(this.relx);
   this.posy = Math.floor(this.rely);
+
+  // close any running dialogs
+  for (var i = JP.world.entities.length - 1; i >= 0; i--)
+  {
+    var ent = JP.world.entities[i];
+    if (ent.convoState !== null)
+    {
+      ent.convoState = null;
+      JP.Entity.TalkPane(ent);
+    }
+  }
+
   JP.world.Prerender();
   JP.needDraw = true;
 };
@@ -330,7 +342,7 @@ JP.Player.prototype.Talk = function()
   else
   {
     var npc = JP.Entity.FindAroundPlayer(JP.Entity.Type.NPC, 2.5);
-    if (npc === -1 || JP.world.entities[npc].canTalk === false || JP.world.entities[npc].Talk() === false)
+    if (npc === -1 || JP.world.entities[npc].Talk() === false)
       new JP.Logger.LogItem("There's nothing to talk to.", false, false, true).Post();
   }
 };
