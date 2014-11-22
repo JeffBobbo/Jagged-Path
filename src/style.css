@@ -115,6 +115,20 @@ div#convoPane
   left:0px;
   bottom:0px;
 }
+div#convoContent
+{
+  position:relative;
+  min-width:100%;
+}
+p#convoMessage
+{
+  text-align:center;
+}
+div#convoOptions
+{
+  position:relative;
+  text-align:center;
+}
 
 div#splash,div#loading
 {
