@@ -49,24 +49,24 @@ JP.Item.Register = function(item)
     alert(item.name + " used more than once for items");
 };
 
-JP.Item.Spec = function(item, spec)
+JP.Item.Spec = function(name, spec)
 {
-  if (JP.Item.registry[item] === undefined)
+  if (JP.Item.registry[name] === undefined)
     return undefined;
 
-  return JP.Item.registry[item][spec];
+  return JP.Item.registry[name].GetSpec(spec);
 }
-JP.Item.StatString = function(item)
+JP.Item.StatString = function(name)
 {
-  return JP.Item.registry[item].GetStatString();
+  return JP.Item.registry[name].GetStatString();
 }
 
-JP.Item.Use = function(item)
+JP.Item.Use = function(name)
 {
-  if (JP.Item.registry[item] === undefined)
+  if (JP.Item.registry[name] === undefined)
     return;
 
-  return JP.Item.registry[item].Use();
+  return JP.Item.registry[name].Use();
 }
 
 JP.Item.Item = function()
@@ -78,11 +78,11 @@ JP.Item.Item = function()
 
   this.value = 0;
 
-  // tool power
+  // tool settings
   this.power = 0;
-  this.reach = 0; // tool range
+  this.reach = 0;
 
-  // combat values
+  // combat settings
   this.attack  = 0;
   this.defence = 0;
   this.range   = 0;
@@ -92,6 +92,10 @@ JP.Item.Item.prototype.Use = function()
 {
   return true;
 };
+JP.Item.Item.prototype.GetSpec = function(spec)
+{
+  return this[spec] || null;
+}
 JP.Item.Item.prototype.GetStatString = function()
 {
   var str = "";
@@ -103,7 +107,7 @@ JP.Item.Item.prototype.GetStatString = function()
   {
     if (this[attributes[i]] === 0 || this[attributes[i]] === "") // skip empty/0 values
       continue;
-    if (attributes[i] === "class") // ignore the class
+    if (attributes[i] === "class") // ignore the class - replace with GetClassString or such
       continue;
 
     if (str.length > 0)
@@ -205,13 +209,13 @@ JP.Item.Tinderbox.prototype.constructor = JP.Item.Tinderbox;
 JP.Item.Tinderbox.prototype.Use = function()
 {
   var wood = JP.player.ItemClass(JP.Item.Class.WOOD);
-  if (wood === undefined)
+  if (wood === null)
   {
     new JP.Logger.LogItem("You have no wood.", false, false, false).Post();
     return;
   }
 
-  var clearSpot = undefined;
+  var clearSpot = null;
   if (JP.USE_ARCADE_CONTROLS)
   {
     // check in front of us
@@ -265,14 +269,14 @@ JP.Item.Tinderbox.prototype.Use = function()
       clearSpot.y = py;
     }
   }
-  if (clearSpot === undefined)
+  if (clearSpot === null)
   {
     new JP.Logger.LogItem("There is nowhere clear to make a fire.", false, false, false).Post();
     return false;
   }
 
-  JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * JP.Item.Spec(wood, "power")));
-  JP.player.ItemDelta(wood, -1);
+  JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * wood.GetSpec("power")));
+  JP.player.ItemDelta(wood.name, -1);
   new JP.Logger.LogItem("You started a fire.", false, false, false).Post();
   JP.needDraw = true;
 };

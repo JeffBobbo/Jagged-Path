@@ -15,7 +15,7 @@ CGUI.CGUI.prototype.Draw = function(clean)
 
   for (var i = this.windows.length - 1; i >= 0; i--)
   {
-    const win = this.windows[i];
+    var win = this.windows[i];
     if (win.visible === false)
       continue;
     win.Draw();
@@ -25,7 +25,7 @@ CGUI.CGUI.prototype.OnEvent = function(event)
 {
   for (var i = this.windows.length - 1; i >= 0; i--)
   {
-    const win = this.windows[i];
+    var win = this.windows[i];
     if (win.enabled === false)
       continue;
     win.OnEvent(event);
@@ -45,7 +45,7 @@ CGUI.Window.prototype.Draw = function()
 {
   for (var i = this.nodes.length - 1; i >= 0; i--)
   {
-    const node = this.nodes[i];
+    var node = this.nodes[i];
     if (node.visible === false)
       continue;
     node.Draw();
@@ -55,7 +55,7 @@ CGUI.Window.prototype.OnEvent = function(event)
 {
   for (var i = this.nodes.length - 1; i >= 0; i--)
   {
-    const node = this.nodes[i];
+    var node = this.nodes[i];
     if (node.enabled === false)
       continue;
     node.OnEvent(event);

@@ -1,0 +1,35 @@
+[
+  {
+    "codename": "lumberjack",
+    "message": "Mornin'. I'm a lumberjack. Do you need some help?",
+    "options": {
+      "lumberjack_giveAxe": "Do you have an Axe I could borrow please?",
+      "lumberjack_useage": "Can you remind me how to use an axe?",
+      "generic_farewell0": "No thanks."
+    }
+  },
+  {
+    "codename": "lumberjack_giveAxe",
+    "message": "Why yes I do my good man! Here, you can keep it",
+    "options": {
+      "lumberjack_useage": "Awesome... How do I use it?",
+      "generic_farewell0": "Thanks mister! Bye."
+    },
+    "requirements": [
+      {"itemType": "AXE", "itemQuantMax": 0}
+    ],
+    "itemTransfer": [
+      {"itemName": "Axe", "itemQuant": 1}
+    ]
+  },
+  {
+    "codename": "lumberjack_useage",
+    "message": "To use an axe, walk up to a tree and press 'C' to chop!",
+    "options": {
+      "generic_farewell0": "Thanks mister!"
+    },
+    "requirements": [
+      {"itemType": "AXE", "itemQuantMin": 1}
+    ]
+  }
+]

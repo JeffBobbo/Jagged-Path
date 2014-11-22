@@ -289,32 +289,35 @@ JP.Entity.FindAroundPlayer = function(type, range, st, et)
 
   for (var i = JP.world.entities.length - 1; i >= 0; --i)
   {
-    if (type > 0 && (JP.world.entities[i].type & type) === 0)
+    var ent = JP.world.entities[i];
+    if (type > 0 && (ent.type !== type))
       continue;
 
     var o = {x: JP.player.relx + 0.5, y: JP.player.rely + 0.5};
-    var p = {x: JP.world.entities[i].relx + 0.5, y: JP.world.entities[i].rely + 0.5};
+    var p = {x: ent.relx + 0.5, y: ent.rely + 0.5};
 
     if (JP.InsideSegment(o, p, st, et, range) === true)
-      return i;
+      return ent;
   };
-  return -1;
+  return null;
 };
 
 JP.Entity.TalkPane = function(ent)
 {
   ent = typeof ent === "number" ? JP.Entity.FindByID(ent) : ent;
 
-  const name = document.getElementById("convoName");
-  const message = document.getElementById("convoMessage");
-  const options = document.getElementById("convoOptions");
+  var name = document.getElementById("convoName");
+  var message = document.getElementById("convoMessage");
+  var options = document.getElementById("convoOptions");
 
   // reset the pane before adding stuff
   name.textContent = "";
   message.textContent = "";
   options.textContent = "";
 
-  if (ent !== undefined && ent.convoState !== null)
+  var dialog = JP.Dialog.Get(ent.convoState);
+
+  if (ent !== null && dialog !== null)
   {
     var str = ""; // probably a much cleaner way to do this, but cba to think logic atm
     if (ent.givenFName === "" && ent.givenSName === "")
@@ -327,9 +330,18 @@ JP.Entity.TalkPane = function(ent)
       str = ent.givenFName + " " + ent.givenSName;
     name.textContent = str;
 
-    const dialog = JP.Dialog.registry[ent.convoState];
     // add the message
     message.textContent = dialog.message;
+
+
+    // do stuff that needs to be done before we can add the new options
+    if (dialog.itemTransfer !== undefined)
+    {
+      for (var i = dialog.itemTransfer.length - 1; i >= 0; i--)
+        JP.player.ItemDelta(dialog.itemTransfer[i].itemName, dialog.itemTransfer[i].itemQuant);
+    }
+//    if (dialog.goldTransfer !== undefined)
+//      JP.player.DeltaGold(dialog.goldTransfer);
 
     // add options
     if (dialog.options !== undefined)
@@ -338,6 +350,8 @@ JP.Entity.TalkPane = function(ent)
       var len = keys.length;
       for (var i = 0; i < len; ++i)
       {
+        if (JP.Dialog.Get(keys[i]) === null) // don't add it if we don't meet the requirements
+          continue;
         var opt = document.createElement("a");
         opt.textContent = dialog.options[keys[i]];
         opt.href = "#";
@@ -350,14 +364,13 @@ JP.Entity.TalkPane = function(ent)
   }
 };
 
-JP.Entity.TalkOption = function(id, opt)
+JP.Entity.TalkOption = function(ent, opt)
 {
-  const ent = JP.Entity.FindByID(id);
+  var ent = typeof ent === "number" ? JP.Entity.FindByID(ent) : ent;
 
-  if (ent === undefined)
+  if (ent === null)
     return;
-  const convo = JP.Convo.registry[ent.conversation];
-  const dialog = JP.Dialog.registry[opt.getAttribute("data-option")];
+  var dialog = JP.Dialog.registry[opt.getAttribute("data-option")];
 
   ent.convoState = dialog.codename;
   JP.Entity.TalkPane(ent);
@@ -368,13 +381,13 @@ JP.Entity.Entity.prototype.Talk = function()
   if (this.conversation === undefined)
     return false;
 
-  var convo = JP.Convo.Get(this.conversation);
+  var dialog = JP.Dialog.Get(this.conversation);
 
   // we want the conversation to start again if they hit T
 //  if (this.convoState !== null)
 //    return;
 
-  this.convoState = convo.opening;
+  this.convoState = this.conversation;
   JP.Entity.TalkPane(this);
 
   return true;
@@ -539,7 +552,7 @@ JP.Entity.ItemBox.prototype.SetGold = function(quant)
 };
 JP.Entity.ItemBox.prototype.Move = function()
 {
-  const distance = Distance(this.relx, this.rely, JP.player.relx, JP.player.rely);
+  var distance = Distance(this.relx, this.rely, JP.player.relx, JP.player.rely);
 
   if (distance < 0.5) // give the item
   {
@@ -564,7 +577,7 @@ JP.Entity.ItemBox.prototype.Move = function()
   {
     var dx = (JP.player.relx - this.relx) / distance;
     var dy = (JP.player.rely - this.rely) / distance;
-    const speed = 30 / 1000;
+    var speed = 30 / 1000;
     dx = Normalize([dx, dy])[0] * speed * JP.getTickDelta();
     dy = Normalize([dx, dy])[1] * speed * JP.getTickDelta();
     this.relx += dx;

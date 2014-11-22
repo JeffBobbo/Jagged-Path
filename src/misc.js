@@ -98,6 +98,8 @@ function Bound(min, max, a)
 
 function InRange(min, max, a)
 {
+  min = min !== undefined ? min : -Infinity;
+  max = max !== undefined ? max :  Infinity;
   return min <= a && a <= max;
 }
 

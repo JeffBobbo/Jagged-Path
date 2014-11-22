@@ -29,7 +29,7 @@ JP.GUI.Manager.prototype.Draw = function()
     return;
   for (var i = this.windowList.length - 1; i >= 0; i--)
   {
-    const win = this.windowList[i];
+    var win = this.windowList[i];
 
     if (win.visible === false)
       continue;
@@ -61,7 +61,7 @@ JP.GUI.Window.prototype.Draw = function()
 {
   for (var i = this.childList.length - 1; i >= 0; i--)
   {
-    const elem = this.childList[i];
+    var elem = this.childList[i];
 
     if (elem.visible === false)
       continue;

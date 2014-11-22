@@ -2,13 +2,14 @@
   {
     "class": "npc",
     "name": "Lumberjack",
-    "imgPath": "lumberjack.png"
+    "imgPath": "lumberjack.png",
+    "conversation": "lumberjack"
   },
   {
     "class": "npc",
     "name": "TalkTest",
     "imgPath": "player_front.png",
-    "conversation": "generic_convo0",
+    "conversation": "generic_greeting0",
     "giveName": true
   }
 ]
