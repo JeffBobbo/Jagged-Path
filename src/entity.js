@@ -254,24 +254,27 @@ JP.Entity.FindByID = function(id)
   for (var i = JP.world.entities.length - 1; i >= 0; --i)
   {
     if (JP.world.entities[i].id === id)
-      return i;
+      return JP.world.entities[i];
   };
-  return -1;
+  return null;
 };
 
-JP.Entity.FindByPos = function(x, y, xtol, ytol)
+JP.Entity.FindByPos = function(x, y, type, xtol, ytol)
 {
   xtol = xtol || 0.5;
   ytol = ytol || 0.5;
   for (var i = JP.world.entities.length - 1; i >= 0; --i)
   {
-    if (InRange(x - xtol, x + xtol, JP.world.entities[i].relx) === false)
+    var ent = JP.world.entities[i];
+    if (ent.type !== type)
       continue;
-    if (InRange(y - ytol, y + ytol, JP.world.entities[i].rely) === false)
+    if (InRange(x - xtol, x + xtol, ent.relx) === false)
       continue;
-    return i;
+    if (InRange(y - ytol, y + ytol, ent.rely) === false)
+      continue;
+    return ent;
   };
-  return -1;
+  return null;
 };
 
 JP.Entity.FindAroundPlayer = function(type, range, st, et)

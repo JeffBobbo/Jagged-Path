@@ -129,7 +129,7 @@ JP.Item.Axe.prototype = Object.create(JP.Item.Item.prototype);
 JP.Item.Axe.prototype.constructor = JP.Item.Axe;
 JP.Item.Axe.prototype.Use = function()
 {
-  var treeID = -1;
+  var tree = null;
   if (JP.USE_ARCADE_CONTROLS)
   {
     var x = JP.player.relx;
@@ -137,29 +137,29 @@ JP.Item.Axe.prototype.Use = function()
     switch (JP.player.direction)
     {
       case JP.Keys.A:
-        treeID = JP.Entity.FindByPos(x - 0.5, y + 0.5);
+        tree = JP.Entity.FindByPos(x - 0.5, y + 0.5, JP.Entity.Type.TREE);
       break;
       case JP.Keys.D:
-        treeID = JP.Entity.FindByPos(x + 1.5, y + 0.5);
+        tree = JP.Entity.FindByPos(x + 1.5, y + 0.5, JP.Entity.Type.TREE);
       break;
       case JP.Keys.W:
-        treeID = JP.Entity.FindByPos(x + 0.5, y - 0.5);
+        tree = JP.Entity.FindByPos(x + 0.5, y - 0.5, JP.Entity.Type.TREE);
       break;
       case JP.Keys.S:
       default:
-        treeID = JP.Entity.FindByPos(x + 0.5, y + 1.5);
+        tree = JP.Entity.FindByPos(x + 0.5, y + 1.5, JP.Entity.Type.TREE);
       break;
     }
   }
   else
   {
-    treeID = JP.Entity.FindAroundPlayer(JP.Entity.Type.TREE, this.reach, JP.rad(-45), JP.rad(45));
+    tree = JP.Entity.FindAroundPlayer(JP.Entity.Type.TREE, this.reach, JP.rad(-45), JP.rad(45));
   }
-  if (treeID !== -1)
+  if (tree !== null)
   {
-    if (JP.world.entities[treeID].canChop === true)
+    if (tree.canChop === true)
     {
-      if (JP.world.entities[treeID].Impact(this.power))
+      if (tree.Impact(this.power))
         new JP.Logger.LogItem("You cut down the tree.").Post();
       else
         new JP.Logger.LogItem("You swing at the tree.").Post();
@@ -248,7 +248,7 @@ JP.Item.Tinderbox.prototype.Use = function()
     switch (JP.player.direction)
     {
       case JP.Keys.A:
-        if (JP.Entity.FindByPos(x - 1, y) === -1 && JP.world.terrain[x - 1][y].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x - 1, y) === null && JP.world.terrain[x - 1][y].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x - 1;
@@ -256,7 +256,7 @@ JP.Item.Tinderbox.prototype.Use = function()
         }
       break;
       case JP.Keys.D:
-        if (JP.Entity.FindByPos(x + 1, y) === -1 && JP.world.terrain[x + 1][y].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x + 1, y) === null && JP.world.terrain[x + 1][y].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x + 1;
@@ -264,7 +264,7 @@ JP.Item.Tinderbox.prototype.Use = function()
         }
       break;
       case JP.Keys.W:
-        if (JP.Entity.FindByPos(x, y - 1) === -1 && JP.world.terrain[x][y - 1].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x, y - 1) === null && JP.world.terrain[x][y - 1].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x;
@@ -273,7 +273,7 @@ JP.Item.Tinderbox.prototype.Use = function()
       break;
       case JP.Keys.S:
       default:
-        if (JP.Entity.FindByPos(x, y + 1) === -1 && JP.world.terrain[x][y + 1].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x, y + 1) === null && JP.world.terrain[x][y + 1].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x;
