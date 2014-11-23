@@ -433,60 +433,6 @@ JP.Entity.NPC = function()
 };
 JP.Entity.NPC.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.NPC.prototype.constructor = JP.Entity.NPC;
-/*JP.Entity.NPC.prototype.Talk = function()
-{
-  if (JP.player.ItemClass(JP.Item.Class.AXE) === undefined)
-  {
-    new JP.Logger.LogItem("\"Well there, it looks like you could use an axe!\"", false, false, false).Post();
-    JP.player.ItemDelta("Axe");
-    return true;
-  }
-  else if (JP.player.ItemClass(JP.Item.Class.WOOD) === undefined)
-  {
-    new JP.Logger.LogItem("\"Use 'C' to chop at trees and collect wood!\"", false, false, false).Post();
-    return true;
-  }
-  else if (JP.player.ItemClass(JP.Item.Class.TINDERBOX) === undefined)
-  {
-    new JP.Logger.LogItem("\"Here's a Tinderbox, find a clear area and press 'F' to start a fire.\"", false, false, false).Post();
-    JP.player.ItemDelta("Tinderbox");
-    return true;
-  }
-  else if (JP.player.canSwim === false && JP.player.ItemQuant("Evergreen Log") < 25 && JP.player.ItemQuant("Oak Log") < 20)
-  {
-    new JP.Logger.LogItem("\"Bring me 25 Evergreen Logs or 20 Oak Logs and I'll teach you to swim.\"", false, false, false).Post();
-    return true;
-  }
-  else if (JP.player.canSwim === false && JP.player.ItemQuant("Evergreen Log") >= 25)
-  {
-    new JP.Logger.LogItem("\"... Row row row your boat, gently down the stream, belts off trousers down, isn't life a scream?!\"", false, false, false).Post();
-    new JP.Logger.LogItem("You now know how to swim", false, false, true).Post();
-    JP.player.canSwim = true;
-    JP.player.ItemDelta("Evergreen Log", -25);
-    return true;
-  }
-  else if (JP.player.canSwim === false && JP.player.ItemQuant("Oak Log") >= 20)
-  {
-    new JP.Logger.LogItem("\"... Row row row your boat, gently down the stream, belts off trousers down, isn't life a scream?!\"", false, false, false).Post();
-    new JP.Logger.LogItem("You now know how to swim", false, false, true).Post();
-    JP.player.ItemDelta("Oak Log", -20);
-    JP.player.canSwim = true;
-    return true;
-  }
-  else if (JP.player.ItemQuant("Oak Log") < 5)
-  {
-    new JP.Logger.LogItem("\"Bring me five Oak Logs and I'll pay you " + JP.Item.Spec("Oak Log", "value") + " Gold each for them!\"").Post();
-    return true;
-  }
-  else if (JP.player.ItemQuant("Oak Log") >= 5)
-  {
-    JP.player.ItemDelta("Oak Log", -5);
-    new JP.Logger.LogItem("\"'Ere you go.\"").Post();
-    JP.player.DeltaGold(JP.Item.Spec("Oak Log", "value") * 5);
-    return true;
-  }
-  return false;
-};*/
 JP.Entity.NPC.prototype.Move = function()
 {
   return; // this works but it's too fast and cba to work on this atm
