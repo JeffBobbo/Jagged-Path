@@ -46,6 +46,15 @@ JP.Dialog.Get = function(dialog)
         if (InRange(req.itemQuantMin, req.itemQuantMax, JP.player.ItemQuant(req.itemName)) === false)
           return null;
       }
+      if (req.playerStat !== undefined)
+      {
+        var keys = Object.keys(req.playerStat);
+        for (var i = keys.length - 1; i >= 0; i--)
+        {
+          if (JP.player[keys[i]] !== req.playerStat[keys[i]])
+            return null; 
+        }
+      }
     }
   }
   return dialog;

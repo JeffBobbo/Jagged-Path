@@ -1,18 +1,22 @@
 [
   {
     "codename": "lumberjack",
-    "message": "Mornin'. I'm a lumberjack. Do you need some help?",
+    "message": "Hello there. I'm a lumberjack. Do you need some help?",
     "options": {
-      "lumberjack_giveAxe": "Do you have an Axe I could borrow please?",
-      "lumberjack_useage": "Can you remind me how to use an axe?",
+      "lumberjack_axeGive": "Do you have an Axe I could borrow please?",
+      "lumberjack_axeUseage": "Can you remind me how to use an axe?",
+      "lumberjack_tinderboxGive": "How could I start a fire?",
+      "lumberjack_tinderboxUseage": "Can you mind me how to use a tinderbox?",
+      "lumberjack_swim": "Do you know how to swim?",
       "generic_farewell0": "No thanks."
     }
   },
+
   {
-    "codename": "lumberjack_giveAxe",
+    "codename": "lumberjack_axeGive",
     "message": "Why yes I do my good man! Here, you can keep it",
     "options": {
-      "lumberjack_useage": "Awesome... How do I use it?",
+      "lumberjack_axeUseage": "Awesome... How do I use it?",
       "generic_farewell0": "Thanks mister! Bye."
     },
     "requirements": [
@@ -23,13 +27,90 @@
     ]
   },
   {
-    "codename": "lumberjack_useage",
+    "codename": "lumberjack_axeUseage",
     "message": "To use an axe, walk up to a tree and press 'C' to chop!",
     "options": {
       "generic_farewell0": "Thanks mister!"
     },
     "requirements": [
       {"itemType": "AXE", "itemQuantMin": 1}
+    ]
+  },
+
+
+  {
+    "codename": "lumberjack_tinderboxGive",
+    "message": "Tinderboxes are easy to produce, here's one you can have.",
+    "options": {
+      "lumberjack_tinderboxUseage": "How do I light a fire?",
+      "generic_farewell0": "Thanks! Bye."
+    },
+    "requirements": [
+      {"itemType": "TINDERBOX", "itemQuantMax": 0}
+    ],
+    "itemTransfer": [
+      {"itemName": "Tinderbox", "itemQuant": 1}
+    ]
+  },
+  {
+    "codename": "lumberjack_tinderboxUseage",
+    "message": "Once you have some wood, find a clear area and press 'F' to start a fire.",
+    "options": {
+      "generic_farewell0": "Thanks!"
+    },
+    "requirements": [
+      {"itemType": "TINDERBOX", "itemQuantMin": 1}
+    ]
+  },
+
+  {
+    "codename": "lumberjack_swim",
+    "message": "What an odd question, but yes I do. Why?",
+    "options": {
+      "lumberjack_swim1": "Could you teach me?"
+    },
+    "requirements": [
+      {"itemType": "WOOD", "itemQuantMin": 1},
+      {"playerStat": {"canSwim": false}}
+    ]
+  },
+  {
+    "codename": "lumberjack_swim1",
+    "message": "Mhmmm... For 20 Oak Logs, sure.",
+    "options": {
+      "lumberjack_swimBuy": "I have 20 Oak Logs with me!",
+      "lumberjack_swimNotRightNow": "Not right now.",
+      "lumberjack_swimTooPoor": "I don't have 20 Oak Logs... I'll be back."
+    }
+  },
+  {
+    "codename": "lumberjack_swimBuy",
+    "message": "*You are instructed by the lumberjack and now know how to swim*\n\nJust head out to sea, and move like before.",
+    "options": {
+      "generic_welcome0": "Thank you"
+    },
+    "requirements": [
+      {"itemName": "Oak Log", "itemQuantMin": 20}
+    ],
+    "itemTransfer": [
+      {"itemName": "Oak Log", "quant": 20}
+    ],
+    "playerStat": {
+      "canSwim": true
+    }
+  },
+  {
+    "codename": "lumberjack_swimNotRightNow",
+    "message": "Okay then, see you later.",
+    "requirements": [
+      {"itemName": "Oak Log", "itemQuantMin": 20}
+    ]
+  },
+  {
+    "codename": "lumberjack_swimTooPoor",
+    "message": "Okay then, see you later.",
+    "requirements": [
+      {"itemName": "Oak Log", "itemQuantMax": 20}
     ]
   }
 ]

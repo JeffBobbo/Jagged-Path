@@ -343,6 +343,14 @@ JP.Entity.TalkPane = function(ent)
 //    if (dialog.goldTransfer !== undefined)
 //      JP.player.DeltaGold(dialog.goldTransfer);
 
+    // temporary measure for tweaking player stats until skills are done
+    if (dialog.playerStat !== undefined)
+    {
+      var keys = Object.keys(dialog.playerStat);
+      for (var i = keys.length - 1; i >= 0; i--)
+        JP.player[keys[i]] = dialog.playerStat[keys[i]];
+    }
+
     // add options
     if (dialog.options !== undefined)
     {
