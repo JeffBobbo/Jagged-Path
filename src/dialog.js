@@ -43,7 +43,7 @@ JP.Dialog.Get = function(dialog)
       }
       if (req.itemName !== undefined)
       {
-        if (JP.player.ItemQuant(req.itemName) < req.itemQuant)
+        if (InRange(req.itemQuantMin, req.itemQuantMax, JP.player.ItemQuant(req.itemName)) === false)
           return null;
       }
     }
