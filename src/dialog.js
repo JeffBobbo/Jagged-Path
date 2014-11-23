@@ -46,6 +46,11 @@ JP.Dialog.Get = function(dialog)
         if (InRange(req.itemQuantMin, req.itemQuantMax, JP.player.ItemQuant(req.itemName)) === false)
           return null;
       }
+      if (req.goldMin !== undefined || req.goldMax !== undefined)
+      {
+        if (InRange(req.goldMin, req.goldMax, JP.player.gold) === false)
+          return null;
+      }
       if (req.playerStat !== undefined)
       {
         var keys = Object.keys(req.playerStat);

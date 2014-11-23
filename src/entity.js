@@ -334,7 +334,7 @@ JP.Entity.TalkPane = function(ent)
     message.textContent = dialog.message;
 
 
-    // do stuff that needs to be done before we can add the new options
+    // Do transfers which needs to be done for the requirements on the options
     if (dialog.itemTransfer !== undefined)
     {
       for (var i = dialog.itemTransfer.length - 1; i >= 0; i--)
