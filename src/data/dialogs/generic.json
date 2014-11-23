@@ -14,8 +14,18 @@
       "generic_farewell0": "Goodbye."
     }
   },
+
+
   {
     "codename": "generic_farewell0",
     "message": "Goodbye."
+  },
+  {
+    "codename": "generic_welcome0",
+    "message": "Your welcome."
+  },
+  {
+    "codename": "generic_acceptance0",
+    "message": "Okay then."
   }
 ]
