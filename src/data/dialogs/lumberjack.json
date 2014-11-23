@@ -93,7 +93,7 @@
       {"itemName": "Oak Log", "itemQuantMin": 20}
     ],
     "itemTransfer": [
-      {"itemName": "Oak Log", "quant": 20}
+      {"itemName": "Oak Log", "itemQuant": -20}
     ],
     "playerStat": {
       "canSwim": true
