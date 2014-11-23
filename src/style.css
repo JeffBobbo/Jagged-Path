@@ -123,6 +123,7 @@ div#convoContent
 p#convoMessage
 {
   text-align:center;
+  white-space:pre;
 }
 div#convoOptions
 {
