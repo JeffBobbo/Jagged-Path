@@ -99,6 +99,7 @@ JP.Generate = function()
 JP.Idle = function()
 {
   JP.getTickCount(true); // update the tickcount
+  JP.KeyProcessing();
   //JP.player.Idle();
   for (var i = JP.world.entities.length - 1; i >= 0; i--)
   {
@@ -156,72 +157,77 @@ JP.ProcessMouse = function(event)
     JP.MouseState.vy = JP.MouseState.y;
   }
   JP.MouseState.button = (event.type === "mousedown" ? event.button : -1); // LM: 0, MM: 1, RM: 2
-  var evt = new JP.GUI.Event();
-  evt.MouseState = JP.MouseState;
-  evt.type = "mouse";
-  //JP.guimgr.OnEvent(evt);
   JP.needDraw = true;
   return false;
 };
 
-JP.ProcessKey = function(event)
+JP.KeyMap = [];
+JP.ProcessKey = function(evt)
 {
-  var keyCode = (event.which !== undefined || event.which !== null) ? event.which : event.keyCode;
-  switch (keyCode)
+  evt = evt || event;
+  var keyCode = (evt.which !== undefined || evt.which !== null) ? evt.which : evt.keyCode;
+
+  JP.KeyMap[keyCode] = (evt.type === 'keydown');
+};
+
+JP.KeyProcessing = function(key)
+{
+  for (var i = JP.KeyMap.length - 1; i >= 0; i--)
   {
-    //movement
-    case JP.Keys.LEFT:
-    case JP.Keys.A:
-      JP.player.Move(JP.Keys.A); // move left
-    break;
+    var key = JP.KeyMap[i] === true ? i : -1;
+    switch (key)
+    {
+      //movement
+      case JP.Keys.LEFT:
+      case JP.Keys.A:
+        JP.player.Move(JP.Keys.A); // move left
+      break;
 
-    case JP.Keys.UP:
-    case JP.Keys.W:
-      JP.player.Move(JP.Keys.W); // move up
-    break;
+      case JP.Keys.UP:
+      case JP.Keys.W:
+        JP.player.Move(JP.Keys.W); // move up
+      break;
 
-    case JP.Keys.RIGHT:
-    case JP.Keys.D:
-      JP.player.Move(JP.Keys.D); // move right
-    break;
-    case JP.Keys.DOWN:
-    case JP.Keys.S:
-      JP.player.Move(JP.Keys.S); // move down
-    break;
+      case JP.Keys.RIGHT:
+      case JP.Keys.D:
+        JP.player.Move(JP.Keys.D); // move right
+      break;
+      case JP.Keys.DOWN:
+      case JP.Keys.S:
+        JP.player.Move(JP.Keys.S); // move down
+      break;
 
-    //actions
-    case JP.Keys.C:
-      JP.player.ChopTree();
-    break;
-    case JP.Keys.T:
-      JP.player.Talk();
-    break;
-    case JP.Keys.F:
-      JP.player.Fire();
-    break;
+      //actions
+      case JP.Keys.C:
+        JP.player.ChopTree();
+      break;
+      case JP.Keys.T:
+        JP.player.Talk();
+      break;
+      case JP.Keys.F:
+        JP.player.Fire();
+      break;
 
-    // map scaling
-    case JP.Keys.PLUS:
-    case JP.Keys.NUM_PLUS:
-      if (JP.world.generationLevel === JP.World.Gen.DONE)
-      {
-        JP.PIXEL_SIZE = Math.min(64, JP.PIXEL_SIZE + 8);
-        JP.world.Prerender();
-        JP.needDraw = true;
-      }
-    break;
-    case JP.Keys.MINUS:
-    case JP.Keys.NUM_MINUS:
-      if (JP.world.generationLevel === JP.World.Gen.DONE)
-      {
-        JP.PIXEL_SIZE = Math.max(8 , JP.PIXEL_SIZE - 8);
-        JP.world.Prerender();
-        JP.needDraw = true;
-      }
-    break;
-    default:
-      console.log(keyCode);
-    break;
+      // map scaling
+      case JP.Keys.PLUS:
+      case JP.Keys.NUM_PLUS:
+        if (JP.world.generationLevel === JP.World.Gen.DONE)
+        {
+          JP.PIXEL_SIZE = Math.min(64, JP.PIXEL_SIZE + 8);
+          JP.world.Prerender();
+          JP.needDraw = true;
+        }
+      break;
+      case JP.Keys.MINUS:
+      case JP.Keys.NUM_MINUS:
+        if (JP.world.generationLevel === JP.World.Gen.DONE)
+        {
+          JP.PIXEL_SIZE = Math.max(8 , JP.PIXEL_SIZE - 8);
+          JP.world.Prerender();
+          JP.needDraw = true;
+        }
+      break;
+    }
   }
   return false;
 };
@@ -304,6 +310,7 @@ function pageLoad()
   }
 
   JP.canvas.onkeydown   = function(event) {JP.ProcessKey(event); };
+  JP.canvas.onkeyup     = function(event) {JP.ProcessKey(event); };
   JP.canvas.onmousemove = function(event) {JP.ProcessMouse(event); };
   JP.canvas.onmousedown = function(event) {JP.ProcessMouse(event); };
 
