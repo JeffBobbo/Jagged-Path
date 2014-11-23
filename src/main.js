@@ -232,6 +232,8 @@ JP.SetResolution = function()
   JP.tcanvas.width  = document.documentElement.clientWidth;
   JP.canvas.height = document.documentElement.clientHeight;
   JP.tcanvas.height = document.documentElement.clientHeight;
+  if (JP.world !== null)
+    JP.world.Prerender();
   JP.needDraw = true;
 };
 window.onresize = JP.SetResolution;
