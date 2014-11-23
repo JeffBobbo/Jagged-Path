@@ -120,10 +120,15 @@ div#convoContent
   position:relative;
   min-width:100%;
 }
+h2#convoName
+{
+  margin:4px;
+}
 p#convoMessage
 {
   text-align:center;
   white-space:pre;
+  margin:4px;
 }
 div#convoOptions
 {
