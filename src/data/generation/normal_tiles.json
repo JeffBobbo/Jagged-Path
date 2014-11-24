@@ -21,7 +21,7 @@
     "maxHeat": 10
   },
   {
-    "tile": "Sand",
+    "tile": "Beach",
     "minHeight": 10,
     "maxHeight": 25,
     "minHeat": 10,
