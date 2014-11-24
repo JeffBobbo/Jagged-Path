@@ -234,11 +234,11 @@ JP.KeyProcessing = function(key)
 
 JP.SetResolution = function()
 {
-  JP.canvas.width  = document.documentElement.clientWidth;
-  JP.tcanvas.width  = document.documentElement.clientWidth;
-  JP.canvas.height = document.documentElement.clientHeight;
-  JP.tcanvas.height = document.documentElement.clientHeight;
-  if (JP.world !== null)
+  JP.canvas.width  = document.documentElement.clientWidth - 300;
+  JP.tcanvas.width  = document.documentElement.clientWidth - 300;
+  JP.canvas.height = document.documentElement.clientHeight - 120;
+  JP.tcanvas.height = document.documentElement.clientHeight - 120;
+  if (JP.world !== null && JP.world.generationLevel === JP.World.Gen.DONE)
     JP.world.Prerender();
   JP.needDraw = true;
 };
