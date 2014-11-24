@@ -59,7 +59,9 @@ div#rightPanel
   left:calc(100% - 300px);
   width:calc(300px - 16px);
   height:calc(100% - 16px);
-  background-color:rgba(0, 0, 0, 0.75);
+/*  background-color:rgba(0, 0, 0, 0.75); */
+  background-color:#333;
+  border: solid 1px black;
   padding:8px;
 }
 
@@ -108,7 +110,9 @@ p#fpsCounter
 
 div#convoPane
 {
-  background-color:rgba(0, 0, 0, 0.75);
+/*  background-color:rgba(0, 0, 0, 0.75); */
+  background-color:#333;
+  border: solid 1px black;
   position:fixed;
   width:calc(100% - 300px);
   height:120px;
