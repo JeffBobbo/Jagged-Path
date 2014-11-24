@@ -304,12 +304,15 @@ function pageLoad()
 
   if (localStorage.getItem("JP.World.Saved") === null)
   {
-    document.getElementById('loadWorld').disabled = true;
+    document.getElementById('loadWorld').disabled   = true;
     document.getElementById('deleteWorld').disabled = true;
+    document.getElementById('newWorld').disabled    = false;
   }
   else
   {
-    document.getElementById('newWorld').disabled = true;
+    document.getElementById('loadWorld').disabled   = false;
+    document.getElementById('deleteWorld').disabled = false;
+    document.getElementById('newWorld').disabled    = true;
   }
 
   JP.canvas.onkeydown   = function(event) {JP.ProcessKey(event); };
