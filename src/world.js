@@ -446,12 +446,12 @@ JP.World.prototype.EntityMap = function()
 
 JP.World.prototype.Prerender = function()
 {
-  var xoffset = JP.player.relx - (((JP.canvas.width - 300) / JP.PIXEL_SIZE) / 2);
-  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) / 2);
+  var xoffset = JP.player.relx - (((JP.canvas.width - JP.RPANE) / JP.PIXEL_SIZE) / 2);
+  var yoffset = JP.player.rely - (((JP.canvas.height - JP.CPANE) / JP.PIXEL_SIZE) / 2);
   // set offsets to stay inside the map
-  xoffset = Bound(0, JP.WIDTH  - ((JP.canvas.width - 300) / JP.PIXEL_SIZE), xoffset);
-  yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
-  var xmax = JP.canvas.width / JP.PIXEL_SIZE + xoffset;
+  xoffset = Bound(0, this.terrain.length    - ((JP.canvas.width  - JP.RPANE) / JP.PIXEL_SIZE), xoffset);
+  yoffset = Bound(0, this.terrain[0].length - ((JP.canvas.height - JP.CPANE) / JP.PIXEL_SIZE), yoffset);
+  var xmax = JP.canvas.width  / JP.PIXEL_SIZE + xoffset;
   var ymax = JP.canvas.height / JP.PIXEL_SIZE + yoffset;
   for (var x = xoffset | 0; x < xmax; ++x)
   {
@@ -497,11 +497,11 @@ JP.World.prototype.Prerender = function()
 JP.World.prototype.Draw = function() 
 {
   // draw terrain
-  var xoffset = JP.player.relx - (((JP.canvas.width - 300) / JP.PIXEL_SIZE) / 2);
-  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) / 2);
+  var xoffset = JP.player.relx - (((JP.canvas.width - JP.RPANE) / JP.PIXEL_SIZE) / 2);
+  var yoffset = JP.player.rely - (((JP.canvas.height - JP.CPANE) / JP.PIXEL_SIZE) / 2);
   // set offsets to stay inside the map
-  xoffset = Bound(0, JP.WIDTH  - ((JP.canvas.width - 300) / JP.PIXEL_SIZE), xoffset);
-  yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
+  xoffset = Bound(0, JP.WIDTH  - ((JP.canvas.width - JP.RPANE) / JP.PIXEL_SIZE), xoffset);
+  yoffset = Bound(0, JP.HEIGHT - ((JP.canvas.height - JP.CPANE) / JP.PIXEL_SIZE), yoffset);
   var xmax = JP.canvas.width / JP.PIXEL_SIZE + xoffset;
   var ymax = JP.canvas.height / JP.PIXEL_SIZE + yoffset;
 

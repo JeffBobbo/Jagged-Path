@@ -17,6 +17,9 @@ var JP = JP || {
   // how big each tile is
   PIXEL_SIZE: 32,
 
+  RPANE: 300,
+  CPANE: 120,
+
   needDraw: false,
 };
 
@@ -234,10 +237,10 @@ JP.KeyProcessing = function(key)
 
 JP.SetResolution = function()
 {
-  JP.canvas.width  = document.documentElement.clientWidth - 300;
-  JP.tcanvas.width  = document.documentElement.clientWidth - 300;
-  JP.canvas.height = document.documentElement.clientHeight - 120;
-  JP.tcanvas.height = document.documentElement.clientHeight - 120;
+  JP.canvas.width  = document.documentElement.clientWidth - JP.RPANE;
+  JP.tcanvas.width  = document.documentElement.clientWidth - JP.RPANE;
+  JP.canvas.height = document.documentElement.clientHeight - JP.CPANE;
+  JP.tcanvas.height = document.documentElement.clientHeight - JP.CPANE;
   if (JP.world !== null && JP.world.generationLevel === JP.World.Gen.DONE)
     JP.world.Prerender();
   JP.needDraw = true;

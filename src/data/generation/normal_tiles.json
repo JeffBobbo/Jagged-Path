@@ -2,27 +2,27 @@
   {
     "tile": "Water",
     "minHeight": -1,
-    "maxHeight": 15,
+    "maxHeight": 10,
     "minHeat": 10,
     "maxHeat": -1
   },
   {
     "tile": "Ice",
     "minHeight": -1,
-    "maxHeight": 15,
+    "maxHeight": 10,
     "minHeat": -1,
     "maxHeat": 10
   },
   {
     "tile": "Snow",
-    "minHeight": 15,
+    "minHeight": 10,
     "maxHeight": 55,
     "minHeat": -1,
     "maxHeat": 10
   },
   {
     "tile": "Sand",
-    "minHeight": 15,
+    "minHeight": 10,
     "maxHeight": 25,
     "minHeat": 10,
     "maxHeat": 60
