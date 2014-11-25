@@ -526,34 +526,29 @@ JP.World.prototype.Draw = function()
 
   if (JP.USE_ARCADE_CONTROLS === true)
   {
+    var img = null;
     switch (JP.player.direction)
     {
       case JP.Keys.W:
-        JP.context.drawImage(JP.player.imgUp,
-          (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
-          (JP.player.rely - yoffset) * JP.PIXEL_SIZE
-        );
+        img = JP.player.imgUp;
       break;
       case JP.Keys.A:
-        JP.context.drawImage(JP.player.imgLeft,
-          (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
-          (JP.player.rely - yoffset) * JP.PIXEL_SIZE
-        );
+        img = JP.player.imgLeft;
       break;
       case JP.Keys.D:
-        JP.context.drawImage(JP.player.imgRight,
-          (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
-          (JP.player.rely - yoffset) * JP.PIXEL_SIZE
-        );
+        img = JP.player.imgRight;
       break;
       case JP.Keys.S:
       default:
-        JP.context.drawImage(JP.player.imgDown,
-          (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
-          (JP.player.rely - yoffset) * JP.PIXEL_SIZE
-        );
+        img = JP.player.imgDown;
       break;
     }
+    JP.context.drawImage(img,
+      (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
+      (JP.player.rely - yoffset) * JP.PIXEL_SIZE,
+      JP.PIXEL_SIZE,
+      JP.PIXEL_SIZE
+    );
   }
   else
   {
