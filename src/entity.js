@@ -277,15 +277,15 @@ JP.Entity.FindByPos = function(x, y, type, xtol, ytol)
   return null;
 };
 
-JP.Entity.FindAroundPlayer = function(type, range, st, et)
+JP.Entity.FindAroundPlayer = function(type, range, st, et, srct)
 {
   type = type || 0;
   range = range || 1;
   st = st || JP.rad(-60);
   et = et || JP.rad( 60);
 
-  st += JP.player.direction;
-  et += JP.player.direction;
+  st += srct || JP.player.direction;
+  et += srct || JP.player.direction;
 
   for (var i = JP.world.entities.length - 1; i >= 0; --i)
   {
