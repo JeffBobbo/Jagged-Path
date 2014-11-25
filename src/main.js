@@ -164,20 +164,21 @@ JP.ProcessMouse = function(event)
   return false;
 };
 
-JP.KeyMap = [];
+JP.KeyMap = {};
 JP.ProcessKey = function(evt)
 {
   evt = evt || event;
   var keyCode = (evt.which !== undefined || evt.which !== null) ? evt.which : evt.keyCode;
 
-  JP.KeyMap[keyCode] = (evt.type === 'keydown');
+  JP.KeyMap[keyCode] = (JP.KeyMap[keyCode] !== null ? evt.type === 'keydown' : evt.type === 'keyup' ? false : null);
 };
 
 JP.KeyProcessing = function(key)
 {
-  for (var i = JP.KeyMap.length - 1; i >= 0; i--)
+  var keys = Object.keys(JP.KeyMap);
+  for (var i = keys.length - 1; i >= 0; i--)
   {
-    var key = JP.KeyMap[i] === true ? i : -1;
+    var key = JP.KeyMap[keys[i]] === true ? parseInt(keys[i]) : -1;
     switch (key)
     {
       //movement
@@ -203,12 +204,15 @@ JP.KeyProcessing = function(key)
       //actions
       case JP.Keys.C:
         JP.player.ChopTree();
+          JP.KeyMap[JP.Keys.C] = null;
       break;
       case JP.Keys.T:
         JP.player.Talk();
+          JP.KeyMap[JP.Keys.T] = null;
       break;
       case JP.Keys.F:
         JP.player.Fire();
+          JP.KeyMap[JP.Keys.F] = null;
       break;
 
       // map scaling
@@ -218,6 +222,8 @@ JP.KeyProcessing = function(key)
         {
           JP.PIXEL_SIZE = Math.min(64, JP.PIXEL_SIZE + 8);
           JP.world.Prerender();
+          JP.KeyMap[JP.Keys.PLUS] = null;
+          JP.KeyMap[JP.Keys.NUM_PLUS] = null;
           JP.needDraw = true;
         }
       break;
@@ -227,6 +233,8 @@ JP.KeyProcessing = function(key)
         {
           JP.PIXEL_SIZE = Math.max(8 , JP.PIXEL_SIZE - 8);
           JP.world.Prerender();
+          JP.KeyMap[JP.Keys.MINUS] = null;
+          JP.KeyMap[JP.Keys.NUM_MINUS] = null;
           JP.needDraw = true;
         }
       break;
@@ -260,11 +268,12 @@ function loadWorld()
   if (JP.world !== null)
     return; // don't do this twice
 
+  JP.USE_ARCADE_CONTROLS = document.getElementById("useArcade").checked;
+
   JP.SetResolution();
   // remove the splash screen
   document.getElementById("splash").style.display = "none";
   document.getElementById('loading').style.display = "";
-//  JP.guimgr.RemoveWindow(JP.splash);
 
   // create the world
   JP.world = new JP.World();
