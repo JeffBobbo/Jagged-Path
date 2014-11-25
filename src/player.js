@@ -309,26 +309,27 @@ JP.Player.prototype.Talk = function()
 {
   if (JP.USE_ARCADE_CONTROLS)
   {
-    var a = [];
+    var ents = [];
     for (var i = 0; i < JP.world.entities.length; ++i)
     {
-      if (JP.world.entities[i].InRangeOfPlayer() === true)
-        a.push(i);
-    }
-    for (var i = 0; i < a.length; ++i)
-    {
-      if (JP.world.entities[a[i]].canTalk === false)
+      var ent = JP.world.entities[i];
+      if ((ent.type & JP.Entity.Type.NPC) === 0)
         continue;
 
-      if (JP.world.entities[a[i]].Talk() === true)
+      if (ent.InRangeOfPlayer() === true)
+        ents.push(ent);
+    }
+    for (var i = 0; i < ents.length; ++i)
+    {
+      if (ents[i].Talk() === true)
       {
-        var dx = this.posx - JP.world.entities[a[i]].posx;
-        var dy = this.posy - JP.world.entities[a[i]].posy;
-        if (dx === 1)
+        var dx = this.posx - ents[i].posx;
+        var dy = this.posy - ents[i].posy;
+        if (dx > 0 && dx > Math.abs(dy))
           this.direction = JP.Keys.A;
-        else if (dx === -1)
+        else if (dx <= 0 && dx > Math.abs(dy))
           this.direction = JP.Keys.D;
-        else if (dy === 1)
+        else if (dy > 0 && dy >= Math.abs(dx))
           this.direction = JP.Keys.W;
         else
           this.direction = JP.Keys.S;
