@@ -50,7 +50,7 @@
   },
   {
     "tile": "Savanna",
-    "minHeight": 20,
+    "minHeight": 10,
     "maxHeight": 25,
     "minHeat": 60,
     "maxHeat": -1
