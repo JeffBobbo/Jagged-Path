@@ -140,7 +140,7 @@ div#convoOptions
   text-align:center;
 }
 
-div#splash,div#loading
+div#splash,div#creation,div#loading,div#instruction
 {
   background-color:#444;
   position:relative;
@@ -152,6 +152,23 @@ div#splash,div#loading
   left:calc(50% - 200px);
   height:300px;
   width:400px;
+}
+
+div#instruction>p
+{
+  text-align:center;
+}
+div#creation>p
+{
+  text-align:center;
+}
+div#creation>span
+{
+  margin:auto;
+}
+div#creation>span>input
+{
+  width:80px;
 }
 
 a

@@ -52,12 +52,24 @@
           <button id="loadWorld" onclick="loadWorld()" style="width:120px">Load World</button>
           <br/>
           <button id="deleteWorld" onclick="JP.Delete()" style="width:120px" title="Delets current save, irrevesible">Delete World</button>
+          <br/>
+          <a href="#" onclick="document.getElementById('instruction').style.display = ''; document.getElementById('splash').style.display = 'none'"><h4>How to play</h4></a>
         </div>
       </div>
       <div id="loading" style="display:none;">
         <h1 id="loadingTitle"></h1>
         <h2 id="loadingDetail"></h2>
         <h2 id="loadingExtra"></h2>
+      </div>
+      <div id="instruction" style="display:none;">
+        <h1>How to play</h1>
+        <br/>
+        <p>WASD / Arrow Keys to move</p>
+        <p>Mouse to look</p>
+        <p>'T' to talk to a NPC</p>
+        <p>+/- to zoom view</p>
+        <br/>
+          <a href="#" onclick="document.getElementById('instruction').style.display = 'none'; document.getElementById('splash').style.display = ''"><h4>Close</h4></a>
       </div>
     </div>
 
