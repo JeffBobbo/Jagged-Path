@@ -136,22 +136,20 @@ JP.Item.Axe.prototype.Use = function()
   var tree = null;
   if (JP.USE_ARCADE_CONTROLS)
   {
-    var x = JP.player.relx;
-    var y = JP.player.rely;
     switch (JP.player.direction)
     {
       case JP.Keys.A:
-        tree = JP.Entity.FindByPos(x - 0.5, y + 0.5, JP.Entity.Type.TREE);
+        tree = JP.Entity.FindAroundPlayer(JP.Entity.Type.TREE, this.reach, JP.rad(-45), JP.rad(45), 0);
       break;
       case JP.Keys.D:
-        tree = JP.Entity.FindByPos(x + 1.5, y + 0.5, JP.Entity.Type.TREE);
+        tree = JP.Entity.FindAroundPlayer(JP.Entity.Type.TREE, this.reach, JP.rad(-45), JP.rad(45), Math.PI/2);
       break;
       case JP.Keys.W:
-        tree = JP.Entity.FindByPos(x + 0.5, y - 0.5, JP.Entity.Type.TREE);
+        tree = JP.Entity.FindAroundPlayer(JP.Entity.Type.TREE, this.reach, JP.rad(-45), JP.rad(45), Math.PI);
       break;
       case JP.Keys.S:
       default:
-        tree = JP.Entity.FindByPos(x + 0.5, y + 1.5, JP.Entity.Type.TREE);
+        tree = JP.Entity.FindAroundPlayer(JP.Entity.Type.TREE, this.reach, JP.rad(-45), JP.rad(45), -Math.PI/2);
       break;
     }
   }
