@@ -219,12 +219,12 @@ JP.Item.Tinderbox.prototype.Use = function()
   if (JP.USE_ARCADE_CONTROLS)
   {
     // check in front of us
-    var x = JP.player.posx;
-    var y = JP.player.posy;
+    var x = JP.player.relx + 0.5;
+    var y = JP.player.rely + 0.5;
     switch (JP.player.direction)
     {
       case JP.Keys.A:
-        if (JP.Entity.FindByPos(x - 1, y) === null && JP.world.terrain[x - 1][y].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x - 1, y) === null && JP.world.terrain[Math.floor(x - 1)][Math.floor(y)].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x - 1;
@@ -232,7 +232,7 @@ JP.Item.Tinderbox.prototype.Use = function()
         }
       break;
       case JP.Keys.D:
-        if (JP.Entity.FindByPos(x + 1, y) === null && JP.world.terrain[x + 1][y].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x + 1, y) === null && JP.world.terrain[Math.floor(x + 1)][Math.floor(y)].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x + 1;
@@ -240,7 +240,7 @@ JP.Item.Tinderbox.prototype.Use = function()
         }
       break;
       case JP.Keys.W:
-        if (JP.Entity.FindByPos(x, y - 1) === null && JP.world.terrain[x][y - 1].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x, y - 1) === null && JP.world.terrain[Math.floor(x)][Math.floor(y - 1)].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x;
@@ -249,7 +249,7 @@ JP.Item.Tinderbox.prototype.Use = function()
       break;
       case JP.Keys.S:
       default:
-        if (JP.Entity.FindByPos(x, y + 1) === null && JP.world.terrain[x][y + 1].constructor !== JP.Tile.Water)
+        if (JP.Entity.FindByPos(x, y + 1) === null && JP.world.terrain[Math.floor(x)][Math.floor(y + 1)].constructor !== JP.Tile.Water)
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x;
@@ -275,8 +275,8 @@ JP.Item.Tinderbox.prototype.Use = function()
     return false;
   }
 
-  JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * wood.GetSpec("power")));
-  JP.player.ItemDelta(wood.name, -1);
+  JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * JP.Item.Spec(wood, "power")));
+  JP.player.ItemDelta(wood, -1);
   new JP.Logger.LogItem("You started a fire.", false, false, false).Post();
   JP.needDraw = true;
 };
