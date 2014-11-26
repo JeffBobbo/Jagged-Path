@@ -23,6 +23,12 @@ var JP = JP || {
   needDraw: false,
 };
 
+JP.STATE = {
+  INIT: 0,
+  GEN:  1,
+  RUN:  2
+};
+
 // controls
 JP.Keys = JP.Keys || {
   A: 65,
@@ -68,7 +74,6 @@ JP.Initialize = function()
     document.getElementById('loadingTitle').textContent = "Retreiving game data";
     document.getElementById('loadingDetail').textContent = Commify(JP.Data.filesRec) + " of " + Commify(JP.Data.filesReq) + " received";
     document.getElementById('loadingExtra').textContent = 'Please Wait';
-    requestAnimationFrame(JP.Initialize);
     return;
   }
 
@@ -77,18 +82,16 @@ JP.Initialize = function()
   {
     document.getElementById('loadingTitle').textContent = "Loading world data";
     document.getElementById('loadingDetail').textContent = (prog * 100).toFixed(0) + '%';
-    requestAnimationFrame(JP.Initialize);
     return;
   }
-  requestAnimationFrame(JP.Generate);
-}
+  JP.gameState++;
+};
 
 JP.Generate = function()
 {
   if (JP.world.generationLevel < JP.World.Gen.DONE)
   {
     JP.world.GenerationTasks();
-    requestAnimationFrame(JP.Generate);
     return;
   }
   else
@@ -96,13 +99,32 @@ JP.Generate = function()
     document.getElementById('loading').style.display = "none";
     JP.player.Load();
     JP.world.Prerender();
-    requestAnimationFrame(JP.Idle);
   }
-}
+  JP.gameState++;
+};
+
+JP.GameLoop = function()
+{
+  JP.getTickCount(true); // update the tickcount
+  document.getElementById('fpsCounter').textContent = (1000 / JP.getFPS()).toFixed(0) + " fps";
+
+  switch (JP.gameState)
+  {
+    case JP.STATE.INIT:
+      JP.Initialize();
+    break;
+    case JP.STATE.GEN:
+      JP.Generate();
+    break;
+    case JP.STATE.RUN:
+      JP.Idle();
+    break;
+  }
+  requestAnimationFrame(JP.GameLoop);
+};
 
 JP.Idle = function()
 {
-  JP.getTickCount(true); // update the tickcount
   JP.KeyProcessing();
   //JP.player.Idle();
   for (var i = JP.world.entities.length - 1; i >= 0; i--)
@@ -118,9 +140,7 @@ JP.Idle = function()
     if (JP.world.entities[i].seppuku === true)
       JP.world.entities.splice(i, 1);
   };
-
   JP.Save();
-  requestAnimationFrame(JP.Idle);
 };
 
 JP.Save = function()
@@ -142,12 +162,12 @@ JP.Draw = function()
   JP.context = JP.canvas.getContext("2d");
   JP.tcontext = JP.tcanvas.getContext("2d");
 
-  document.getElementById('fpsCounter').textContent = (1000 / JP.getFPS()).toFixed(0) + " fps";
 
   if (JP.needDraw === false)
     return;
 
-  JP.world.Draw();
+  if (JP.world !== null)
+    JP.world.Draw();
 
   JP.needDraw = false;
 };
@@ -263,13 +283,14 @@ function newWorld()
   JP.Delete();
 
   loadWorld();
-}
+};
 
 function loadWorld()
 {
   if (JP.world !== null)
     return; // don't do this twice
 
+  JP.gameState = JP.STATE.INIT;
   JP.USE_ARCADE_CONTROLS = document.getElementById("useArcade").checked;
 
   JP.SetResolution();
@@ -285,7 +306,7 @@ function loadWorld()
   JP.Logger.logNode = document.getElementById('eventLog');
   JP.canvas.focus();
 
-  requestAnimationFrame(JP.Initialize);
+  requestAnimationFrame(JP.GameLoop);
 };
 
 JP.Delete = function()
@@ -307,8 +328,8 @@ function pageLoad()
 {
   // setup the canvas
   JP.canvas = document.getElementById('canvas');
-  JP.context = JP.canvas.getContext("2d");
   JP.tcanvas = document.getElementById('tcanvas');
+  JP.context = JP.canvas.getContext("2d");
   JP.tcontext = JP.tcanvas.getContext("2d");
   JP.SetResolution();
 
