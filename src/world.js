@@ -149,12 +149,16 @@ JP.World.prototype.GenerationTasks = function()
       }
     break;
     case JP.World.Gen.RADIAL:
+      ret = true;
+      this.generationLevel++;
+      /*
       str = "Creating Radial Map";
       ret = this.CreateRadialMap();
       if (ret === true)
       {
         this.generationLevel++;
       }
+      */
     break;
     case JP.World.Gen.HEIGHT:
       str = "Creating Height Map";
@@ -335,7 +339,7 @@ JP.World.prototype.FilterMap = function()
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    var radius = this.tmpData[x][y].radius;
+    var radius = 3;// this means a kernel size of 7x7
     var filter = JP.Gaussian.getFilter(radius);
     var x0 = x - (radius - 1);
     var y0 = y - (radius - 1);
