@@ -68,6 +68,7 @@ JP.Initialize = function()
     document.getElementById('loadingTitle').textContent = "Retreiving game data";
     document.getElementById('loadingDetail').textContent = Commify(JP.Data.filesRec) + " of " + Commify(JP.Data.filesReq) + " received";
     document.getElementById('loadingExtra').textContent = 'Please Wait';
+    requestAnimationFrame(JP.Initialize);
     return;
   }
 
@@ -76,10 +77,10 @@ JP.Initialize = function()
   {
     document.getElementById('loadingTitle').textContent = "Loading world data";
     document.getElementById('loadingDetail').textContent = (prog * 100).toFixed(0) + '%';
+    requestAnimationFrame(JP.Initialize);
     return;
   }
-  clearInterval(JP.intervalID);
-  JP.intervalID = setInterval(function() {JP.Generate();}, 5);
+  requestAnimationFrame(JP.Generate);
 }
 
 JP.Generate = function()
@@ -87,6 +88,7 @@ JP.Generate = function()
   if (JP.world.generationLevel < JP.World.Gen.DONE)
   {
     JP.world.GenerationTasks();
+    requestAnimationFrame(JP.Generate);
     return;
   }
   else
@@ -94,8 +96,7 @@ JP.Generate = function()
     document.getElementById('loading').style.display = "none";
     JP.player.Load();
     JP.world.Prerender();
-    clearInterval(JP.intervalID);
-    JP.intervalID = setInterval(function() {JP.Idle();}, 20);
+    requestAnimationFrame(JP.Idle);
   }
 }
 
@@ -119,6 +120,7 @@ JP.Idle = function()
   };
 
   JP.Save();
+  requestAnimationFrame(JP.Idle);
 };
 
 JP.Save = function()
@@ -283,8 +285,7 @@ function loadWorld()
   JP.Logger.logNode = document.getElementById('eventLog');
   JP.canvas.focus();
 
-  clearInterval(JP.intervalID);
-  JP.intervalID = setInterval(function() {JP.Initialize();}, 5);
+  requestAnimationFrame(JP.Initialize);
 };
 
 JP.Delete = function()
@@ -328,17 +329,4 @@ function pageLoad()
   JP.canvas.onkeyup     = function(event) {JP.ProcessKey(event); };
   JP.canvas.onmousemove = function(event) {JP.ProcessMouse(event); };
   JP.canvas.onmousedown = function(event) {JP.ProcessMouse(event); };
-
-/*  JP.guimgr = new JP.GUI.Manager();
-  JP.splash = JP.guimgr.CreateWindow();
-  JP.guimgr.windowList[JP.splash].visible = true;
-  var cb = {};
-  cb[JP.CallbackType.MOUSE1] = start;
-  var btn = JP.guimgr.windowList[JP.splash].CreateElement("Start", JP.guicontext.width * 0.4, JP.guicontext.height * 0.4, JP.guicontext.width * 0.2, JP.guicontext.height * 0.2, cb);
-  JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New");
-  JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEIN, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("22px Courier New")});
-  JP.guimgr.windowList[JP.splash].childList[btn].RegisterEvent(JP.CallbackType.MOUSEOUT, function() {JP.guimgr.windowList[JP.splash].childList[btn].SetFont("20px Courier New")});
-  // draw the gui until we start
-  JP.intervalID = setInterval(function() {JP.guimgr.Draw();}, 5);
-  */
 };
