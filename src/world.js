@@ -246,7 +246,7 @@ JP.World.prototype.CreateMap = function()
     this.tmpData[x][y] = {};
   }
 
-  return x / this.tmpData.length;
+  return x / JP.WIDTH;
 };
 
 
