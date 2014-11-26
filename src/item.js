@@ -260,7 +260,7 @@ JP.Item.Tinderbox.prototype.Use = function()
   {
     var px = JP.player.relx + 0.5;
     var py = JP.player.rely + 0.5;
-    if (JP.Entity.FindByPos(px, py) === -1)
+    if (JP.Entity.FindByPos(px, py) === null)
     {
       clearSpot = {};
       clearSpot.x = px;
@@ -272,7 +272,6 @@ JP.Item.Tinderbox.prototype.Use = function()
     new JP.Logger.LogItem("There is nowhere clear to make a fire.", false, false, false).Post();
     return false;
   }
-
   JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * JP.Item.Spec(wood, "power")));
   JP.player.ItemDelta(wood, -1);
   new JP.Logger.LogItem("You started a fire.", false, false, false).Post();
