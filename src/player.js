@@ -6,6 +6,8 @@
 
 JP.Player = function()
 {
+  this.fName = "";
+  this.sName = "";
   this.posx = -1;
   this.posy = -1;
   this.relx = -1; // floats
@@ -54,6 +56,8 @@ JP.Player = function()
   // end data
   // saveKeys -- This is what gets saved or loaded -- key names of the JP.Player object
   this.saveKeys = [
+    "fName",
+    "sName",
     "relx",
     "rely",
     "direction",
