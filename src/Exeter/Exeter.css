@@ -1,0 +1,12 @@
+@font-face {
+    font-family: 'Exeter';
+    src: url('Exeter.eot');
+    src: url('Exeter.eot?#iefix') format('embedded-opentype'),
+         url('Exeter.woff') format('woff'),
+         url('Exeter.ttf') format('truetype'),
+         url('Exeter.svg#Exeter') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
