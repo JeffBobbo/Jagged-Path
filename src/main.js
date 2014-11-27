@@ -29,27 +29,6 @@ JP.STATE = {
   RUN:  2
 };
 
-// controls
-JP.Keys = JP.Keys || {
-  A: 65,
-  W: 87,
-  D: 68,
-  S: 83,
-  LEFT:  37,
-  UP:    38,
-  RIGHT: 39,
-  DOWN:  40,
-
-  C: 67, // chop wood
-  T: 84, // talk
-  F: 70, // fire
-
-  PLUS: 187, // zoom
-  MINUS: 189,
-  NUM_PLUS: 107,
-  NUM_MINUS: 109
-};
-
 JP.MouseState = JP.MouseState || {
   x: -1,
   y: -1,
@@ -186,6 +165,29 @@ JP.ProcessMouse = function(event)
   return false;
 };
 
+
+
+// controls
+JP.Keys = JP.Keys || {
+  A: 65,
+  W: 87,
+  D: 68,
+  S: 83,
+  LEFT:  37,
+  UP:    38,
+  RIGHT: 39,
+  DOWN:  40,
+
+  C: 67, // chop wood
+  T: 84, // talk
+  F: 70, // fire
+  O: 79, // toggle control scheme (temp)
+
+  PLUS: 187, // zoom
+  MINUS: 189,
+  NUM_PLUS: 107,
+  NUM_MINUS: 109
+};
 JP.KeyMap = {};
 JP.ProcessKey = function(evt)
 {
@@ -226,15 +228,15 @@ JP.KeyProcessing = function(key)
       //actions
       case JP.Keys.C:
         JP.player.ChopTree();
-          JP.KeyMap[JP.Keys.C] = null;
+        JP.KeyMap[JP.Keys.C] = null;
       break;
       case JP.Keys.T:
         JP.player.Talk();
-          JP.KeyMap[JP.Keys.T] = null;
+        JP.KeyMap[JP.Keys.T] = null;
       break;
       case JP.Keys.F:
         JP.player.Fire();
-          JP.KeyMap[JP.Keys.F] = null;
+        JP.KeyMap[JP.Keys.F] = null;
       break;
 
       // map scaling
@@ -259,6 +261,10 @@ JP.KeyProcessing = function(key)
           JP.KeyMap[JP.Keys.NUM_MINUS] = null;
           JP.needDraw = true;
         }
+      break;
+      case JP.Keys.O: // temp hack for swapping control styles
+        JP.USE_ARCADE_CONTROLS = !JP.USE_ARCADE_CONTROLS;
+        JP.KeyMap[JP.Keys.O] = null;
       break;
     }
   }

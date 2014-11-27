@@ -17,22 +17,16 @@ JP.Player = function()
   this.direction;
   this.imgBase = 'img/player';
 
-  if (JP.USE_ARCADE_CONTROLS === true)
-  {
-    this.imgUp = new Image();
-    this.imgUp.src = this.imgBase + '_back.png';
-    this.imgLeft = new Image();
-    this.imgLeft.src = this.imgBase + '_left.png';
-    this.imgRight = new Image();
-    this.imgRight.src = this.imgBase + '_right.png';
-    this.imgDown = new Image();
-    this.imgDown.src = this.imgBase + '_front.png';
-  }
-  else
-  {
-    this.img = new Image();
-    this.img.src = this.imgBase + '.png';
-  }
+  this.imgUp = new Image();
+  this.imgUp.src = this.imgBase + '_back.png';
+  this.imgLeft = new Image();
+  this.imgLeft.src = this.imgBase + '_left.png';
+  this.imgRight = new Image();
+  this.imgRight.src = this.imgBase + '_right.png';
+  this.imgDown = new Image();
+  this.imgDown.src = this.imgBase + '_front.png';
+  this.img = new Image();
+  this.img.src = this.imgBase + '.png';
 
   // inventory stuff
   this.gold = 0; // monies
