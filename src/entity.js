@@ -302,9 +302,10 @@ JP.Entity.FindAroundPlayer = function(type, range, st, et, srct)
   return null;
 };
 
-JP.Entity.TalkPane = function(ent)
+JP.Entity.TalkPane = function(ent, end)
 {
   ent = typeof ent === "number" ? JP.Entity.FindByID(ent) : ent;
+  end = end || false;
 
   var name = document.getElementById("convoName");
   var message = document.getElementById("convoMessage");
@@ -314,6 +315,12 @@ JP.Entity.TalkPane = function(ent)
   name.textContent = "";
   message.textContent = "";
   options.textContent = "";
+
+  if (end === true)
+  {
+    ent.convoState = null;
+    return;
+  }
 
   var dialog = JP.Dialog.Get(ent.convoState);
 
@@ -368,6 +375,17 @@ JP.Entity.TalkPane = function(ent)
         options.appendChild(opt);
         options.appendChild(document.createElement("br"));
       }
+    }
+    else
+    {
+      // this is the end of the conversation, add a close button
+      var close = document.createElement("a");
+      close.textContent = "Close";
+      close.className = "closeConvo";
+      close.href = "#";
+      close.setAttribute("data-ent", ent.id);
+      close.onclick = function() { JP.Entity.TalkPane(this.getAttribute("data-ent"), true); };
+      options.appendChild(close);
     }
   }
 };
