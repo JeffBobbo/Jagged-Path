@@ -352,8 +352,8 @@ function pageLoad()
     document.getElementById('newWorld').disabled    = true;
   }
 
-  JP.canvas.onkeydown   = function(event) {JP.ProcessKey(event); };
-  JP.canvas.onkeyup     = function(event) {JP.ProcessKey(event); };
+  document.onkeydown   = function(event) {JP.ProcessKey(event); };
+  document.onkeyup     = function(event) {JP.ProcessKey(event); };
   JP.canvas.onmousemove = function(event) {JP.ProcessMouse(event); };
   JP.canvas.onmousedown = function(event) {JP.ProcessMouse(event); };
 };
