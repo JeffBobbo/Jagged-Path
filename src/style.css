@@ -94,13 +94,18 @@ div#inventory>div
 }
 table#inventTable
 {
-  position:relative;
+  position:fixed;
   width:100%;
   text-align:left;
 }
 table#inventTable>tr>*
 {
   width:50%;
+}
+span#rightPanelBottom
+{
+  position:fixed;
+  bottom:4px;
 }
 p#fpsCounter
 {

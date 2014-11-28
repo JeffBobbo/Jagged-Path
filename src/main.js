@@ -76,8 +76,12 @@ JP.Generate = function()
   else
   {
     document.getElementById('loading').style.display = "none";
+
+
     JP.player.Load();
     JP.world.Prerender();
+    document.getElementById('eventLog').style.display = "";
+    document.getElementById('inventory').style.display = "";
   }
   JP.gameState++;
 };
@@ -303,6 +307,10 @@ function loadWorld()
   // remove the splash screen
   document.getElementById("splash").style.display = "none";
   document.getElementById('loading').style.display = "";
+
+  // show FPS counter
+  document.getElementById('fpsCounter').style.display = "";
+
 
   // create the world
   JP.world = new JP.World();
