@@ -89,12 +89,15 @@ JP.Player.prototype.Load = function()
   {
     try
     {
-      this.ItemDelta(keys[i], invent[keys[i]], true);
+      this.ItemDelta(keys[i], invent[keys[i]], true, false);
     }
     catch(msg)
     {
     }
   }
+
+  this.ItemUpdate();
+  this.GoldUpdate();
 
   this.posx = Math.floor(this.relx);
   this.posy = Math.floor(this.rely);
@@ -149,10 +152,11 @@ JP.Player.prototype.ItemQuantOfClass = function(itemClass)
   return quant;
 };
 
-JP.Player.prototype.ItemDelta = function(name, quant, absolute)
+JP.Player.prototype.ItemDelta = function(name, quant, absolute, update)
 {
   quant = quant || 1;
   absolute = absolute || false;
+  update = update || true;
 
   //make sure the item exists
   if (JP.Item.Spec(name, "name") === undefined)
@@ -165,7 +169,9 @@ JP.Player.prototype.ItemDelta = function(name, quant, absolute)
 
   if (this.inventory[name] <= 0)
     delete this.inventory[name];
-  this.ItemUpdate();
+
+  if (update === true)
+    this.ItemUpdate();
 };
 
 JP.Player.prototype.ItemUpdate = function()
@@ -200,7 +206,13 @@ JP.Player.prototype.DeltaGold = function(quant, absolute)
   if (gold < 0)
     return false;
   this.gold = gold;
+  this.GoldUpdate();
   return true;
+};
+
+JP.Player.prototype.GoldUpdate = function()
+{
+  document.getElementById('goldCount').textContent = SIfy(this.gold) + " Gold";
 };
 
 JP.Player.prototype.Place = function()
