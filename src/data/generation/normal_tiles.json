@@ -1,28 +1,28 @@
 [
   {
     "tile": "Water",
-    "minHeight": -1,
-    "maxHeight": 10,
+    "minHeight": -100,
+    "maxHeight": 0,
     "minHeat": 10,
-    "maxHeat": -1
+    "maxHeat": null
   },
   {
     "tile": "Ice",
-    "minHeight": -1,
-    "maxHeight": 10,
-    "minHeat": -1,
+    "minHeight": -100,
+    "maxHeight": 0,
+    "minHeat": null,
     "maxHeat": 10
   },
   {
     "tile": "Snow",
-    "minHeight": 10,
+    "minHeight": 0,
     "maxHeight": 55,
-    "minHeat": -1,
+    "minHeat": null,
     "maxHeat": 10
   },
   {
     "tile": "Beach",
-    "minHeight": 10,
+    "minHeight": 0,
     "maxHeight": 25,
     "minHeat": 10,
     "maxHeat": 60
@@ -30,43 +30,43 @@
   {
     "tile": "Grass",
     "minHeight": 25,
-    "maxHeight": 53,
+    "maxHeight": 50,
     "minHeat": 10,
-    "maxHeat": 60
+    "maxHeat": 50
   },
   {
     "tile": "Dirt",
-    "minHeight": 53,
+    "minHeight": 50,
     "maxHeight": 55,
     "minHeat": 10,
-    "maxHeat": 60
+    "maxHeat": 50
   },
   {
     "tile": "Desert",
     "minHeight": 25,
     "maxHeight": 55,
-    "minHeat": 60,
-    "maxHeat": -1
+    "minHeat": 70,
+    "maxHeat": 100
   },
   {
     "tile": "Savanna",
-    "minHeight": 10,
-    "maxHeight": 25,
-    "minHeat": 60,
-    "maxHeat": -1
+    "minHeight": 25,
+    "maxHeight": 55,
+    "minHeat": 50,
+    "maxHeat": 70
   },
   {
     "tile": "Mountain",
     "minHeight": 55,
-    "maxHeight": -1,
-    "minHeat": 10,
-    "maxHeat": -1
+    "maxHeight": 100,
+    "minHeat": 20,
+    "maxHeat": null
   },
   {
     "tile": "SnowyMountain",
     "minHeight": 55,
-    "maxHeight": -1,
-    "minHeat": -1,
-    "maxHeat": 10
+    "maxHeight": 100,
+    "minHeat": null,
+    "maxHeat": 20
   }
 ]

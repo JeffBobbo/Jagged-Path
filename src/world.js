@@ -132,8 +132,6 @@ JP.World.Gen.PLACEMENT = 6;
 JP.World.Gen.SAVING    = 7;
 JP.World.Gen.DONE      = 8;
 
-JP.World.Gen.BLOB_SIZE = 1; // how big blobs to do, a blob is a square of this * this
-
 JP.World.prototype.GenerationTasks = function()
 {
   var ret;
@@ -275,21 +273,15 @@ JP.World.prototype.CreateHeightMap = function()
     JP.World.prototype.CreateHeightMap.x = 0;
     noise.seed(Math.random());
   }
-  else
-    JP.World.prototype.CreateHeightMap.x += JP.World.Gen.BLOB_SIZE;
 
-  var x = JP.World.prototype.CreateHeightMap.x;
+  var x = JP.World.prototype.CreateHeightMap.x++;
 
   if (x === this.tmpData.length)
     return true; // return true when we're done
 
-  for (var y = 0; y < this.tmpData[x].length; y += JP.World.Gen.BLOB_SIZE)
+  for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    for (var i = 0; i < JP.World.Gen.BLOB_SIZE; ++i)
-    {
-      for (var j = 0; j < JP.World.Gen.BLOB_SIZE; ++j)
-        this.tmpData[x + i][y + j].height = Math.abs(noise.perlin2(((x + i) * 4) / this.tmpData.length, ((y + j) * 4) / this.tmpData[x+i].length)) * 100;
-    }
+    this.tmpData[x][y].height = noise.perlin2((x * 4) / this.tmpData.length, (y * 4) / this.tmpData[x].length) * 100;
   }
   return x / this.tmpData.length;
 };
@@ -301,26 +293,20 @@ JP.World.prototype.CreateHeatMap = function()
     JP.World.prototype.CreateHeatMap.x = 0;
     JP.World.prototype.CreateHeatMap.belt = randRange(1 / 3, 2 / 3);
   }
-  else
-    JP.World.prototype.CreateHeatMap.x += JP.World.Gen.BLOB_SIZE;
 
-  var x = JP.World.prototype.CreateHeatMap.x;
+  var x = JP.World.prototype.CreateHeatMap.x++;
 
   if (x === this.tmpData.length)
     return true; // return true when we're done
 
   var hotSpotBelt = JP.World.prototype.CreateHeatMap.belt;
     
-  for (var y = 0; y < this.tmpData[x].length; y += JP.World.Gen.BLOB_SIZE)
+  for (var y = 0; y < this.tmpData[x].length; ++y)
   {
     var heat = y / this.tmpData[x].length;
     heat = 1 - (Math.abs(hotSpotBelt - heat) * 2);
     heat = Math.max(1.0, heat * randRange(0.5, 2.0) * 100);
-    for (var i = 0; i < JP.World.Gen.BLOB_SIZE; ++i)
-    {
-      for (var j = 0; j < JP.World.Gen.BLOB_SIZE; ++j)
-        this.tmpData[x + i][y + j].heat = heat;
-    }
+    this.tmpData[x][y].heat = heat;
   }
   return x / this.tmpData.length;
 };
@@ -395,13 +381,13 @@ JP.World.prototype.TileMap = function()
     {
       // data about where one particular tile should appear
       var setting = JP.World.Generation.tiles[i];
-      if (setting.minHeight !== -1 && height < setting.minHeight)
+      if (setting.minHeight !== null && height < setting.minHeight)
         continue;
-      if (setting.maxHeight !== -1 && height >= setting.maxHeight)
+      if (setting.maxHeight !== null && height >= setting.maxHeight)
         continue;
-      if (setting.minHeat !== -1 && heat < setting.minHeat)
+      if (setting.minHeat !== null && heat < setting.minHeat)
         continue;
-      if (setting.maxHeat !== -1 && heat >= setting.maxHeat)
+      if (setting.maxHeat !== null && heat >= setting.maxHeat)
         continue;
       possibleTiles.push(setting.tile);
     }
