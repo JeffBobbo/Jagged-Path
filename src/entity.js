@@ -231,7 +231,7 @@ JP.Entity.Entity.prototype.Death = function(dropLevel)
       }
       else
       {
-        JP.player.DeltaGold(randIntRange(this.goldMin, this.goldMax));
+        JP.player.GoldDelta(randIntRange(this.goldMin, this.goldMax));
       }
     }
   }
@@ -348,7 +348,7 @@ JP.Entity.TalkPane = function(ent, end)
         JP.player.ItemDelta(dialog.itemTransfer[i].itemName, dialog.itemTransfer[i].itemQuant);
     }
     if (dialog.goldTransfer !== undefined)
-      JP.player.DeltaGold(dialog.goldTransfer);
+      JP.player.GoldDelta(dialog.goldTransfer);
 
     // temporary measure for tweaking player stats until skills are done
     if (dialog.playerStat !== undefined)
@@ -536,7 +536,7 @@ JP.Entity.ItemBox.prototype.Move = function()
     }
     else if (this.quant > 0)
     {
-      JP.player.DeltaGold(this.quant);
+      JP.player.GoldDelta(this.quant);
       msg = "You picked up " + Commify(this.quant) + " Gold Coins";
     }
     else

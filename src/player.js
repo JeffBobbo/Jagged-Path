@@ -193,7 +193,7 @@ JP.Player.prototype.ItemUpdate = function()
   }
 };
 
-JP.Player.prototype.DeltaGold = function(quant, absolute)
+JP.Player.prototype.GoldDelta = function(quant, absolute)
 {
   absolute = absolute || false;
   if (quant === undefined)
