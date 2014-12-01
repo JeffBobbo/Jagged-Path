@@ -24,8 +24,8 @@
     "tile": "Beach",
     "minHeight": 0,
     "maxHeight": 25,
-    "minHeat": 10,
-    "maxHeat": 60
+    "minHeat": null,
+    "maxHeat": null
   },
   {
     "tile": "Grass",
