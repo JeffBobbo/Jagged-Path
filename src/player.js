@@ -236,7 +236,7 @@ JP.Player.prototype.Move = function(dir)
 {
   var dt = JP.getTickDelta();
   var dist = (this.speed * JP.PIXEL_SIZE) * (dt / 1000);
-  if (JP.world.terrain[this.posx][this.posy].constructor === JP.Tile.Water)
+  if (JP.world.terrain[this.posx][this.posy].name === "Water")
     dist *= 0.5; // slower in water
 
   if (JP.USE_ARCADE_CONTROLS)
