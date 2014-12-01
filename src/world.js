@@ -226,10 +226,8 @@ JP.World.prototype.CreateMap = function()
     this.tmpData = []; // this stores raw data
     this.entities = [];
   }
-  else
-    JP.World.prototype.CreateMap.x++;
 
-  var x = JP.World.prototype.CreateMap.x;
+  var x = JP.World.prototype.CreateMap.x++;
 
   if (x === JP.WIDTH)
     return true; // return true when we're done
@@ -252,10 +250,8 @@ JP.World.prototype.CreateRadialMap = function()
 {
   if (JP.World.prototype.CreateRadialMap.x === undefined)
     JP.World.prototype.CreateRadialMap.x = 0;
-  else
-    JP.World.prototype.CreateRadialMap.x++;
 
-  var x = JP.World.prototype.CreateRadialMap.x;
+  var x = JP.World.prototype.CreateRadialMap.x++;
 
   if (x === this.tmpData.length)
     return true; // return true when we're done
@@ -315,10 +311,8 @@ JP.World.prototype.FilterMap = function()
 {
   if (JP.World.prototype.FilterMap.x === undefined)
     JP.World.prototype.FilterMap.x = 0;
-  else
-    JP.World.prototype.FilterMap.x++;
 
-  var x = JP.World.prototype.FilterMap.x;
+  var x = JP.World.prototype.FilterMap.x++;
 
   if (x === this.tmpData.length)
     return true; // return true when we're done
@@ -362,10 +356,8 @@ JP.World.prototype.TileMap = function()
 {
   if (JP.World.prototype.TileMap.x === undefined)
     JP.World.prototype.TileMap.x = 0;
-  else
-    JP.World.prototype.TileMap.x++;
 
-  var x = JP.World.prototype.TileMap.x;
+  var x = JP.World.prototype.TileMap.x++;
 
   if (x === this.mapData.length)
     return true; // return true when we're done
@@ -402,10 +394,8 @@ JP.World.prototype.EntityMap = function()
 {
   if (JP.World.prototype.EntityMap.x === undefined)
     JP.World.prototype.EntityMap.x = 0;
-  else
-    JP.World.prototype.EntityMap.x++;
 
-  var x = JP.World.prototype.EntityMap.x;
+  var x = JP.World.prototype.EntityMap.x++;
   
   if (x === this.mapData.length)
   {
