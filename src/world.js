@@ -227,6 +227,7 @@ JP.World.prototype.CreateMap = function()
     this.mapData = []; // this stores data while we generate the map
     this.tmpData = []; // this stores raw data
     this.entities = [];
+    this.spawners = [];
   }
 
   var x = JP.World.prototype.CreateMap.x++;
