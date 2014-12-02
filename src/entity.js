@@ -508,6 +508,7 @@ JP.Entity.ItemBox = function()
   this.imgPath = 'item.png';
   this.item = null;
   this.quant = null;
+  this.size = 0.75;
 };
 JP.Entity.ItemBox.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.ItemBox.prototype.constructor = JP.Entity.ItemBox;
@@ -559,14 +560,15 @@ JP.Entity.ItemBox.prototype.Move = function()
   }
   if (distance < 6) // step towards the player
   {
-    // TODO: FIX
     var dx = (JP.player.relx - this.relx) / distance;
     var dy = (JP.player.rely - this.rely) / distance;
-    var speed = 3/1000;
+    var speed = 2.5/1000;
     dx *= speed * JP.getTickDelta();
     dy *= speed * JP.getTickDelta();
     this.relx += dx;
+    Bound(0, JP.world.terrain.length - 1, this.relx)
     this.rely += dy;
+    Bound(0, JP.world.terrain[0].length - 1, this.rely)
     JP.needDraw = true;
   }
   this.posx = Math.floor(this.relx);
