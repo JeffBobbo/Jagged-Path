@@ -1,14 +1,14 @@
 [
   {
     "tile": "Water",
-    "minHeight": -100,
+    "minHeight": null,
     "maxHeight": 0,
     "minHeat": 10,
     "maxHeat": null
   },
   {
     "tile": "Ice",
-    "minHeight": -100,
+    "minHeight": null,
     "maxHeight": 0,
     "minHeat": null,
     "maxHeat": 10
@@ -46,7 +46,7 @@
     "minHeight": 25,
     "maxHeight": 55,
     "minHeat": 70,
-    "maxHeat": 100
+    "maxHeat": null
   },
   {
     "tile": "Savanna",
