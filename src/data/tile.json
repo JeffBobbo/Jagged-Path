@@ -1,5 +1,10 @@
 [
   {
+    "name": "Invalid",
+    "colour": "#000000",
+    "spawnSafe": true
+  },
+  {
     "name": "Beach",
     "colour": "#EFD279",
     "spawnSafe": true
