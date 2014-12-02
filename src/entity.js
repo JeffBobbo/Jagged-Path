@@ -138,7 +138,7 @@ JP.Entity.Entity = function(x, y, lifespan)
 
 JP.Entity.Entity.prototype.SetImage = function(imgPath)
 {
-  this.imgPath = this.imgPath || imgPath;
+  this.imgPath = imgPath || this.imgPath;
   this.img = this.img || new Image();
   this.img.src = 'img/' + this.imgPath;
 };
