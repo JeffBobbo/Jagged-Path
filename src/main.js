@@ -110,6 +110,8 @@ JP.Idle = function()
 {
   JP.KeyProcessing();
   //JP.player.Idle();
+  for (var i = JP.world.spawners.length - 1; i >= 0; i--)
+    JP.world.spawners[i].Idle();
   for (var i = JP.world.entities.length - 1; i >= 0; i--)
   {
     JP.world.entities[i].Idle();
@@ -120,8 +122,20 @@ JP.Idle = function()
   // remove any seppuku'd entities
   for (var i = JP.world.entities.length - 1; i >= 0; i--)
   {
-    if (JP.world.entities[i].seppuku === true)
+    var ent = JP.world.entities[i]
+    if (ent.seppuku === true)
+    {
       JP.world.entities.splice(i, 1);
+      
+      if (ent.spawner !== null)
+      {
+        for (var j = ent.spawner.children.length - 1; j >= 0; j--)
+        {
+          if (ent.spawner.children[j] === ent.id)
+            ent.spawner.children.splice(j, 1);
+        };
+      }
+    }
   };
   JP.Save();
 };

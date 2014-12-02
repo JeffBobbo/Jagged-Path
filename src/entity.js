@@ -109,9 +109,6 @@ JP.Entity.RandomName = function(s)
 JP.Entity.Entity = function(x, y, lifespan)
 {
   this.name = "";
-  this.givenFName = "";
-  this.givenSName = "";
-  this.gender = randTrue(); // 0 female, 1 male
   this.id = JP.Entity.ID++;
   this.img = undefined;
   this.imgPath = undefined;
@@ -128,9 +125,7 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.moveGoal = {x: x, y: y, cx: x, cy: y};
   this.timeToLive = JP.getTickCount() + lifespan || -1;
 
-  // dialog stuff
-  this.conversation = null;
-  this.convoState = null;
+  this.spawner = null;
 
   // item drops on death
   // array of objects like: {item, chance};
@@ -235,6 +230,7 @@ JP.Entity.Entity.prototype.Death = function(dropLevel)
       }
     }
   }
+
 
   this.seppuku = true;
 //  JP.world.entities.splice(JP.Entity.FindByID(this.id), 1);
@@ -448,6 +444,14 @@ JP.Entity.NPC = function()
   this.type = JP.Entity.Type.NPC;
   this.imgPath ='lumberjack.png';
   this.canMove = false;
+
+  this.givenFName = "";
+  this.givenSName = "";
+  this.gender = randTrue(); // 0 female, 1 male
+
+  // dialog stuff
+  this.conversation = null;
+  this.convoState = null;
 };
 JP.Entity.NPC.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.NPC.prototype.constructor = JP.Entity.NPC;
@@ -547,11 +551,12 @@ JP.Entity.ItemBox.prototype.Move = function()
   }
   if (distance < 6) // step towards the player
   {
+    // TODO: FIX
     var dx = (JP.player.relx - this.relx) / distance;
     var dy = (JP.player.rely - this.rely) / distance;
-    var speed = 30 / 1000;
-    dx = Normalize([dx, dy])[0] * speed * JP.getTickDelta();
-    dy = Normalize([dx, dy])[1] * speed * JP.getTickDelta();
+    var speed = 3/1000;
+    dx *= speed * JP.getTickDelta();
+    dy *= speed * JP.getTickDelta();
     this.relx += dx;
     this.rely += dy;
     JP.needDraw = true;

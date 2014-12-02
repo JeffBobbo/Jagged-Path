@@ -8,6 +8,7 @@ JP.World = function()
 {
   this.terrain  = null;
   this.entities = null;
+  this.spawners = null;
   this.mapData  = null;
   this.generationLevel = 0;
 };
@@ -88,6 +89,7 @@ JP.World.prototype.Load = function()
     this.mapData = [];
     this.tmpData = [];
     this.entities = [];
+    this.spawners = [];
   }
   var x = JP.World.prototype.Load.x++;
 
@@ -402,6 +404,9 @@ JP.World.prototype.EntityMap = function()
     JP.player.Place();
     if (this.terrain[JP.player.posx][JP.player.posy].spawnSafe === true)
       this.entities.unshift(JP.Entity.Create("Lumberjack", JP.player.posx, JP.player.posy)); // place a woodsman with the player
+    var testSpawn = new JP.SpawnItem("Gold", JP.player.posx+5, JP.player.posy+5);
+    testSpawn.boxQuant = 30;
+    this.spawners.unshift(testSpawn);
     return true; // return true when we're done
   }
 
