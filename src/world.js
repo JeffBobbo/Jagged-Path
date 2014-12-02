@@ -402,11 +402,6 @@ JP.World.prototype.EntityMap = function()
   if (x === this.mapData.length)
   {
     JP.player.Place();
-    if (this.terrain[JP.player.posx][JP.player.posy].spawnSafe === true)
-      this.entities.unshift(JP.Entity.Create("Lumberjack", JP.player.posx, JP.player.posy)); // place a woodsman with the player
-    var testSpawn = new JP.SpawnItem("Gold", JP.player.posx+5, JP.player.posy+5);
-    testSpawn.boxQuant = 30;
-    this.spawners.unshift(testSpawn);
     return true; // return true when we're done
   }
 
