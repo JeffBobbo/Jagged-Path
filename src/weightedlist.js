@@ -52,4 +52,4 @@ JP.WeightedList.prototype.ChooseRandom = function()
       return this.data[i].data;
   };
   return null;
-}
+};
