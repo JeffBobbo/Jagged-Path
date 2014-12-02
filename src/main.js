@@ -79,6 +79,16 @@ JP.Generate = function()
 
 
     JP.player.Load();
+
+    // temp hack
+    if (JP.world.terrain[Math.floor(JP.player.relx)][Math.floor(JP.player.rely)].spawnSafe === true)
+      JP.world.entities.unshift(JP.Entity.Create("Lumberjack", Math.floor(JP.player.relx), Math.floor(JP.player.rely))); // place a woodsman with the player
+    var testSpawn = new JP.SpawnItem("Gold", JP.player.relx, JP.player.rely);
+    testSpawn.boxQuant = 10;
+    testSpawn.interval = 120*1000; // two minutes
+    JP.world.spawners.unshift(testSpawn);
+
+
     JP.world.Prerender();
     document.getElementById('eventLog').style.display = "";
     document.getElementById('inventory').style.display = "";
