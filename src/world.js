@@ -280,7 +280,7 @@ JP.World.prototype.CreateHeightMap = function()
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    this.tmpData[x][y].height = noise.perlin2((x * 4) / this.tmpData.length, (y * 4) / this.tmpData[x].length) * 100;
+    this.tmpData[x][y].height = noise.perlin2(x / 100, y / 100) * 100;
   }
   return x / this.tmpData.length;
 };
