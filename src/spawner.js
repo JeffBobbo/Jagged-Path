@@ -19,7 +19,7 @@ JP.SpawnBase = function(progeny, x, y)
   this.rely = y || -1;
 
   // spawner area
-  this.radius = 3;
+  this.radius = 2;
 
   // what we can actually spawn
   this.progeny = progeny || null;
@@ -67,7 +67,7 @@ JP.SpawnBase.prototype.CanSpawn = function()
   if (count >= this.num) // none free
     return false;
 
-  if (this.lastSpawn + this.interval < JP.getTickCount)
+  if (this.lastSpawn + this.interval > JP.getTickCount())
     return false;
 
   return true;
@@ -78,13 +78,15 @@ JP.SpawnBase.prototype.Spawn = function()
   if (this.CanSpawn() === false)
     return;
 
-  this.lastSpawn = JP.getTickCount;
+  this.lastSpawn = JP.getTickCount();
   for (var i = this.ChildCount(); i < this.num && this.limit !== 0; ++i)
   {
-    var dir = randRange(-Math.PI, Math.PI); // pick a random direction
-    var dist = randRange(0, this.radius);   // and a random distance
-    var x = Math.cos(dir) * dist + this.relx; // and work out placement
-    var y = Math.sin(dir) * dist + this.rely; // and work out placement
+    //var dir = randRange(-Math.PI, Math.PI); // pick a random direction
+    //var dist = randRange(0, this.radius);   // and a random distance
+    //var x = Math.cos(dir) * dist + this.relx; // and work out placement
+    var x = this.relx * randRange(-radius/2, radius/2); // and work out placement
+    //var y = Math.sin(dir) * dist + this.rely; // and work out placement
+    var y = this.rely * randRange(-radius/2, radius/2); // and work out placement
 
     var ent = JP.Entity.Create(this.progeny, x, y, null);
     ent.spawner = this;
@@ -112,13 +114,15 @@ JP.SpawnItem.prototype.Spawn = function()
   if (this.CanSpawn() === false)
     return;
 
-  this.lastSpawn = JP.getTickCount;
+  this.lastSpawn = JP.getTickCount();
   for (var i = this.ChildCount(); i < this.num && this.limit !== 0; ++i)
   {
-    var dir = randRange(-Math.PI, Math.PI); // pick a random direction
-    var dist = randRange(0, this.radius);   // and a random distance
-    var x = Math.cos(dir) * dist + this.relx; // and work out placement
-    var y = Math.sin(dir) * dist + this.rely; // and work out placement
+    //var dir = randRange(-Math.PI, Math.PI); // pick a random direction
+    //var dist = randRange(0, this.radius);   // and a random distance
+    //var x = Math.cos(dir) * dist + this.relx; // and work out placement
+    var x = this.relx + randRange(-this.radius/2, this.radius/2); // and work out placement
+    //var y = Math.sin(dir) * dist + this.rely; // and work out placement
+    var y = this.rely + randRange(-this.radius/2, this.radius/2); // and work out placement
 
     var box = new JP.Entity.ItemBox(x, y);
     box.spawner = this;
