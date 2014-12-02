@@ -187,6 +187,9 @@ JP.Entity.Entity.prototype.Impact = function(damage)
 
 JP.Entity.Entity.prototype.Idle = function()
 {
+  if (this.seppuku === true)
+    return;
+
   if (this.timeToLive !== -1 && this.timeToLive < JP.getTickCount())
   {
     this.Death();
@@ -417,6 +420,8 @@ JP.Entity.Entity.prototype.Talk = function()
 
 JP.Entity.Entity.prototype.Move = function()
 {
+  if (this.seppuku === true)
+    return;
   this.posx = Math.floor(this.relx);
   this.posy = Math.floor(this.rely);
   return;
@@ -528,6 +533,9 @@ JP.Entity.ItemBox.prototype.SetGold = function(quant)
 };
 JP.Entity.ItemBox.prototype.Move = function()
 {
+  if (this.seppuku === true)
+    return;
+
   var distance = Distance(this.relx, this.rely, JP.player.relx, JP.player.rely);
 
   if (distance < 0.5) // give the item
