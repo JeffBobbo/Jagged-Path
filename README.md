@@ -14,4 +14,4 @@ License
 
 Due to the current landmine nature of software licenses (like, really, ugh). All the files written by me are simply all rights reserved. The HTML page, the CSS and each JavaScript file show this. JSON files don't allow for comments but are under the same restriction for now.
 
-The only two files exempt from this is *lz-string.js* and *perlin.js*, which are WTFPL and Public Domain respectively.
+The only two files exempt from this is *[lz-string.js](https://github.com/pieroxy/lz-string)* and *[perlin.js](https://github.com/josephg/noisejs/)*, which are WTFPL and Public Domain respectively.
