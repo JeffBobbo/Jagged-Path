@@ -99,7 +99,7 @@ JP.Generate = function()
 JP.GameLoop = function()
 {
   JP.getTickCount(true); // update the tickcount
-  document.getElementById('fpsCounter').textContent = (1000 / JP.getFPS()).toFixed(0) + " fps";
+  document.getElementById('fpsCounter').textContent = JP.getFPS().toFixed(0) + " fps";
 
   switch (JP.gameState)
   {

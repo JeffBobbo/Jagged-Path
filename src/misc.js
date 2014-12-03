@@ -10,52 +10,58 @@ JP.getTickCount = function(update)
 {
   if (JP.getTickCount.tick === undefined)
   {
-    JP.getTickCount.tick = localStorage.getItem("JP.tickCount") || 0;
-    JP.getTickCount.last = getTime();
+    JP.getTickCount.tick = localStorage.getItem("JP.tickCount") || 0; // restore from save, or start at 0
+    JP.getTickCount.now = getTime(); // set to now
   }
-  JP.getTickCount.tick += getTime() - JP.getTickCount.last;
   if (update === true)
   {
-    JP.getTickCount.last = getTime();
+    JP.getTickCount.tick += getTime() - JP.getTickCount.now; // increment the difference
+    JP.getTickCount.now = getTime(); // set to now again
+
+    // update the others
     JP.getFPS(true);
     JP.getTickDelta(true);
   }
-  return JP.getTickCount.tick; 
+  return JP.getTickCount.tick; // our total since the start of time (when the world started)
 };
 
 JP.getTickDelta = function(update)
 {
   if (JP.getTickDelta.now === undefined)
   {
-    JP.getTickDelta.last = JP.getTickCount();
-    JP.getTickDelta.now  = JP.getTickCount();
+    JP.getTickDelta.last = 0; // init
+    JP.getTickDelta.now  = 0;
   }
   if (update === true)
   {
-    JP.getTickDelta.last = JP.getTickDelta.now;
-    JP.getTickDelta.now  = JP.getTickCount();
+    JP.getTickDelta.last = JP.getTickDelta.now; // last tick
+    JP.getTickDelta.now  = JP.getTickCount(); // time now
   }
-  var ret = JP.getTickDelta.now - JP.getTickDelta.last;
-  return ret;
+  return JP.getTickDelta.now - JP.getTickDelta.last; // different
 };
 
 JP.getFPS = function(update)
 {
   if (JP.getFPS.cache === undefined)
+  {
     JP.getFPS.cache = [];
+    JP.getFPS.fps = 0;
+  }
 
   if (update === true)
   {
     JP.getFPS.cache.push(JP.getTickDelta());
-    if (JP.getFPS.cache.length > 20)
+    while (JP.getFPS.cache.length > 60)
       JP.getFPS.cache.shift(); // shift off first
-    JP.getFPS.last = 0;
+
+    var ret = 0;
     for (var i = JP.getFPS.cache.length - 1; i >= 0; i--)
-      JP.getFPS.last += JP.getFPS.cache[i];
-    JP.getFPS.last /= JP.getFPS.cache.length;
-    JP.getFPS.last = 1000 / JP.getFPS.last;
+      ret += JP.getFPS.cache[i];
+
+    ret /= JP.getFPS.cache.length;
+    JP.getFPS.fps = 1000 / ret;
   }
-  return JP.getFPS.last;
+  return JP.getFPS.fps;
 }
 
 function randRange(min, max)
