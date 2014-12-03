@@ -207,10 +207,14 @@ function strtob(str)
 window.onfocus = function()
 {
   JP.focus = true;
+
+  JP.KeyMap = []; // reset the key state
 };
 window.onblur = function()
 {
   JP.focus = false;
+
+  JP.KeyMap = []; // reset the key state
 };
 
 // prototype'd functions
