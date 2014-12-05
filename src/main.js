@@ -301,6 +301,17 @@ JP.KeyProcessing = function(key)
 
 JP.SetResolution = function()
 {
+  if (JP.canvas === null)
+  {
+    JP.canvas = document.getElementById('canvas');
+    JP.context = JP.canvas.getContext("2d");
+  }
+  if (JP.tcanvas === null)
+  {
+    JP.tcanvas = document.getElementById('tcanvas');
+    JP.tcontext = JP.tcanvas.getContext("2d");
+  }
+
   JP.canvas.width  = document.documentElement.clientWidth - JP.RPANE;
   JP.tcanvas.width  = document.documentElement.clientWidth - JP.RPANE;
   JP.canvas.height = document.documentElement.clientHeight - JP.CPANE;
@@ -365,11 +376,7 @@ JP.Delete = function()
 function pageLoad()
 {
   // setup the canvas
-  JP.canvas = document.getElementById('canvas');
-  JP.tcanvas = document.getElementById('tcanvas');
-  JP.context = JP.canvas.getContext("2d");
-  JP.tcontext = JP.tcanvas.getContext("2d");
-  JP.SetResolution();
+  JP.SetResolution(); // this handles the JP.t?canvas references
 
   if (localStorage.getItem("JP.World.Saved") === null)
   {
