@@ -64,6 +64,7 @@ JP.Entity.Create = function(entity, x, y, lifespan)
     throw "No such entity: " + entity;
   var ent = new reg.cstruct(x, y, lifespan);
   ent.merge(reg.data);
+  ent.hp = ent.hpMax;
   if (reg.data.giveName === true)
   {
     var name = JP.Entity.RandomName(this.gender);
@@ -434,8 +435,7 @@ JP.Entity.Tree = function()
   this.canChop = true;
   this.hpMax = 5;
   this.imgPath = 'oak.png';
-  this.hp = randIntRange(3, 5); // how many hits to farm/kill
-  this.drops = [{name: "Oak Log", chance: 1.0}];
+  this.hp = hpMax;
 
   // reposition slightly so trees don't sit uniformly
   this.size = (randIntRange((JP.PIXEL_SIZE >> 1) - 2, (JP.PIXEL_SIZE >> 1) + 2) << 1) / JP.PIXEL_SIZE;
