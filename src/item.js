@@ -34,6 +34,7 @@ JP.Item.Load = function(data)
     break;
     default:
       alert("Unknown item class for " + data.name + ". Class: " + data.class);
+      return;
     break;
   }
   delete data.class;

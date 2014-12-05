@@ -40,6 +40,7 @@ JP.Entity.Load = function(data)
     break;
     default:
       alert("Unknown entity class for " + data.name + ". Class: " + data.class);
+      return;
     break;  
   }
   entity.name = data.name
