@@ -39,7 +39,7 @@ JP.Entity.Load = function(data)
       entity.cstruct = JP.Entity.NPC;
     break;
     default:
-      alert("Unkown entity class for " + data.name + ". Class: " + data.class);
+      alert("Unknown entity class for " + data.name + ". Class: " + data.class);
     break;  
   }
   entity.name = data.name
