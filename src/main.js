@@ -8,7 +8,9 @@
 
 var JP = JP || {
   canvas: null,
+  tcanvas: null,
   context: null,
+  tcontext: null,
   world: null,
   // how big is our world in tiles
   WIDTH:  920,
