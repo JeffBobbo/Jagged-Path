@@ -1,0 +1,13 @@
+[
+  {
+    "class": "item",
+    "name": "MoneySpawn10",
+    "num": 1,
+    "interval": 120000,
+    "limited": -1,
+    "radius": 0,
+
+    "progeny": "Gold",
+    "boxQuant": 10
+  }
+]

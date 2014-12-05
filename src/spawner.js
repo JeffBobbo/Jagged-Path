@@ -4,6 +4,53 @@
   All rights reserved
 */
 
+JP.Spawn = {};
+
+JP.Spawn.registry = {};
+
+JP.Spawn.Load = function(data)
+{
+  var spawn = {};
+  switch (data.class)
+  {
+    case "base":
+      spawn.cstruct = JP.SpawnBase;
+    break;
+    case "item":
+      spawn.cstruct = JP.SpawnItem;
+    break;
+    default:
+      alert("Unknown spawn class for " + data.name + ". Class: " + data.class);
+      return;
+    break;
+  }
+  spawn.name = data.name;
+
+  delete data.class;
+  spawn.data = data;
+  JP.Spawn.Register(spawn);
+};
+
+JP.Spawn.Register = function(spawn)
+{
+  if (JP.Spawn.registry[spawn.name] === undefined)
+    JP.Spawn.registry[spawn.name] = spawn;
+  else
+    alert(spawn.name + " used more than once for spawners");
+};
+
+JP.Spawn.Create = function(spawner, x, y)
+{
+  var reg = JP.Spawn.registry[spawner];
+  if (reg === undefined)
+    throw "No such spawner: " + spawner;
+
+  var spawn = new reg.cstruct(null, x, y);
+  spawn.merge(reg.data);
+
+  return spawn;
+}
+
 JP.SpawnBase = function(progeny, x, y)
 {
   this.id = JP.SpawnBase.ID++;
