@@ -436,7 +436,7 @@ JP.Entity.Tree = function()
   this.canChop = true;
   this.hpMax = 5;
   this.imgPath = 'oak.png';
-  this.hp = hpMax;
+  this.hp = this.hpMax;
 
   // reposition slightly so trees don't sit uniformly
   this.size = (randIntRange((JP.PIXEL_SIZE >> 1) - 2, (JP.PIXEL_SIZE >> 1) + 2) << 1) / JP.PIXEL_SIZE;
