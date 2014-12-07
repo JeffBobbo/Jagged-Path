@@ -70,6 +70,55 @@ sub GetParam
   return undef;
 }
 
+package Source
+
+sub new
+{
+  my $class = shift;
+  my $file = shift;
+
+  my $self = {};
+
+  bless($self, $class);
+
+  $self->{file} = $file;
+  $self->{text} = undef;
+  return $self;
+}
+
+sub Read
+{
+  my $self = shift;
+
+  $self->{text} = []; # array ref
+  open(my $fh, '<', $self->{file}) or die "Couldn't open $self->{file} for reading: $!\n";
+  while (<$fh>)
+  {
+    chomp(); # remove line endings
+    push(@$self->{text}, $_);
+  }
+}
+
+sub ScrubSingleLineComments
+{
+  my $self = shift;
+
+  if (!defined $self->{text})
+  {
+    $self->Read();
+  }
+  for (my $i = 0; $i <= @$#self->{text}; $i++)
+  {
+    my $comment = index($line[$i], "//");
+    if ($comment >= 0)
+    {
+      $line = substr($line, 0, $comment);
+
+    }
+  }
+
+}
+
 # main
 package main;
 
@@ -86,6 +135,8 @@ GetOptions(
 my $config = Config->new($configFile); # create config file object
 
 $config->Read(); # read in data
+
+my @files
 
 exit(0);
 
