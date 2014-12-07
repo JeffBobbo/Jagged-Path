@@ -39,21 +39,21 @@ sub File
   return $self->{file};
 }
 
-use Data::Dumper;
-
 sub Read
 {
   my $self = shift;
   open(my $fh, '<', $self->{file}) or die "Can't open $self->{file} for reading: $!\n";
   while (<$fh>)
   {
-    my $parseTo = index($_, $comment); # might not need this
+    chomp(); # remove tailing whitespace
+    my $parseTo = index($_, $comment);
 
-    my $line = substr($_, 0, index($_, $comment));
+    my $line = $_;
+    $line = substr($_, 0, $parseTo) if ($parseTo >= 0); # chop of comments
     my @tokens = split(/[:,] /, $line);
 
     my $param =  shift(@tokens);
-    $self->{config}->{$param} = join("|", @tokens); # store the values as a pipe deliminated list 
+    $self->{config}->{$param} = join(' ', @tokens); # store the values as a space deliminated list 
   }
   close($fh);
 }
@@ -70,7 +70,9 @@ sub GetParam
   return undef;
 }
 
-package Source
+## end of Config
+
+package Source;
 
 sub new
 {
@@ -90,13 +92,20 @@ sub Read
 {
   my $self = shift;
 
-  $self->{text} = []; # array ref
   open(my $fh, '<', $self->{file}) or die "Couldn't open $self->{file} for reading: $!\n";
-  while (<$fh>)
-  {
-    chomp(); # remove line endings
-    push(@$self->{text}, $_);
-  }
+  my @lines = <$fh>;
+  close($fh);
+  $self->{text} = \@lines;
+}
+
+sub Write
+{
+  my $self = shift;
+  my $target = shift;
+
+  open(my $fh, '>', $target) or die "Couldn't open $target for writing: $!\n";
+  print $fh @{$self->{text}};
+  close($fh);
 }
 
 sub ScrubSingleLineComments
@@ -107,36 +116,46 @@ sub ScrubSingleLineComments
   {
     $self->Read();
   }
-  for (my $i = 0; $i <= @$#self->{text}; $i++)
+  my @lines = @{$self->{text}};
+  print "@lines\n";
+  for (my $i = 0; $i <= $#lines; $i++)
   {
-    my $comment = index($line[$i], "//");
+    my $comment = index($lines[$i], '//');
     if ($comment >= 0)
     {
-      $line = substr($line, 0, $comment);
-
+      $lines[$i] = substr($lines[$i], 0, $comment);
     }
   }
-
+  $self->{text} = \@lines;
 }
+
+## end of Source
 
 # main
 package main;
 
-use Getopt::Long;
-
-my $configFile = "";
+use Data::Dumper;
+my $configFile = '';
 
 # get our args
-GetOptions(
-  'help'   => \&help, # this exits for us
-  'conf=s' => \$configFile
-);
+foreach my $ARG (@ARGV)
+{
+  $configFile = substr($ARG, 3) if (index($ARG, '-c=') != -1);
+  help() if ($ARG eq '-h');
+}
 
 my $config = Config->new($configFile); # create config file object
 
 $config->Read(); # read in data
 
-my @files
+my $fileList = $config->GetParam('sources');
+my @files = split(' ', $fileList);
+for (my $i = 0; $i <= $#files; $i++)
+{
+  $files[$i] = Source->new($files[$i]); # repopulate file list with Source objects
+  $files[$i]->ScrubSingleLineComments();
+  $files[$i]->Write($config->GetParam('target'));
+}
 
 exit(0);
 
