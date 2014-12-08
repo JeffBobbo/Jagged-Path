@@ -22,7 +22,7 @@ var JP = JP || {
   RPANE: 300,
   CPANE: 120,
 
-  needDraw: false,
+  needDraw: false
 };
 
 JP.STATE = {
@@ -34,7 +34,7 @@ JP.STATE = {
 JP.MouseState = JP.MouseState || {
   x: -1,
   y: -1,
-  button: -1,
+  button: -1
 };
 
 JP.CallbackType = {
