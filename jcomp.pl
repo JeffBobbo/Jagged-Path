@@ -177,6 +177,16 @@ sub ScrubMultiLineComments
   }
 }
 
+sub HTMLReplaceSources
+{
+  my $self = shift;
+  print "HTMLReplaceSources\n";
+  my @sources = @{shift()};
+
+  my @lines = @{$self->{text}};
+  
+}
+
 ## end of Source
 
 # main
@@ -192,22 +202,22 @@ foreach my $ARG (@ARGV)
 }
 
 my $config = Config->new($configFile); # create config file object
-
 $config->Read(); # read in data
 
-my $fileList = $config->GetParam('sources');
+# parse the js stuff
+my $fileList = $config->GetParam('source-js');
 my @files = split(' ', $fileList);
-print "Source files: @files\n";
+print "JS source files: @files\n";
 my $content = "";
 for (my $i = 0; $i <= $#files; $i++)
 {
-  $files[$i] = Source->new($files[$i]); # repopulate file list with Source objects
-  $files[$i]->Read();
-  $files[$i]->ScrubSingleLineComments();
-  $files[$i]->ScrubLeadTrailWhitespace();
-  $files[$i]->ScrubNewLines();
-  $files[$i]->ScrubMultiLineComments();
-  $files[$i]->Write(\$content);
+  my $source = Source->new($files[$i]); # repopulate file list with Source objects
+  $source->Read();
+  $source->ScrubSingleLineComments();
+  $source->ScrubLeadTrailWhitespace();
+  $source->ScrubNewLines();
+  $source->ScrubMultiLineComments();
+  $source->Write(\$content);
 }
 
 my $precontent = "";
@@ -226,13 +236,24 @@ if (defined $copyrightFile)
 }
 
 # write the data out
-my $target = $config->GetParam('target');
+my $target = $config->GetParam('target-js');
 open(my $fh, '>', $target) or die "Couldn't open $target for writing: $!\n";
 print $fh $precontent;
 print $fh $content;
 print $fh $postcontent;
 close($fh);
 
+
+# now handle html
+my $htmlList = $config->GetParam('source-html');
+my @htmlFiles = split(' ', $htmlList);
+print "HTML source files: @htmlFiles\n";
+for (my $i = 0; $i <= $#htmlFiles; $i++)
+{
+  my $html = Source->new($files[$i]);
+  $html->Read();
+  $html->HTMLReplaceSources(\@files);
+}
 exit(0);
 
 sub help
