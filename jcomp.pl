@@ -85,6 +85,7 @@ sub new
 
   $self->{file} = $file;
   $self->{text} = undef;
+  $self->{line} = undef;
   return $self;
 }
 
@@ -104,20 +105,22 @@ sub Write
   my $target = shift;
 
   open(my $fh, '>', $target) or die "Couldn't open $target for writing: $!\n";
-  print $fh @{$self->{text}};
+  if (defined $self->{line})
+  {
+    print $fh $self->{line};
+  }
+  else
+  {
+    print $fh @{$self->{text}};
+  }
   close($fh);
 }
 
 sub ScrubSingleLineComments
 {
   my $self = shift;
-
-  if (!defined $self->{text})
-  {
-    $self->Read();
-  }
+  print "ScrubSingleLineComments\n";
   my @lines = @{$self->{text}};
-  print "@lines\n";
   for (my $i = 0; $i <= $#lines; $i++)
   {
     my $comment = index($lines[$i], '//');
@@ -127,6 +130,50 @@ sub ScrubSingleLineComments
     }
   }
   $self->{text} = \@lines;
+}
+
+sub ScrubLeadTrailWhitespace
+{
+  my $self = shift;
+  print "ScrubLeadTrailWhitespace\n";
+  my @lines = @{$self->{text}};
+  for (my $i = 0; $i <= $#lines; $i++)
+  {
+    $lines[$i] =~ s/^[\t ]+//; # leading
+    $lines[$i] =~ s/[\t ]+$//; # trailing
+  }
+  $self->{text} = \@lines;
+}
+
+sub ScrubNewLines
+{
+  my $self = shift;
+  print "ScrubNewLines\n";
+  my @lines = @{$self->{text}};
+  for (my $i = 0; $i <= $#lines; $i++)
+  {
+    $lines[$i] =~ s/[\r\n]//g; # replace any literal new lines
+    $self->{line} .= $lines[$i]; # append to new var
+  }
+}
+
+sub ScrubMultiLineComments
+{
+  my $self = shift;
+  print "ScrubMultiLineComments\n";
+  my $open = index($self->{line}, '/*');
+  while ($open >= 0)
+  {
+    my $close = index($self->{line}, '*/');
+    if ($close == -1) # there is no end, strip the rest of the file
+    {
+      $close = length($self->{line});
+    }
+    my $start = substr($self->{line}, 0, $open);
+    my $end   = substr($self->{line}, $close + 2, length($self->{line}) - $close);
+    $self->{line} = $start . $end;
+    $open = index($self->{line}, '/*');
+  }
 }
 
 ## end of Source
@@ -150,10 +197,15 @@ $config->Read(); # read in data
 
 my $fileList = $config->GetParam('sources');
 my @files = split(' ', $fileList);
+print "@files\n";
 for (my $i = 0; $i <= $#files; $i++)
 {
   $files[$i] = Source->new($files[$i]); # repopulate file list with Source objects
+  $files[$i]->Read();
   $files[$i]->ScrubSingleLineComments();
+  $files[$i]->ScrubLeadTrailWhitespace();
+  $files[$i]->ScrubNewLines();
+  $files[$i]->ScrubMultiLineComments();
   $files[$i]->Write($config->GetParam('target'));
 }
 
