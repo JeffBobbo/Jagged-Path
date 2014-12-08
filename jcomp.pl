@@ -184,7 +184,28 @@ sub HTMLReplaceSources
   my @sources = @{shift()};
 
   my @lines = @{$self->{text}};
-  
+  for (my $i = 0; $i <= $#lines; $i++)
+  {
+    my $tag = index(lc($lines[$i]), '<script');
+    next if ($tag == -1); # no script tag on this line
+
+    my $tagEnd = index($lines[$i], '>', $tag);
+    my $source = index($lines[$i], 'src="', $tag) + 4;
+    next if ($source == -1 || $source > $tagEnd); # this is no source, but an inline script, so skip
+
+    my $sourceEnd = index($lines[$i], '"', $source);
+    my $script = substr($lines[$i], $source, $sourceEnd - $source);
+
+    my $remove = 0;
+    foreach my $srcFile (@sources)
+    {
+      if ($srcFile eq $script)
+      {
+        $remove = 1;
+        last;
+      }
+    }
+  }
 }
 
 ## end of Source
@@ -252,7 +273,7 @@ for (my $i = 0; $i <= $#htmlFiles; $i++)
 {
   my $html = Source->new($files[$i]);
   $html->Read();
-  $html->HTMLReplaceSources(\@files);
+#  $html->HTMLReplaceSources(\@files);
 }
 exit(0);
 
