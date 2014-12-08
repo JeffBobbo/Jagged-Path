@@ -4,13 +4,13 @@
 # decided ruby sucks
 
 # script functionality:
-# concatenate js files together
-# remove comments
-# remove whitespace
-# add license at start
-# ignore json
-# rule file
-# parse html and edit scripts
+# concatenate js files together -- done
+# remove comments -- done
+# remove whitespace -- done
+# add license at start -- done
+# ignore json -- could include this
+# rule file -- wip
+# parse html and edit scripts -- todo
 
 use warnings;
 use strict;
@@ -102,24 +102,25 @@ sub Read
 sub Write
 {
   my $self = shift;
-  my $target = shift;
+  my $dest = shift;
 
-  open(my $fh, '>', $target) or die "Couldn't open $target for writing: $!\n";
   if (defined $self->{line})
   {
-    print $fh $self->{line};
+    $$dest .= $self->{line};
   }
-  else
+  else # should only happen for the copyright file
   {
-    print $fh @{$self->{text}};
+    foreach my $line (@{$self->{text}})
+    {
+      $$dest .= $line;
+    }
   }
-  close($fh);
 }
 
 sub ScrubSingleLineComments
 {
   my $self = shift;
-  print "ScrubSingleLineComments\n";
+#  print "ScrubSingleLineComments\n";
   my @lines = @{$self->{text}};
   for (my $i = 0; $i <= $#lines; $i++)
   {
@@ -135,7 +136,7 @@ sub ScrubSingleLineComments
 sub ScrubLeadTrailWhitespace
 {
   my $self = shift;
-  print "ScrubLeadTrailWhitespace\n";
+#  print "ScrubLeadTrailWhitespace\n";
   my @lines = @{$self->{text}};
   for (my $i = 0; $i <= $#lines; $i++)
   {
@@ -148,7 +149,7 @@ sub ScrubLeadTrailWhitespace
 sub ScrubNewLines
 {
   my $self = shift;
-  print "ScrubNewLines\n";
+#  print "ScrubNewLines\n";
   my @lines = @{$self->{text}};
   for (my $i = 0; $i <= $#lines; $i++)
   {
@@ -181,7 +182,6 @@ sub ScrubMultiLineComments
 # main
 package main;
 
-use Data::Dumper;
 my $configFile = '';
 
 # get our args
@@ -197,7 +197,8 @@ $config->Read(); # read in data
 
 my $fileList = $config->GetParam('sources');
 my @files = split(' ', $fileList);
-print "@files\n";
+print "Source files: @files\n";
+my $content = "";
 for (my $i = 0; $i <= $#files; $i++)
 {
   $files[$i] = Source->new($files[$i]); # repopulate file list with Source objects
@@ -206,8 +207,31 @@ for (my $i = 0; $i <= $#files; $i++)
   $files[$i]->ScrubLeadTrailWhitespace();
   $files[$i]->ScrubNewLines();
   $files[$i]->ScrubMultiLineComments();
-  $files[$i]->Write($config->GetParam('target'));
+  $files[$i]->Write(\$content);
 }
+
+my $precontent = "";
+my $postcontent = "";
+
+# handle copyright
+my $copyrightFile = $config->GetParam('copyright-file');
+if (defined $copyrightFile)
+{
+  my $copyright = Source->new($copyrightFile);
+  $copyright->Read();
+  $precontent .= "/*\n";
+  $copyright->Write(\$precontent);
+  $precontent .= "\n" if (substr($precontent, -1) ne "\n");
+  $precontent .= "*/\n\n";
+}
+
+# write the data out
+my $target = $config->GetParam('target');
+open(my $fh, '>', $target) or die "Couldn't open $target for writing: $!\n";
+print $fh $precontent;
+print $fh $content;
+print $fh $postcontent;
+close($fh);
 
 exit(0);
 
