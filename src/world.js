@@ -533,7 +533,8 @@ JP.World.prototype.Draw = function()
   }
   else
   {
-    JP.player.direction = JP.atan(((JP.player.relx - xoffset) - mx), ((JP.player.rely - yoffset) - my));
+    if (!JP.USE_ASTEROID_CONTROLS)
+      JP.player.direction = JP.atan(((JP.player.relx - xoffset) - mx), ((JP.player.rely - yoffset) - my));
 
     JP.context.translate((JP.player.relx - xoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2, (JP.player.rely - yoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2);
     JP.context.rotate(JP.player.direction);

@@ -14,6 +14,7 @@ JP.Player = function()
   this.rely = -1; // floats
 
   this.speed = 0.2; // multiplier of JP.PIXEL_SIZE, in tiles per s
+  this.rotationSpeed = Math.PI / 2;
   this.direction;
   this.imgBase = 'img/player';
 
@@ -275,8 +276,15 @@ JP.Player.prototype.Move = function(dir)
     {
       case JP.Keys.A: // strafe L
       case JP.Keys.D: // strafe R
-        dx = Math.sin(-this.direction) * (dist * (dir === JP.Keys.A ? -0.8 : 0.8)); // I know this looks weird, but neh
-        dy = Math.cos(-this.direction) * (dist * (dir === JP.Keys.A ? -0.8 : 0.8)); // I know this looks weird, but neh
+        if (JP.USE_ASTEROID_CONTROLS)
+        {
+          this.direction += (dir === JP.Keys.A ? -1 : 1) * this.rotationSpeed * (dt / 1000);
+        }
+        else
+        {
+          dx = Math.sin(-this.direction) * (dist * (dir === JP.Keys.A ? -0.8 : 0.8)); // I know this looks weird, but neh
+          dy = Math.cos(-this.direction) * (dist * (dir === JP.Keys.A ? -0.8 : 0.8)); // I know this looks weird, but neh
+        }
       break;
       case JP.Keys.W: // forwards march!
         dx = Math.cos(this.direction) * dist;
