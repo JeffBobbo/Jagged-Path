@@ -13,9 +13,9 @@ JP.Player = function()
   this.relx = -1; // floats
   this.rely = -1; // floats
 
-  this.speed = 0.2; // multiplier of JP.PIXEL_SIZE, in tiles per s
-  this.rotationSpeed = Math.PI / 2;
-  this.direction;
+  this.speed = 4; // in tiles per s
+  this.rotationSpeed = Math.PI * 2; // pi radians per second
+  this.direction = 0;
   this.imgBase = 'img/player';
 
   this.imgUp = new Image();
@@ -236,7 +236,7 @@ JP.Player.prototype.Place = function()
 JP.Player.prototype.Move = function(dir)
 {
   var dt = JP.getTickDelta();
-  var dist = (this.speed * JP.PIXEL_SIZE) * (dt / 1000);
+  var dist = this.speed * (dt / 1000);
   if (JP.world.terrain[this.posx][this.posy].name === "Water")
     dist *= 0.5; // slower in water
 
