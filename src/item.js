@@ -135,7 +135,7 @@ JP.Item.Axe.prototype.constructor = JP.Item.Axe;
 JP.Item.Axe.prototype.Use = function()
 {
   var tree = null;
-  if (JP.USE_ARCADE_CONTROLS)
+  if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ARCADE)
   {
     switch (JP.player.direction)
     {
@@ -215,7 +215,7 @@ JP.Item.Tinderbox.prototype.Use = function()
   }
 
   var clearSpot = null;
-  if (JP.USE_ARCADE_CONTROLS)
+  if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ARCADE)
   {
     // check in front of us
     var x = JP.player.relx + 0.5;

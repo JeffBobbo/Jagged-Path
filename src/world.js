@@ -427,22 +427,22 @@ JP.World.prototype.EntityMap = function()
 
 JP.World.prototype.Prerender = function()
 {
-  var xoffset = JP.player.relx - ((JP.canvas.width / JP.PIXEL_SIZE) / 2);
-  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) / 2);
+  var xoffset = JP.player.relx - ((JP.canvas.width / JP.zoomLevel) / 2);
+  var yoffset = JP.player.rely - ((JP.canvas.height / JP.zoomLevel) / 2);
   // set offsets to stay inside the map
-  xoffset = Bound(0, this.terrain.length    - (JP.canvas.width / JP.PIXEL_SIZE), xoffset);
-  yoffset = Bound(0, this.terrain[0].length - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
-  var xmax = JP.canvas.width  / JP.PIXEL_SIZE + xoffset;
-  var ymax = JP.canvas.height / JP.PIXEL_SIZE + yoffset;
+  xoffset = Bound(0, this.terrain.length    - (JP.canvas.width / JP.zoomLevel), xoffset);
+  yoffset = Bound(0, this.terrain[0].length - (JP.canvas.height / JP.zoomLevel), yoffset);
+  var xmax = JP.canvas.width  / JP.zoomLevel + xoffset;
+  var ymax = JP.canvas.height / JP.zoomLevel + yoffset;
   if (xmax > this.terrain.length)
   {
     xmax = this.terrain.length;
-    xoffset = JP.canvas.width / JP.PIXEL_SIZE;
+    xoffset = JP.canvas.width / JP.zoomLevel;
   }
   if (ymax > this.terrain.length)
   {
     ymax = this.terrain[xoffset].length;
-    yoffset = JP.canvas.height / JP.PIXEL_SIZE;
+    yoffset = JP.canvas.height / JP.zoomLevel;
   }
   for (var x = xoffset | 0; x < xmax; ++x)
   {
@@ -456,10 +456,10 @@ JP.World.prototype.Prerender = function()
           group++;
         JP.tcontext.fillStyle = tile.colour;
         JP.tcontext.fillRect(
-          (x - xoffset) * JP.PIXEL_SIZE,
-          (y - yoffset) * JP.PIXEL_SIZE,
-          JP.PIXEL_SIZE,
-          JP.PIXEL_SIZE * group
+          (x - xoffset) * JP.zoomLevel,
+          (y - yoffset) * JP.zoomLevel,
+          JP.zoomLevel,
+          JP.zoomLevel * group
         );
         if (group > 1)
           y += group - 1;
@@ -470,15 +470,15 @@ JP.World.prototype.Prerender = function()
         {
           JP.tcontext.fillStyle = tile.colour;
           JP.tcontext.fillRect(
-            (x - xoffset) * JP.PIXEL_SIZE,
-            (y - yoffset) * JP.PIXEL_SIZE,
-            JP.PIXEL_SIZE,
-            JP.PIXEL_SIZE
+            (x - xoffset) * JP.zoomLevel,
+            (y - yoffset) * JP.zoomLevel,
+            JP.zoomLevel,
+            JP.zoomLevel
           );
         }
         JP.tcontext.drawImage(tile.img,
-          (x - xoffset) * JP.PIXEL_SIZE,
-          (y - yoffset) * JP.PIXEL_SIZE
+          (x - xoffset) * JP.zoomLevel,
+          (y - yoffset) * JP.zoomLevel
         );
       }
     }
@@ -488,13 +488,13 @@ JP.World.prototype.Prerender = function()
 JP.World.prototype.Draw = function() 
 {
   // draw terrain
-  var xoffset = JP.player.relx - ((JP.canvas.width / JP.PIXEL_SIZE) / 2);
-  var yoffset = JP.player.rely - ((JP.canvas.height / JP.PIXEL_SIZE) / 2);
+  var xoffset = JP.player.relx - ((JP.canvas.width / JP.zoomLevel) / 2);
+  var yoffset = JP.player.rely - ((JP.canvas.height / JP.zoomLevel) / 2);
   // set offsets to stay inside the map
-  xoffset = Bound(0, JP.WIDTH  - (JP.canvas.width / JP.PIXEL_SIZE), xoffset);
-  yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.PIXEL_SIZE), yoffset);
-  var xmax = JP.canvas.width / JP.PIXEL_SIZE + xoffset;
-  var ymax = JP.canvas.height / JP.PIXEL_SIZE + yoffset;
+  xoffset = Bound(0, JP.WIDTH  - (JP.canvas.width / JP.zoomLevel), xoffset);
+  yoffset = Bound(0, JP.HEIGHT - (JP.canvas.height / JP.zoomLevel), yoffset);
+  var xmax = JP.canvas.width / JP.zoomLevel + xoffset;
+  var ymax = JP.canvas.height / JP.zoomLevel + yoffset;
 
   JP.context.drawImage(JP.tcanvas, 0, 0);
   // prerender ents
@@ -502,10 +502,10 @@ JP.World.prototype.Draw = function()
     this.entities[i].Draw(xoffset, yoffset);
 
   // draw player
-  var mx = (JP.MouseState.vx - JP.PIXEL_SIZE / 2) / JP.PIXEL_SIZE;
-  var my = (JP.MouseState.vy - JP.PIXEL_SIZE / 2) / JP.PIXEL_SIZE;
+  var mx = (JP.MouseState.vx - JP.zoomLevel / 2) / JP.zoomLevel;
+  var my = (JP.MouseState.vy - JP.zoomLevel / 2) / JP.zoomLevel;
 
-  if (JP.USE_ARCADE_CONTROLS === true)
+  if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ARCADE)
   {
     var img = null;
     switch (JP.player.direction)
@@ -525,22 +525,22 @@ JP.World.prototype.Draw = function()
       break;
     }
     JP.context.drawImage(img,
-      (JP.player.relx - xoffset) * JP.PIXEL_SIZE,
-      (JP.player.rely - yoffset) * JP.PIXEL_SIZE,
-      JP.PIXEL_SIZE,
-      JP.PIXEL_SIZE
+      (JP.player.relx - xoffset) * JP.zoomLevel,
+      (JP.player.rely - yoffset) * JP.zoomLevel,
+      JP.zoomLevel,
+      JP.zoomLevel
     );
   }
   else
   {
-    if (!JP.USE_ASTEROID_CONTROLS)
+    if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.FPS)
       JP.player.direction = JP.atan(((JP.player.relx - xoffset) - mx), ((JP.player.rely - yoffset) - my));
 
-    JP.context.translate((JP.player.relx - xoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2, (JP.player.rely - yoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2);
+    JP.context.translate((JP.player.relx - xoffset) * JP.zoomLevel + JP.zoomLevel / 2, (JP.player.rely - yoffset) * JP.zoomLevel + JP.zoomLevel / 2);
     JP.context.rotate(JP.player.direction);
-    JP.context.drawImage(JP.player.img, -(JP.PIXEL_SIZE / 2), -(JP.PIXEL_SIZE / 2), JP.PIXEL_SIZE, JP.PIXEL_SIZE);
+    JP.context.drawImage(JP.player.img, -(JP.zoomLevel / 2), -(JP.zoomLevel / 2), JP.zoomLevel, JP.zoomLevel);
     JP.context.rotate(-(JP.player.direction));
-    JP.context.translate(-((JP.player.relx - xoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2), -((JP.player.rely - yoffset) * JP.PIXEL_SIZE + JP.PIXEL_SIZE / 2));
+    JP.context.translate(-((JP.player.relx - xoffset) * JP.zoomLevel + JP.zoomLevel / 2), -((JP.player.rely - yoffset) * JP.zoomLevel + JP.zoomLevel / 2));
   }
   //console.log("Render took " + (getTime() - start) + "ms");
 };

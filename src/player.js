@@ -240,7 +240,7 @@ JP.Player.prototype.Move = function(dir)
   if (JP.world.terrain[this.posx][this.posy].name === "Water")
     dist *= 0.5; // slower in water
 
-  if (JP.USE_ARCADE_CONTROLS)
+  if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ARCADE)
   {
     switch (dir)
     {
@@ -276,7 +276,7 @@ JP.Player.prototype.Move = function(dir)
     {
       case JP.Keys.A: // strafe L
       case JP.Keys.D: // strafe R
-        if (JP.USE_ASTEROID_CONTROLS)
+        if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ASTEROID)
         {
           this.direction += (dir === JP.Keys.A ? -1 : 1) * this.rotationSpeed * (dt / 1000);
         }
@@ -325,7 +325,7 @@ JP.Player.prototype.Move = function(dir)
 
 JP.Player.prototype.Talk = function()
 {
-  if (JP.USE_ARCADE_CONTROLS)
+  if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ARCADE)
   {
     var ents = [];
     for (var i = 0; i < JP.world.entities.length; ++i)

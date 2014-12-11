@@ -149,29 +149,29 @@ JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
 {
   if (this.seppuku)
     return;
-  if (this.relx < Math.floor(xoffset) || this.relx > JP.canvas.width / JP.PIXEL_SIZE + xoffset)
+  if (this.relx < Math.floor(xoffset) || this.relx > JP.canvas.width / JP.zoomLevel + xoffset)
     return;
-  if (this.rely < Math.floor(yoffset) || this.rely > JP.canvas.height / JP.PIXEL_SIZE + yoffset)
+  if (this.rely < Math.floor(yoffset) || this.rely > JP.canvas.height / JP.zoomLevel + yoffset)
     return;
   if (this.imgPath !== undefined)
   {
     if (this.img === undefined)
       this.SetImage();
     JP.context.drawImage(this.img,
-      (this.relx - xoffset) * JP.PIXEL_SIZE,
-      (this.rely - yoffset) * JP.PIXEL_SIZE,
-      Math.floor(JP.PIXEL_SIZE * this.size),
-      Math.floor(JP.PIXEL_SIZE * this.size)
+      (this.relx - xoffset) * JP.zoomLevel,
+      (this.rely - yoffset) * JP.zoomLevel,
+      Math.floor(JP.zoomLevel * this.size),
+      Math.floor(JP.zoomLevel * this.size)
     );
   }
   else
   {
     JP.context.fillStyle = this.colour;
     JP.context.fillRect(
-      (this.relx - xoffset) * JP.PIXEL_SIZE,
-      (this.rely - yoffset) * JP.PIXEL_SIZE,
-      JP.PIXEL_SIZE,
-      JP.PIXEL_SIZE
+      (this.relx - xoffset) * JP.zoomLevel,
+      (this.rely - yoffset) * JP.zoomLevel,
+      JP.zoomLevel,
+      JP.zoomLevel
     );
   }
 };
@@ -439,7 +439,7 @@ JP.Entity.Tree = function()
   this.hp = this.hpMax;
 
   // reposition slightly so trees don't sit uniformly
-  this.size = (randIntRange((JP.PIXEL_SIZE >> 1) - 2, (JP.PIXEL_SIZE >> 1) + 2) << 1) / JP.PIXEL_SIZE;
+  this.size = (randIntRange((JP.zoomLevel >> 1) - 2, (JP.zoomLevel >> 1) + 2) << 1) / JP.zoomLevel;
 };
 JP.Entity.Tree.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.Tree.prototype.constructor = JP.Entity.Tree;

@@ -16,8 +16,10 @@ var JP = JP || {
   WIDTH:  920,
   HEIGHT: 480,
 
-  // how big each tile is
-  PIXEL_SIZE: 32,
+  // tile size limits
+  MIN_ZOOM_SIZE: 8,
+  MAX_ZOOM_SIZE: 64,
+  zoomLevel: 32, // default
 
   RPANE: 300,
   CPANE: 120,
@@ -210,7 +212,6 @@ JP.Keys = JP.Keys || {
   C: 67, // chop wood
   T: 84, // talk
   F: 70, // fire
-  O: 79, // toggle control scheme (temp)
 
   PLUS: 187, // zoom
   MINUS: 189,
@@ -273,7 +274,8 @@ JP.KeyProcessing = function(key)
       case JP.Keys.NUM_PLUS:
         if (JP.world.generationLevel === JP.World.Gen.DONE)
         {
-          JP.PIXEL_SIZE = Math.min(64, JP.PIXEL_SIZE + 8);
+          JP.zoomLevel = Math.min(JP.MAX_ZOOM_SIZE, JP.zoomLevel + 8);
+          JP.Option.Set("zoomLevel", JP.zoomLevel);
           JP.world.Prerender();
           JP.KeyMap[JP.Keys.PLUS] = null;
           JP.KeyMap[JP.Keys.NUM_PLUS] = null;
@@ -284,16 +286,13 @@ JP.KeyProcessing = function(key)
       case JP.Keys.NUM_MINUS:
         if (JP.world.generationLevel === JP.World.Gen.DONE)
         {
-          JP.PIXEL_SIZE = Math.max(8 , JP.PIXEL_SIZE - 8);
+          JP.zoomLevel = Math.max(JP.MIN_ZOOM_SIZE , JP.zoomLevel - 8);
+          JP.Option.Set("zoomLevel", JP.zoomLevel);
           JP.world.Prerender();
           JP.KeyMap[JP.Keys.MINUS] = null;
           JP.KeyMap[JP.Keys.NUM_MINUS] = null;
           JP.needDraw = true;
         }
-      break;
-      case JP.Keys.O: // temp hack for swapping control styles
-        JP.USE_ARCADE_CONTROLS = !JP.USE_ARCADE_CONTROLS;
-        JP.KeyMap[JP.Keys.O] = null;
       break;
     }
   }
@@ -337,7 +336,9 @@ function loadWorld()
     return; // don't do this twice
 
   JP.gameState = JP.STATE.INIT;
-  JP.USE_ARCADE_CONTROLS = document.getElementById("useArcade").checked;
+
+  JP.Option.Load();
+  JP.zoomLevel = JP.Option.Get("zoomLevel");
 
   JP.SetResolution();
   // remove the splash screen

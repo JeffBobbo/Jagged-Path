@@ -54,15 +54,15 @@ JP.Tile.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
   {
     JP.context.fillStyle = this.colour;
     JP.context.fillRect(
-      (x - xoffset) * JP.PIXEL_SIZE,
-      (y - yoffset) * JP.PIXEL_SIZE,
-      JP.PIXEL_SIZE,
-      JP.PIXEL_SIZE
+      (x - xoffset) * JP.zoomLevel,
+      (y - yoffset) * JP.zoomLevel,
+      JP.zoomLevel,
+      JP.zoomLevel
     );
   }
   JP.context.drawImage(this.img,
-    (x - xoffset) * JP.PIXEL_SIZE,
-    (y - yoffset) * JP.PIXEL_SIZE
+    (x - xoffset) * JP.zoomLevel,
+    (y - yoffset) * JP.zoomLevel
   );
 };
 
