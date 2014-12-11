@@ -44,3 +44,49 @@ JP.Option.Load = function()
     return;
   JP.Option.options.merge(JSON.parse(o));
 };
+
+
+// functions for the front end
+JP.Option.Open = function()
+{
+  JP.Option.LoadOptions();
+  document.getElementById('options').style.display = '';
+  document.getElementById('splash').style.display = 'none';
+};
+
+JP.Option.Close = function()
+{
+  JP.Option.SaveOptions(); // get the data and save
+
+  // then close
+  document.getElementById('options').style.display = 'none';
+  if (JP.world === null) // reshow the splash if we haven't started the game yet
+    document.getElementById('splash').style.display = '';
+};
+
+JP.Option.SaveOptions = function()
+{
+  var controlOpt = document.getElementsByName('controlStyle');
+  for (var i = controlOpt.length - 1; i >= 0; i--)
+  {
+    if (controlOpt[i].checked === true)
+    {
+      JP.Option.Set('controlStyle', JP.Option.ControlStyle[controlOpt[i].value]);
+      break; 
+    }
+  }
+};
+
+JP.Option.LoadOptions = function()
+{
+  var controlOpt = document.getElementsByName('controlStyle');
+  var setting = JP.Option.Get('controlStyle');
+  for (var i = controlOpt.length - 1; i >= 0; i--)
+  {
+    if (JP.Option.ControlStyle[controlOpt[i].value] === setting)
+    {
+      controlOpt.checked = true;
+      break;
+    }
+  }
+};

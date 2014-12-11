@@ -145,7 +145,7 @@ div#convoOptions
   text-align:center;
 }
 
-div#splash,div#creation,div#loading,div#instruction
+div#splash,div#creation,div#loading,div#instruction,div#options
 {
   background-color:#444;
   position:relative;

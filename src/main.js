@@ -337,7 +337,6 @@ function loadWorld()
 
   JP.gameState = JP.STATE.INIT;
 
-  JP.Option.Load();
   JP.zoomLevel = JP.Option.Get("zoomLevel");
 
   JP.SetResolution();
@@ -377,6 +376,7 @@ JP.Delete = function()
 
 function pageLoad()
 {
+  JP.Option.Load();
   // setup the canvas
   JP.SetResolution(); // this handles the JP.t?canvas references
 

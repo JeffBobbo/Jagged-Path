@@ -79,11 +79,21 @@
         <h1>How to play</h1>
         <br/>
         <p>WASD / Arrow Keys to move</p>
-        <p>Mouse to look (non-Arcade only)</p>
+        <p>Mouse to look (FPS only)</p>
         <p>'T' to talk to a NPC</p>
         <p>+/- to zoom view</p>
         <br/>
           <a href="#" onclick="document.getElementById('instruction').style.display = 'none'; document.getElementById('splash').style.display = ''"><h4>Close</h4></a>
+      </div>
+      <div id="options" style="display:none;">
+        <h1>Options</h1>
+        <br/>
+        <p>Control Style</p><br/>
+        <input type="radio" name="controlStyle" value="FPS" title="The mouse controls where you look, sideways movement keys strafe">FPS</input>
+        <input type="radio" name="controlStyle" value="ARCADE" title="No mouse use, instead the movement keys refer to that direction">Arcade</input>
+        <input type="radio" name="controlStyle" value="ASTEROID" title="No mouse use, sideways movement keys rotate you">Asteroid</input>
+        <br/>
+          <a href="#" onclick="JP.Option.Close()"><h4>Close</h4></a>
       </div>
     </div>
 
@@ -113,6 +123,7 @@
       </div>
       <span id="rightPanelBottom">
         <p id="fpsCounter" style="display:none;">NaN fps</p>
+        <a href="#" onclick="JP.Option.Open()">Options</a>
       </span>
     </div>
   </body>
