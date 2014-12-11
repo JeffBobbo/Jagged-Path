@@ -14,6 +14,7 @@
 
 use warnings;
 use strict;
+use Switch;
 
 # config class?
 package Config;
@@ -214,12 +215,58 @@ sub HTMLReplaceSources
 package main;
 
 my $configFile = '';
+my $version = ''; # target version
+my $vcs = 'git';
+my $username = '';
+my $password = '';
 
 # get our args
 foreach my $ARG (@ARGV)
 {
   $configFile = substr($ARG, 3) if (index($ARG, '-c=') != -1);
+  $version = substr($ARG, 3) if (index($ARG, '-v=') != -1);
+  $vcs = 'svn' if (index($ARG, '-s'));
+  $vcs = 'hg' if (index($ARG, '-m'));
+
+  $username = substr($ARG, 3) if (index($ARG, '-u=') != -1);
+  # change this to be done on request so that we can mask the input
+  $password = substr($ARG, 3) if (index($ARG, '-p=') != -1);
+
   help() if ($ARG eq '-h');
+}
+
+# do the update
+my $updateEnabled = 0;
+if ($updateEnabled == 1)
+{
+  switch ($vcs)
+  {
+    case 'git'
+    {
+      my $ret = `git pull`;
+      # should probably include some kind of checking here
+      $ret = `git checkout $version`;
+      # and again here
+    }
+    case 'svn'
+    {
+      my $ret = `svn up -r$version --non-interactive`;
+      if ($ret =~ /Exported revision ([0-9]+)\./)
+      {
+        $version = $1;
+      }
+      else
+      {
+        print STDERR "svn up failed: $ret\n";
+        exit(1);
+      }
+    }
+    case 'hg'
+    {
+      print STDERR "hg not implemented, sorry\n";
+      exit(1);
+    }
+  }
 }
 
 my $config = Config->new($configFile); # create config file object
