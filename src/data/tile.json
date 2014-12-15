@@ -39,8 +39,8 @@
     "spawnSafe": false
   },
   {
-    "name": "Water",
-    "colour": "#003FFF",
+    "name": "Sea",
+    "colour": "#007FAF",
     "spawnSafe": false,
     "swimmable": true
   },

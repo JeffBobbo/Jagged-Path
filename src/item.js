@@ -223,7 +223,7 @@ JP.Item.Tinderbox.prototype.Use = function()
     switch (JP.player.direction)
     {
       case JP.Keys.A:
-        if (JP.Entity.FindByPos(x - 1, y) === null && JP.world.terrain[Math.floor(x - 1)][Math.floor(y)].name !== "Water")
+        if (JP.Entity.FindByPos(x - 1, y) === null && JP.world.terrain[Math.floor(x - 1)][Math.floor(y)].name !== "Sea")
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x - 1;
@@ -231,7 +231,7 @@ JP.Item.Tinderbox.prototype.Use = function()
         }
       break;
       case JP.Keys.D:
-        if (JP.Entity.FindByPos(x + 1, y) === null && JP.world.terrain[Math.floor(x + 1)][Math.floor(y)].name !== "Water")
+        if (JP.Entity.FindByPos(x + 1, y) === null && JP.world.terrain[Math.floor(x + 1)][Math.floor(y)].name !== "Sea")
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x + 1;
@@ -239,7 +239,7 @@ JP.Item.Tinderbox.prototype.Use = function()
         }
       break;
       case JP.Keys.W:
-        if (JP.Entity.FindByPos(x, y - 1) === null && JP.world.terrain[Math.floor(x)][Math.floor(y - 1)].name !== "Water")
+        if (JP.Entity.FindByPos(x, y - 1) === null && JP.world.terrain[Math.floor(x)][Math.floor(y - 1)].name !== "Sea")
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x;
@@ -248,7 +248,7 @@ JP.Item.Tinderbox.prototype.Use = function()
       break;
       case JP.Keys.S:
       default:
-        if (JP.Entity.FindByPos(x, y + 1) === null && JP.world.terrain[Math.floor(x)][Math.floor(y + 1)].name !== "Water")
+        if (JP.Entity.FindByPos(x, y + 1) === null && JP.world.terrain[Math.floor(x)][Math.floor(y + 1)].name !== "Sea")
         {
           clearSpot = clearSpot || {};
           clearSpot.x = x;
