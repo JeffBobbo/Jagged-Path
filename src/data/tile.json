@@ -31,7 +31,8 @@
   },
   {
     "name": "Desert",
-    "colour": "#C19A6B"
+    "colour": "#C19A6B",
+    "spawnSafe": false
   },
   {
     "name": "Savanna",
@@ -39,8 +40,19 @@
     "spawnSafe": false
   },
   {
+    "name": "Jungle",
+    "colour": "#3C6C42",
+    "spawnSafe": false
+  },
+  {
     "name": "Sea",
     "colour": "#007FAF",
+    "spawnSafe": false,
+    "swimmable": true
+  },
+  {
+    "name": "River",
+    "colour": "#4FA6FF",
     "spawnSafe": false,
     "swimmable": true
   },

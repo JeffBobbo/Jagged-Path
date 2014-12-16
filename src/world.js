@@ -128,87 +128,103 @@ JP.World.Gen.NONE      = 0;
 JP.World.Gen.RADIAL    = 1;
 JP.World.Gen.HEIGHT    = 2;
 JP.World.Gen.HEAT      = 3;
-JP.World.Gen.FILTER    = 4;
-JP.World.Gen.TILING    = 5;
-JP.World.Gen.PLACEMENT = 6;
-JP.World.Gen.SAVING    = 7;
-JP.World.Gen.DONE      = 8;
+JP.World.Gen.MOISTURE  = 4;
+JP.World.Gen.FILTER    = 5;
+JP.World.Gen.TILING    = 6;
+JP.World.Gen.PLACEMENT = 7;
+JP.World.Gen.SAVING    = 8;
+JP.World.Gen.DONE      = 9;
+
+JP.World.PERLINDIV = 200;
 
 JP.World.prototype.GenerationTasks = function()
 {
   var ret;
   var str;
-  switch (this.generationLevel)
+  var target = Math.floor(1000 / JP.getFPS());
+  var start = getTime(); // using getTime instead JP.getTickCount due to FPS issues
+  while (getTime() - start < target && ret !== true) // keep going until estimated frame time is up, or stage is done
   {
-    case JP.World.Gen.NONE:
-      str = "Creating World";
-      ret = this.CreateMap();
-      if (ret === true)
-      {
+    switch (this.generationLevel)
+    {
+      case JP.World.Gen.NONE:
+        str = "Creating World";
+        ret = this.CreateMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.RADIAL:
+        ret = true;
         this.generationLevel++;
-      }
-    break;
-    case JP.World.Gen.RADIAL:
-      ret = true;
-      this.generationLevel++;
-      /*
-      str = "Creating Radial Map";
-      ret = this.CreateRadialMap();
-      if (ret === true)
-      {
-        this.generationLevel++;
-      }
-      */
-    break;
-    case JP.World.Gen.HEIGHT:
-      str = "Creating Height Map";
-      ret = this.CreateHeightMap();
-      if (ret === true)
-      {
-        this.generationLevel++;
-      }
-    break;
-    case JP.World.Gen.HEAT:
-      str = "Creating Heat Map";
-      ret = this.CreateHeatMap();
-      if (ret === true)
-      {
-        this.generationLevel++;
-      }
-    break;
-    case JP.World.Gen.FILTER:
-      str = "Filtering Map";
-      ret = this.FilterMap();
-      if (ret === true)
-      {
-        this.generationLevel++;
-      }
-    break;
-    case JP.World.Gen.TILING:
-      str = "Tiling Map";
-      ret = this.TileMap();
-      if (ret === true)
-      {
-        this.generationLevel++;
-      }
-    break;
-    case JP.World.Gen.PLACEMENT:
-      str = "Placing Entities";
-      ret = this.EntityMap();
-      if (ret === true)
-      {
-        this.generationLevel++;
-      }
-    break;
-    case JP.World.Gen.SAVING:
-      str = "Saving the World";
-      ret = this.Save();
-      if (ret === true)
-      {
-        this.generationLevel++;
-        JP.needDraw = true;
-      }
-    break;
+        /*
+        str = "Creating Radial Map";
+        ret = this.CreateRadialMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+        */
+      break;
+      case JP.World.Gen.HEIGHT:
+        str = "Creating Height Map";
+        ret = this.CreateHeightMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.HEAT:
+        str = "Creating Heat Map";
+        ret = this.CreateHeatMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.MOISTURE:
+        str = "Creating Moisture Map";
+        ret = this.CreateMoistureMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.FILTER:
+        str = "Filtering Map";
+        ret = this.FilterMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.TILING:
+        str = "Tiling Map";
+        ret = this.TileMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.PLACEMENT:
+        str = "Placing Entities";
+        ret = this.EntityMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.SAVING:
+        str = "Saving the World";
+        ret = this.Save();
+        if (ret === true)
+        {
+          this.generationLevel++;
+          JP.needDraw = true;
+        }
+      break;
+    }
   }
   if (ret !== true)
   {
@@ -280,7 +296,7 @@ JP.World.prototype.CreateHeightMap = function()
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    this.tmpData[x][y].height = noise.perlin2(x/1600, y/1600) * 100;
+    this.tmpData[x][y].height = noise.perlin2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
   }
   return x / this.tmpData.length;
 };
@@ -310,6 +326,26 @@ JP.World.prototype.CreateHeatMap = function()
   return x / this.tmpData.length;
 };
 
+JP.World.prototype.CreateMoistureMap = function()
+{
+  if (JP.World.prototype.CreateMoistureMap.x === undefined)
+  {
+    JP.World.prototype.CreateMoistureMap.x = 0;
+    noise.seed(Math.random());
+  }
+
+  var x = JP.World.prototype.CreateMoistureMap.x++;
+
+  if (x === this.tmpData.length)
+    return true; // return true when we're done
+
+  for (var y = 0; y < this.tmpData[x].length; ++y)
+  {
+    this.tmpData[x][y].moisture = noise.perlin2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
+  }
+  return x / this.tmpData.length;
+};
+
 JP.World.prototype.FilterMap = function()
 {
   if (JP.World.prototype.FilterMap.x === undefined)
@@ -329,6 +365,7 @@ JP.World.prototype.FilterMap = function()
 
     var height = 0;
     var heat = 0;
+    var moisture = 0;
     for (var rx = 0; rx < (radius << 1) + 1; ++rx)
     {
       for (var ry = 0; ry < (radius << 1) + 1; ++ry)
@@ -345,12 +382,14 @@ JP.World.prototype.FilterMap = function()
         if (ty >= JP.HEIGHT)
           ty = JP.HEIGHT - (ty - JP.HEIGHT) - 1;
 
-        height += this.tmpData[tx][ty].height * filter[rx][ry];
-        heat   += this.tmpData[tx][ty].heat   * filter[rx][ry];
+        height   += this.tmpData[tx][ty].height   * filter[rx][ry];
+        heat     += this.tmpData[tx][ty].heat     * filter[rx][ry];
+        moisture += this.tmpData[tx][ty].moisture * filter[rx][ry];
       }
     }
     this.mapData[x][y].height   = Math.floor(height);
     this.mapData[x][y].heat     = Math.floor(heat);
+    this.mapData[x][y].moisture = Math.floor(moisture);
   }
   return x / this.tmpData.length;
 };
@@ -369,6 +408,7 @@ JP.World.prototype.TileMap = function()
   {
     var height = this.mapData[x][y].height;
     var heat = this.mapData[x][y].heat;
+    var moisture = this.mapData[x][y].moisture;
     var tile = undefined;
 
     var possibleTiles = [];
@@ -376,13 +416,19 @@ JP.World.prototype.TileMap = function()
     {
       // data about where one particular tile should appear
       var setting = JP.World.Generation.tiles[i];
-      if (setting.minHeight !== null && height < setting.minHeight)
+
+      // note, using two instead of three comparison to cover null and undefined
+      if (setting.minHeight != null && height < setting.minHeight)
         continue;
-      if (setting.maxHeight !== null && height >= setting.maxHeight)
+      if (setting.maxHeight != null && height >= setting.maxHeight)
         continue;
-      if (setting.minHeat !== null && heat < setting.minHeat)
+      if (setting.minHeat != null && heat < setting.minHeat)
         continue;
-      if (setting.maxHeat !== null && heat >= setting.maxHeat)
+      if (setting.maxHeat != null && heat >= setting.maxHeat)
+        continue;
+      if (setting.minMoisture != null && moisture < setting.minMoisture)
+        continue;
+      if (setting.maxMoisture != null && moisture >= setting.maxMoisture)
         continue;
       possibleTiles.push(setting.tile);
     }

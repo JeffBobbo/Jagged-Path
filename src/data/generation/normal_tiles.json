@@ -46,14 +46,27 @@
     "minHeight": 25,
     "maxHeight": 55,
     "minHeat": 70,
-    "maxHeat": null
+    "maxHeat": null,
+    "minMoisture": null,
+    "maxMoisture": 50
   },
   {
     "tile": "Savanna",
     "minHeight": 25,
     "maxHeight": 55,
     "minHeat": 50,
-    "maxHeat": 70
+    "maxHeat": 70,
+    "minMoisture": null,
+    "maxMoisture": 50
+  },
+  {
+    "tile": "Jungle",
+    "minHeight": 25,
+    "maxHeight": 55,
+    "minHeat": 50,
+    "maxHeat": null,
+    "minMoisture": 50,
+    "maxMoisture": null
   },
   {
     "tile": "Mountain",
