@@ -131,9 +131,10 @@ JP.World.Gen.HEAT      = 3;
 JP.World.Gen.MOISTURE  = 4;
 JP.World.Gen.FILTER    = 5;
 JP.World.Gen.TILING    = 6;
-JP.World.Gen.PLACEMENT = 7;
-JP.World.Gen.SAVING    = 8;
-JP.World.Gen.DONE      = 9;
+JP.World.Gen.FEATURE   = 7;
+JP.World.Gen.PLACEMENT = 8;
+JP.World.Gen.SAVING    = 9;
+JP.World.Gen.DONE      = 10;
 
 JP.World.PERLINDIV = 200;
 
@@ -202,6 +203,14 @@ JP.World.prototype.GenerationTasks = function()
       case JP.World.Gen.TILING:
         str = "Tiling Map";
         ret = this.TileMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.FEATURE:
+        str = "Adding Map Features";
+        ret = this.FeatureMap();
         if (ret === true)
         {
           this.generationLevel++;
@@ -437,6 +446,98 @@ JP.World.prototype.TileMap = function()
     this.terrain[x][y] = (tile === undefined ? JP.Tile.Create("Invalid") : JP.Tile.Create(tile));
   }
   return x / this.mapData.length;
+};
+
+
+JP.World.prototype.NextRiverNode = function()
+{ // find the highest tile that's be unprocess so far, use by FeatureMap
+  var highest = null;
+  var pos = {x: -1, y: -1};
+  for (var x = this.mapData.length - 1; x >= 0; x--)
+  {
+    for (var y = this.mapData[x].length - 1; y >= 0; y--)
+    {
+      var tile = this.mapData[x][y];
+      if (tile.processed === true)
+        continue;
+      if (highest === null || tile.height > highest.height)
+      {
+        highest = tile;
+        pos.x = x;
+        pos.y = y;
+      }
+
+    }
+  }
+  return {data: highest, x: pos.x, y: pos.y};
+};
+
+JP.World.prototype.FeatureMap = function()
+{
+  if (JP.World.prototype.FeatureMap.processedCount === undefined)
+  {
+    JP.World.prototype.FeatureMap.processedCount = 0;
+    JP.World.prototype.FeatureMap.processedTotal = this.terrain.length * this.terrain[0].length;
+  }
+
+  var DRAINAGE = 0.5; // how much water drains away on each tile as a percentage of what's there
+  var RIVERAMT = 20; // how much water is needed to make a river
+
+  var data = this.NextRiverNode();
+  var src = data.data;
+
+  // find lowest adjacent
+  var dest;
+  var spos = {x: data.x, y: data.y};
+  this.mapData[spos.x][spos.y].processed = true;
+  JP.World.prototype.FeatureMap.processedCount++;
+  var dpos = {x: data.x, y: data.y};
+  while(true)
+  {
+    dest = null;
+
+    for (var x = -1; x <= 1; x++)
+    {
+      for (var y = -1; y <= 1; y++)
+      {
+        if (x * y !== 0 || (x === 0 && y === 0)) // skip edges and middle
+          continue;
+
+        if (spos.x + x >= this.mapData.length || spos.x + x < 0)
+          continue;
+        if (spos.y + y >= this.mapData[0].length || spos.y + y < 0)
+          continue;
+
+        var tile = this.mapData[spos.x + x][spos.y + y];
+        if (dest === null || tile.height < dest.height)
+        {
+          dest = tile;
+          dpos.x += x;
+          dpos.y += y;
+        }
+      }
+    }
+    if (dest === null && this.terrain[dpos.x][dpos.y].name !== "Sea") // we're at the end of the river
+      break;
+
+    if (JP.World.prototype.FeatureMap.processedCount / JP.World.prototype.FeatureMap.processedTotal > 0.1)
+      return true;
+
+    this.mapData[dpos.x][dpos.y].moisture += (this.mapData[spos.x][spos.y].moisture *= DRAINAGE);
+    if (this.mapData[dpos.x][dpos.y].moisture > RIVERAMT)
+    {
+      this.mapData[dpos.x][dpos.y].processed = true;
+      JP.World.prototype.FeatureMap.processedCount++;
+      this.terrain[dpos.x][dpos.y] = JP.Tile.Create("River");
+    }
+    src = dest;
+    spos = dpos;
+  }
+
+  var progress = JP.World.prototype.FeatureMap.processedCount / JP.World.prototype.FeatureMap.processedTotal;
+  if (progress >= 1)
+    return true;
+  return progress;
 };
 
 JP.World.prototype.EntityMap = function()
