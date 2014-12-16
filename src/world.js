@@ -349,8 +349,8 @@ JP.World.prototype.FilterMap = function()
         heat   += this.tmpData[tx][ty].heat   * filter[rx][ry];
       }
     }
-    this.mapData[x][y].height = height;
-    this.mapData[x][y].heat = heat;
+    this.mapData[x][y].height   = Math.floor(height);
+    this.mapData[x][y].heat     = Math.floor(heat);
   }
   return x / this.tmpData.length;
 };
