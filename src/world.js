@@ -450,7 +450,7 @@ JP.World.prototype.TileMap = function()
     }
     if (possibleTiles.length > 0)
       tile = possibleTiles[randIntRange(0, possibleTiles.length-1)];
-    this.terrain[x][y] = (tile === undefined ? JP.Tile.Create("Invalid") : JP.Tile.Create(tile));
+    this.terrain[x][y] = (tile === undefined ? JP.Tile.Create("Invalid", x, y) : JP.Tile.Create(tile, x, y));
   }
   return x / this.mapData.length;
 };
@@ -605,7 +605,7 @@ JP.World.prototype.AddRivers = function()
     walked++;
     if (Math.random() <= (walked / maxWalk) || JP.World.prototype.AddRivers.madeNew === false)
     {
-      this.terrain[cpos.x][cpos.y] = JP.Tile.Create("River");
+      this.terrain[cpos.x][cpos.y] = JP.Tile.Create("River", cpos.x, cpos.y);
       if (walked <= maxWalk) // hack to only mark the first node
         this.mapData[cpos.x][cpos.y].spring = true;
       walked = maxWalk + 1; // hack to make the river continue
@@ -670,13 +670,14 @@ JP.World.prototype.Prerender = function()
   {
     for (var y = yoffset | 0; y < ymax; ++y)
     {
-      var tile = this.terrain[x][y];
+      this.terrain[x][y].Draw(x, y, xoffset, yoffset);
+      /*
       if (tile.img === null)
       {
         var group = 1;
-        while ((y + group) < ymax && tile.colour === this.terrain[x][y+group].colour)
+        while ((y + group) < ymax && col === this.terrain[x][y+group].Colour())
           group++;
-        JP.tcontext.fillStyle = tile.colour;
+        JP.tcontext.fillStyle = col;
         JP.tcontext.fillRect(
           (x - xoffset) * JP.zoomLevel,
           (y - yoffset) * JP.zoomLevel,
@@ -688,7 +689,7 @@ JP.World.prototype.Prerender = function()
       }
       else
       {
-        if (tile.colour !== null)
+        if (col !== null)
         {
           JP.tcontext.fillStyle = tile.colour;
           JP.tcontext.fillRect(
@@ -703,6 +704,7 @@ JP.World.prototype.Prerender = function()
           (y - yoffset) * JP.zoomLevel
         );
       }
+      */
     }
   }
 };
