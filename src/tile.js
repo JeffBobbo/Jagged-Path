@@ -68,18 +68,19 @@ JP.Tile.Tile.prototype.Colour = function()
       if (setting.tile !== this.name)
         continue;
 
-      min = setting.minHeight || 0;
+      min = setting.minHeight || -100;
       max = setting.maxHeight || 100;
       break;
     }
 
     // for each tile above min, add COLOURINC
+    var half = (max - min) / 2 + min;
     var col = parseInt(this.colour.substr(1), 16);
-    var diff = this.data.height - min;
-    var COLOURINC = 1;
-    var r = ((((col >> 16) & 0xFF) + (COLOURINC * diff)) & 0xFF) << 16;
-    var g = ((((col >> 8) & 0xFF) + (COLOURINC * diff)) & 0xFF) << 8;
-    var b = ((((col >> 0) & 0xFF) + (COLOURINC * diff)) & 0xFF) << 0;
+    var diff = this.data.height - half;
+    var COLOURINC = 0.01;
+    var r = Math.min(((col >> 16) & 0xFF) * (1 + COLOURINC * diff), 0xFF) << 16;
+    var g = Math.min(((col >> 8) & 0xFF) * (1 + COLOURINC * diff), 0xFF) << 8;
+    var b = Math.min(((col >> 0) & 0xFF) * (1 + COLOURINC * diff), 0xFF) << 0;
     this.calcColour = r + g + b;
     /*
     var half = (max - min) / 2 + min;
@@ -92,7 +93,10 @@ JP.Tile.Tile.prototype.Colour = function()
     var i = Interpolate(min, max, this.data.height);
     */
   }
-  return "#" + this.calcColour.toString(16);
+  this.calcColour = this.calcColour.toString(16);
+  while (this.calcColour.length < 6)
+    this.calcColour = "0" + this.calcColour;
+  return "#" + this.calcColour;
 }
 
 JP.Tile.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
@@ -100,7 +104,7 @@ JP.Tile.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
   var col = this.Colour();
   if (col !== null)
   {
-    JP.context.fillStyle = this.col;
+    JP.context.fillStyle = col;
     JP.context.fillRect(
       (x - xoffset) * JP.zoomLevel,
       (y - yoffset) * JP.zoomLevel,

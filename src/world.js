@@ -354,7 +354,7 @@ JP.World.prototype.CreateMoistureMap = function()
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    this.tmpData[x][y].moisture = noise.perlin2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
+    this.tmpData[x][y].moisture = noise.simplex2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
   }
   return x / this.tmpData.length;
 };
@@ -400,12 +400,11 @@ JP.World.prototype.FilterMap = function()
         moisture += this.tmpData[tx][ty].moisture * filter[rx][ry];
       }
     }
-    //this.mapData[x][y].height   = Number(height).toFixed(4);
     this.mapData[x][y].height   = Math.floor(height);
-    //this.mapData[x][y].heat     = Number(heat).toFixed(4);
+    //this.mapData[x][y].height   = Math.floor(this.tmpData[x][y].height);
     this.mapData[x][y].heat     = Math.floor(heat);
-    //this.mapData[x][y].moisture = Number(moisture).toFixed(4);
     this.mapData[x][y].moisture = Math.floor(moisture);
+    //this.mapData[x][y].moisture = Math.floor(this.tmpData[x][y].moisture);
   }
   return x / this.tmpData.length;
 };
@@ -670,8 +669,9 @@ JP.World.prototype.Prerender = function()
   {
     for (var y = yoffset | 0; y < ymax; ++y)
     {
-      this.terrain[x][y].Draw(x, y, xoffset, yoffset);
-      /*
+//      this.terrain[x][y].Draw(x, y, xoffset, yoffset);
+      var tile = this.terrain[x][y];
+      var col = tile.Colour();
       if (tile.img === null)
       {
         var group = 1;
@@ -691,7 +691,7 @@ JP.World.prototype.Prerender = function()
       {
         if (col !== null)
         {
-          JP.tcontext.fillStyle = tile.colour;
+          JP.tcontext.fillStyle = col;
           JP.tcontext.fillRect(
             (x - xoffset) * JP.zoomLevel,
             (y - yoffset) * JP.zoomLevel,
@@ -704,7 +704,6 @@ JP.World.prototype.Prerender = function()
           (y - yoffset) * JP.zoomLevel
         );
       }
-      */
     }
   }
 };
