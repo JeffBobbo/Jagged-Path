@@ -298,17 +298,20 @@ JP.World.prototype.CreateHeightMap = function()
   if (JP.World.prototype.CreateHeightMap.x === undefined)
   {
     JP.World.prototype.CreateHeightMap.x = 0;
+    JP.World.prototype.CreateHeightMap.noise = new Noise(4, 2, 4, 3, 5, -Math.PI, Math.PI, -Math.PI, Math.PI);
     noise.seed(Math.random());
   }
 
   var x = JP.World.prototype.CreateHeightMap.x++;
+  var pn = JP.World.prototype.CreateHeightMap.noise;
 
   if (x === this.tmpData.length)
     return true; // return true when we're done
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    this.tmpData[x][y].height = noise.perlin2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
+    //this.tmpData[x][y].height = noise.perlin2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
+    this.tmpData[x][y].height = pn.Value(x, y) * 5;
   }
   return x / this.tmpData.length;
 };
@@ -400,7 +403,7 @@ JP.World.prototype.FilterMap = function()
         moisture += this.tmpData[tx][ty].moisture * filter[rx][ry];
       }
     }
-    this.mapData[x][y].height   = Math.floor(height);
+    this.mapData[x][y].height   = (height).toFixed(2);
     //this.mapData[x][y].height   = Math.floor(this.tmpData[x][y].height);
     this.mapData[x][y].heat     = Math.floor(heat);
     this.mapData[x][y].moisture = Math.floor(moisture);
