@@ -9,6 +9,8 @@
 
   todo: change this so that each layer has it's own frequency and offset, and then stack those together
 
+  this is kinda shit, but I'll keep it around for now
+
 */
 
 function Noise(levels, freqXMin, freqXMax, freqYMin, freqYMax, offXMin, offXMax, offYMin, offYMax)
@@ -16,6 +18,7 @@ function Noise(levels, freqXMin, freqXMax, freqYMin, freqYMax, offXMin, offXMax,
   this.levels = [];
   for (i = 0; i < (levels || 3); ++i)
     this.levels.push(new Noise.Level(i, randRange(freqXMin, freqXMax) / (i+1), randRange(freqYMin, freqYMax) / (i+1) , randRange(offXMin, offXMax) * (i+1), randRange(offYMin, offYMax) * (i+1)));
+  this.persistance = 0.5;
 }
 
 Noise.Level = function(i, freqX, freqY, offX, offY)
@@ -24,7 +27,6 @@ Noise.Level = function(i, freqX, freqY, offX, offY)
   this.freqY = freqY || 1;
   this.offX  = offX  || 0;
   this.offY  = offY  || 0;
-  this.pow   = 2;
 }
 
 
@@ -44,7 +46,7 @@ Noise.prototype.Value = function(x, y)
   for (var i = 1; i <= this.levels.length; ++i)
   {
     var level = this.levels[i-1];
-    ret += i * this.Wave(i)(level.offX + level.freqX * x) + i * this.Wave(i)(level.offY + level.freqY * y);
+    ret += (this.persistance * (Math.pow(2, i-1))) * (this.Wave(i)(level.offX + level.freqX * x) + this.Wave(i)(level.offY + level.freqY * y));
   }
   return ret;
 };
