@@ -57,6 +57,9 @@ JP.Tile.Tile.prototype.Colour = function()
   if (this.colour === null)
     return null;
 
+  if (this.name === "Invalid") // invalid tiles are always black
+    return "#000000";
+
   if (this.calcColour === undefined)
   {
     var min = null;
