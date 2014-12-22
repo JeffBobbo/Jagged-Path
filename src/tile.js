@@ -76,7 +76,6 @@ JP.Tile.Tile.prototype.Colour = function()
       break;
     }
 
-    // for each tile above min, add COLOURINC
     var half = (max - min) / 2 + min;
     var col = parseInt(this.colour.substr(1), 16);
     var diff = this.data.height - half;
@@ -85,15 +84,16 @@ JP.Tile.Tile.prototype.Colour = function()
     var g = Math.min(((col >> 8) & 0xFF) * (1 + COLOURINC * diff), 0xFF) << 8;
     var b = Math.min(((col >> 0) & 0xFF) * (1 + COLOURINC * diff), 0xFF) << 0;
     this.calcColour = r + g + b;
-    /*
-    var half = (max - min) / 2 + min;
-    // now interpolate
-    if (this.data.height > half)
-      min = half;
-    else
-      max = half;
 
-    var i = Interpolate(min, max, this.data.height);
+    /*
+    if (this.data.height > 5)
+      return "#FF0000";
+    if (this.data.height < -5)
+      return "#0000FF";
+    var r = ((this.data.height + 5) / 10 * 0x7F + 0x7F) << 16;
+    var g = ((this.data.height + 5) / 10 * 0x7F + 0x7F) <<  8;
+    var b = ((this.data.height + 5) / 10 * 0x7F + 0x7F) <<  0;
+    this.calcColour = r + g + b;
     */
   }
   this.calcColour = this.calcColour.toString(16);
