@@ -383,7 +383,7 @@ JP.World.prototype.FilterMap = function()
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    var radius = 3;// this means a kernel size of 7x7
+    var radius = 5;// this means a kernel size of 11*11
     var filter = JP.Gaussian.getFilter(radius);
     var x0 = x - (radius - 1);
     var y0 = y - (radius - 1);
