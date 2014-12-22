@@ -145,7 +145,7 @@ JP.World.prototype.GenerationTasks = function()
 {
   var ret;
   var str;
-  var target = Math.floor(1000 / JP.getFPS());
+  var target = Math.floor(1000 / 60);
   var start = getTime(); // using getTime instead JP.getTickCount due to FPS issues
   while (getTime() - start < target && ret !== true) // keep going until estimated frame time is up, or stage is done
   {
