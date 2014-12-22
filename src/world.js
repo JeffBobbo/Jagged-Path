@@ -298,7 +298,7 @@ JP.World.prototype.CreateHeightMap = function()
   if (JP.World.prototype.CreateHeightMap.x === undefined)
   {
     JP.World.prototype.CreateHeightMap.x = 0;
-    JP.World.prototype.CreateHeightMap.noise = new Noise(4, 2, 4, 3, 5, -Math.PI, Math.PI, -Math.PI, Math.PI);
+    //JP.World.prototype.CreateHeightMap.noise = new Noise(4, 2, 4, 3, 5, -Math.PI, Math.PI, -Math.PI, Math.PI);
     noise.seed(Math.random());
   }
 
@@ -310,8 +310,12 @@ JP.World.prototype.CreateHeightMap = function()
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    //this.tmpData[x][y].height = noise.perlin2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
-    this.tmpData[x][y].height = pn.Value(x, y) * 5;
+    var xp = x / this.tmpData.length
+    var yp = y / this.tmpData[0].length; // normalize
+    var size = 3;  // pick a scaling value
+    this.tmpData[x][y].height = noise.perlin2(xp*size, yp*size) * 100;
+    //this.tmpData[x][y].height = pn.Value(x, y) * 5;
+    //this.tmpData[x][y].height = PerlinNoise.noise(xp * size, yp * size, 0.5) * 100;
   }
   return x / this.tmpData.length;
 };
@@ -357,7 +361,12 @@ JP.World.prototype.CreateMoistureMap = function()
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    this.tmpData[x][y].moisture = noise.simplex2(x/JP.World.PERLINDIV, y/JP.World.PERLINDIV) * 100;
+    var xp = x / this.tmpData.length
+    var yp = y / this.tmpData[0].length; // normalize
+    var size = 3;  // pick a scaling value
+    this.tmpData[x][y].moisture = noise.perlin2(xp*size, yp*size) * 100;
+    //this.tmpData[x][y].moisture = pn.Value(x, y) * 5;
+    //this.tmpData[x][y].moisture = PerlinNoise.noise(xp * size, yp * size, 0.5) * 100;
   }
   return x / this.tmpData.length;
 };
