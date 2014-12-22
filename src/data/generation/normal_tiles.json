@@ -2,27 +2,27 @@
   {
     "tile": "Sea",
     "minHeight": null,
-    "maxHeight": 0,
+    "maxHeight": 5,
     "minHeat": 10,
     "maxHeat": null
   },
   {
     "tile": "Ice",
     "minHeight": null,
-    "maxHeight": 0,
+    "maxHeight": 5,
     "minHeat": null,
     "maxHeat": 10
   },
   {
     "tile": "Snow",
-    "minHeight": 0,
+    "minHeight": 5,
     "maxHeight": 55,
     "minHeat": null,
     "maxHeat": 10
   },
   {
     "tile": "Beach",
-    "minHeight": 0,
+    "minHeight": 5,
     "maxHeight": 25,
     "minHeat": 10,
     "maxHeat": null
@@ -72,7 +72,7 @@
     "tile": "Mountain",
     "minHeight": 55,
     "maxHeight": 100,
-    "minHeat": 20,
+    "minHeat": 30,
     "maxHeat": null
   },
   {
@@ -80,6 +80,6 @@
     "minHeight": 55,
     "maxHeight": 100,
     "minHeat": null,
-    "maxHeat": 20
+    "maxHeat": 30
   }
 ]
