@@ -312,7 +312,7 @@ JP.World.prototype.CreateHeightMap = function()
   {
     var xp = x / this.tmpData.length
     var yp = y / this.tmpData[0].length; // normalize
-    var size = 3;  // pick a scaling value
+    var size = 2;  // pick a scaling value
     this.tmpData[x][y].height = noise.perlin2(xp*size, yp*size) * 100;
     //this.tmpData[x][y].height = pn.Value(x, y) * 5;
     //this.tmpData[x][y].height = PerlinNoise.noise(xp * size, yp * size, 0.5) * 100;
