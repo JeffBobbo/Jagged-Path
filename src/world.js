@@ -504,7 +504,7 @@ JP.World.prototype.AddRivers = function()
     // if we didn't find any, lets make some
     if (needToMake === true)
     {
-      var num = randIntRange(36, 48);
+      var num = randIntRange(24, 36);
       for (var i = num - 1; i >= 0; i--)
       {
         while (true)
