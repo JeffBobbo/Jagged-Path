@@ -486,20 +486,23 @@ JP.World.prototype.AddRivers = function()
   {
     JP.World.prototype.AddRivers.i = 0; // progress tracking
 
-    // find all the springs which we made previously
-    JP.World.prototype.AddRivers.springs = [];
+    // find out if we need to make new river points
+    JP.World.prototype.AddRivers.points = [];
+    var needToMake = true;
     for (var x = this.mapData.length - 1; x >= 0; x--)
     {
       for (var y = this.mapData[x].length - 1; y >= 0; y--)
       {
-        if (this.mapData[x][y].spring === true)
-          JP.World.prototype.AddRivers.springs.push({x: x, y: y});
+        if (this.mapData[x][y].river === true)
+        {
+          needToMake = true;
+          break;
+        }
       }
     }
-    JP.World.prototype.AddRivers.madeNew = JP.World.prototype.AddRivers.springs.length === 0;
 
     // if we didn't find any, lets make some
-    if (JP.World.prototype.AddRivers.springs.length === 0)
+    if (needToMake === true)
     {
       var num = randIntRange(36, 48);
       for (var i = num - 1; i >= 0; i--)
@@ -513,117 +516,102 @@ JP.World.prototype.AddRivers = function()
           if (name === "Sea" || name === "Snow" || name === "Ice" || name === "Desert")
             continue;
        
-          JP.World.prototype.AddRivers.springs.push({x: x, y: y});
+          JP.World.prototype.AddRivers.points.push({x: x, y: y});
           break;
         }
 
       }
     }
-    JP.World.prototype.AddRivers.numRivers = JP.World.prototype.AddRivers.springs.length; // progress tracking
+    JP.World.prototype.AddRivers.numRivers = JP.World.prototype.AddRivers.points.length; // progress tracking
   }
 
 
-  var i = JP.World.prototype.AddRivers.i++;
-  if (i === JP.World.prototype.AddRivers.numRivers)
-    return true; // we done
-
-  // get the next spring
-  var spring = JP.World.prototype.AddRivers.springs[i];
-
-  // find the highest tile of this island by walking up the river
-  while(JP.World.prototype.AddRivers.madeNew === true) // don't do this if we already have our spring from save
+  if (JP.World.prototype.AddRivers.i < JP.World.prototype.AddRivers.numRivers)
   {
-    this.mapData[spring.x][spring.y].processed = true;
-    var next = null;
-    var possibleNext = [];
-    for (var x = -1; x <= 1; x++)
+    var i = JP.World.prototype.AddRivers.i++;
+
+    var point = JP.World.prototype.AddRivers.points[i];
+
+    var cpos = {x: point.x, y: point.y};
+    var river = [];
+    for (var j = 0; j < 1; ++j)
     {
-      for (var y = -1; y <= 1; y++)
+      while (true)
       {
-        if (x * y !== 0 || (x === 0 && y === 0)) // skip edges and middle
-          continue;
+        river.push(cpos); // push this onto the river
+        this.mapData[cpos.x][cpos.y].processed = true;
+        var next = null;
+        var possibleNext = [];
+        for (var x = -1; x <= 1; x++)
+        {
+          for (var y = -1; y <= 1; y++)
+          {
+            if (x * y !== 0 || (x === 0 && y === 0)) // skip edges and middle
+              continue;
 
-        if (spring.x + x >= this.mapData.length || spring.x + x < 0)
-          break;
-        if (spring.y + y >= this.mapData[0].length || spring.y + y < 0)
-          break;
+            if (cpos.x + x >= this.mapData.length || cpos.x + x < 0)
+              break;
+            if (cpos.y + y >= this.mapData[0].length || cpos.y + y < 0)
+              break;
 
-        var tile = this.terrain[spring.x + x][spring.y + y];
-        if (tile.name === "Sea" || tile.name === "Ice") // if we're next to sea or ice, stop
-          break;
-        if (tile.name === "River") // skip river tiles, allows for contribs
-          break;
-        var sdata = this.mapData[spring.x][spring.y];
-        var ddata = this.mapData[spring.x + x][spring.y + y];
+            var tile = this.terrain[cpos.x + x][cpos.y + y];
+            if (tile.name === "Sea" || tile.name === "Ice") // if we're next to sea or ice, stop
+              break;
+            if (tile.name === "River") // skip river tiles, allows for contribs
+              break;
+            var sdata = this.mapData[cpos.x][cpos.y];
+            var ddata = this.mapData[cpos.x + x][cpos.y + y];
 
-        if (ddata.height > sdata.height)
-          next = {x: spring.x + x, y: spring.y + y};
-        if (ddata.processed !== true && ddata.height === sdata.height)
-          possibleNext.push({x: spring.x + x, y: spring.y + y});
+            if (j === 0 ? ddata.height > sdata.height : ddata.height < sdata.height)
+              next = {x: cpos.x + x, y: cpos.y + y};
+            if (ddata.processed !== true && ddata.height === sdata.height)
+              possibleNext.push({x: cpos.x + x, y: cpos.y + y});
+          }
+        }
+        if (next !== null)
+          cpos = next;
+        else if (possibleNext.length > 0)
+          cpos = possibleNext[randIntRange(0, possibleNext.length - 1)];
+        else
+          break;
       }
     }
-    if (next !== null)
-      spring = next;
-    else if (possibleNext.length > 0)
-      spring = possibleNext[randIntRange(0, possibleNext.length - 1)];
-    else
-      break;
+  
+    // river is now a list of coords for our river
+    river.sort(function(a, b) {
+      if (a.height > b.height)
+        return 1;
+      if (a.height < b.height)
+        return -1;
+      return 0;
+    });
+
+    // river is now sorted from low to high height
+    var truncate = randIntRange(5, 15);
+    river.splice(river.length - truncate, Infinity); // remove truncate off the end
+
+    // mark the tiles as river
+    for (var i = river.length - 1; i >= 0; i--)
+    {
+      var pos = river[i];
+      this.mapData[pos.x][pos.y].river = true;
+    }
   }
 
-  // spring should now be the high point, or at least another river/water source
+  // if there's more to do return a progress
+  if (i < JP.World.prototype.AddRivers.numRivers)
+    return i / JP.World.prototype.AddRivers.numRivers;
 
-  var maxWalk = 20; // maximum number of tiles we can walk before the river starts
-  var walked = 0;
-  // now walk down to map the rest of the river
-  var cpos = {x: spring.x, y: spring.y};
-  while(true)
+  // otherwise, set all tiles to be river
+  for (var x = this.mapData.length - 1; x >= 0; x--)
   {
-    this.mapData[cpos.x][cpos.y].processed = true;
-    var next = null;
-    var possibleNext = [];
-    for (var x = -1; x <= 1; x++)
+    for (var y = this.mapData[x].length - 1; y >= 0; y--)
     {
-      for (var y = -1; y <= 1; y++)
-      {
-        if (x * y !== 0 || (x === 0 && y === 0)) // skip edges and middle
-          continue;
-
-        if (cpos.x + x >= this.mapData.length || cpos.x + x < 0)
-          break;
-        if (cpos.y + y >= this.mapData[0].length || cpos.y + y < 0)
-          break;
-
-        var tile = this.terrain[cpos.x + x][cpos.y + y];
-        if (tile.name === "Sea" || tile.name === "Ice") // if we're next to sea or ice, stop
-          break;
-        if (tile.name === "River") // skip river tiles, allows for contribs
-          break;
-        var sdata = this.mapData[cpos.x][cpos.y];
-        var ddata = this.mapData[cpos.x + x][cpos.y + y];
-
-        if (ddata.height < sdata.height)
-          next = {x: cpos.x + x, y: cpos.y + y};
-        if (ddata.processed !== true && ddata.height === sdata.height)
-          possibleNext.push({x: cpos.x + x, y: cpos.y + y});
-      }
-    }
-    if (next !== null)
-      cpos = next;
-    else if (possibleNext.length > 0)
-      cpos = possibleNext[randIntRange(0, possibleNext.length - 1)];
-    else
-      break;
-    walked++;
-    if (Math.random() <= (walked / maxWalk) || JP.World.prototype.AddRivers.madeNew === false)
-    {
-      this.terrain[cpos.x][cpos.y] = JP.Tile.Create("River", cpos.x, cpos.y);
-      if (walked <= maxWalk) // hack to only mark the first node
-        this.mapData[cpos.x][cpos.y].spring = true;
-      walked = maxWalk + 1; // hack to make the river continue
+      if (this.mapData[x][y].river === true)
+        this.terrain[x][y] = JP.Tile.Create("River", x, y);
     }
   }
-
-  return JP.World.prototype.AddRivers.i / JP.World.prototype.AddRivers.numRivers;
+  return true; // and we're done
 };
 
 JP.World.prototype.EntityMap = function()
