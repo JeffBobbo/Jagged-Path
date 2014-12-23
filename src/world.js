@@ -325,7 +325,7 @@ JP.World.prototype.CreateHeatMap = function()
   if (JP.World.prototype.CreateHeatMap.x === undefined)
   {
     JP.World.prototype.CreateHeatMap.x = 0;
-    JP.World.prototype.CreateHeatMap.belt = randRange(2 / 5, 4 / 5); // equator
+    JP.World.prototype.CreateHeatMap.belt = randRange(2 / 5, 3 / 5); // equator
   }
 
   var x = JP.World.prototype.CreateHeatMap.x++;
@@ -334,13 +334,13 @@ JP.World.prototype.CreateHeatMap = function()
     return true; // return true when we're done
 
   var hotSpotBelt = JP.World.prototype.CreateHeatMap.belt;
-  var WIDTH_MOD = 2; // change this changes how fat the belt is
+  var DIST_MOD = 2; // change this changes how fat the belt is
     
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
-    var heat = y / this.tmpData[x].length; // position as a fraction comparable to hotSpotBelt
-    heat = 1 - (Math.abs(hotSpotBelt - heat) * WIDTH_MOD);
-    heat = Math.max(0.0, heat * randRange(0.5, 2.0) * 100);
+    var p = y / this.tmpData[x].length; // position as a fraction comparable to hotSpotBelt
+    var dist = 1 - ((Math.abs(hotSpotBelt - p) * randRange(0.75, 1.25)) * DIST_MOD); // distance from the equator
+    var heat = Bound(0, 100, dist * 100);
     this.tmpData[x][y].heat = heat;
   }
   return x / this.tmpData.length;
@@ -783,5 +783,4 @@ JP.World.prototype.Draw = function()
     JP.context.rotate(-(JP.player.direction));
     JP.context.translate(-((JP.player.relx - xoffset) * JP.zoomLevel + JP.zoomLevel / 2), -((JP.player.rely - yoffset) * JP.zoomLevel + JP.zoomLevel / 2));
   }
-  //console.log("Render took " + (getTime() - start) + "ms");
 };
