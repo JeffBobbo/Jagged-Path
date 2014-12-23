@@ -412,7 +412,7 @@ JP.World.prototype.FilterMap = function()
         moisture += this.tmpData[tx][ty].moisture * filter[rx][ry];
       }
     }
-    this.mapData[x][y].height   = (height).toFixed(2);
+    this.mapData[x][y].height   = (height).toFixed(3);
     //this.mapData[x][y].height   = Math.floor(this.tmpData[x][y].height);
     this.mapData[x][y].heat     = Math.floor(heat);
     this.mapData[x][y].moisture = Math.floor(moisture);
@@ -540,8 +540,11 @@ JP.World.prototype.AddRivers = function()
       {
         river.push(cpos); // push this onto the river
         this.mapData[cpos.x][cpos.y].processed = true;
+        /*
         var next = null;
         var possibleNext = [];
+        */
+        var weightedNext = new JP.WeightedList();
         for (var x = -1; x <= 1; x++)
         {
           for (var y = -1; y <= 1; y++)
@@ -562,16 +565,31 @@ JP.World.prototype.AddRivers = function()
             var sdata = this.mapData[cpos.x][cpos.y];
             var ddata = this.mapData[cpos.x + x][cpos.y + y];
 
+            if (ddata.processed === true)
+              continue;
+
+            /*
             if (j === 0 ? ddata.height > sdata.height : ddata.height < sdata.height)
               next = {x: cpos.x + x, y: cpos.y + y};
             if (ddata.processed !== true && ddata.height === sdata.height)
               possibleNext.push({x: cpos.x + x, y: cpos.y + y});
+            */
+
+            var deltaHeight = (sdata.height - ddata.height);
+            if (j === 0 && deltaHeight <= 0)
+              weightedNext.Insert({x: cpos.x + x, y: cpos.y + y}, deltaHeight * -1 + 1) // make weights positive and non-zero
+            if (j === 1 && deltaHeight >= 0)
+              weightedNext.Insert({x: cpos.x + x, y: cpos.y + y}, deltaHeight + 1) // make weights non-zero
           }
         }
+        /*
         if (next !== null)
           cpos = next;
         else if (possibleNext.length > 0)
           cpos = possibleNext[randIntRange(0, possibleNext.length - 1)];
+        */
+        if (weightedNext.Size() > 0)
+          cpos = weightedNext.ChooseRandom();
         else
           break;
       }
@@ -587,7 +605,7 @@ JP.World.prototype.AddRivers = function()
     });
 
     // river is now sorted from low to high height
-    var truncate = randIntRange(5, 15);
+    var truncate = randIntRange(10, 20);
     river.splice(river.length - truncate, Infinity); // remove truncate off the end
 
     // mark the tiles as river
