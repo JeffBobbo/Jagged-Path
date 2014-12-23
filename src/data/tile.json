@@ -6,12 +6,14 @@
   },
   {
     "name": "Beach",
-    "colour": "#EFD279",
+    "colourMin": "#8C6868",
+    "colourMax": "#EFD279",
     "spawnSafe": true
   },
   {
     "name": "Dirt",
-    "colour": "#836539",
+    "colourMin": "#836539",
+    "colourMax": "#6E604D",
     "spawnSafe": true
   },
   {
@@ -46,7 +48,8 @@
   },
   {
     "name": "Sea",
-    "colour": "#007FAF",
+    "colourMin": "#408684",
+    "colourMax": "#007FAF",
     "spawnSafe": false,
     "swimmable": true
   },
@@ -58,12 +61,14 @@
   },
   {
     "name": "Mountain",
-    "colour": "#999999",
+    "colourMin": "#6E604D",
+    "colourMax": "#999999",
     "climbable": true
   },
   {
     "name": "SnowyMountain",
-    "colour": "#999999",
+    "colourMin": "#6E604D",
+    "colourMax": "#999999",
     "imgPath": "snowyMountain.png",
     "climbable": true
   }
