@@ -12,8 +12,7 @@ JP.Quest.Status = {
   UNKNOWN:   -1,
   UNSTARTED:  0,
   INPROGRESS: 1,
-  COMPLETE:   2,
-  FINISHED:   3
+  COMPLETE:   2
 };
 
 JP.Quest.Load = function(src)
@@ -22,21 +21,13 @@ JP.Quest.Load = function(src)
   if (src === undefined || src === null)
     return;
 
-  var o = undefined;
-  if (typeof(src) === "string")
-    o = JSON.parse(src);
-  else
-    o = src;
-  if (o === undefined || o === null)
-    return;
-
-  var q = new JP.Quest.Quest();
-  q.LoadData(o);
+  var q = new JP.Quest();
+  q.LoadData(src);
 
   JP.Quest.list.push(q);
 };
 
-JP.Quest.Quest = function()
+JP.Quest = function()
 {
   this.codename = "";
   this.fullname = "";
@@ -47,7 +38,7 @@ JP.Quest.Quest = function()
   this.rewards      = [];
 };
 
-JP.Quest.Quest.prototype.LoadData = function(data)
+JP.Quest.prototype.LoadData = function(data)
 {
   if (data === undefined || data === null)
     return;
@@ -66,51 +57,119 @@ JP.Quest.Find = function(codename)
   for (var i = JP.Quest.list.length - 1; i >= 0; --i)
   {
     if (JP.Quest.list[i].codename === codename)
-      return i;
+      return JP.Quest.list[i];
   }
-  return -1;
+  return null;
 };
 
-JP.Quest.Quest.prototype.CanAccept = function()
+JP.Quest.prototype.GetStatus = function()
 {
-  if (this.Status() !== JP.Quest.Quest.Status.UNSTARTED)
-    return false; // already on it
-
-  if (this.requirements === null)
-    return true;
-
-  var keys = Object.keys(this.requirements);
-  for (var i = keys.length - 1; i >= 0; --i)
-  {
-    var key = this.requirements[i];
-    switch (key)
-    {
-      case "questcomplete":
-        if (this.Status() !== JP.Quest.Quest.Status.FINISHED)
-          return false;
-      break;
-    }
-  }
-
-  // if we're here, must be good
-  return true;
-};
-JP.Quest.CanAccept = function(quest)
-{
-  return (JP.Quest.list[quest].CanAccept());
-};
-
-
-JP.Quest.Quest.prototype.GetStatus = function()
-{
+  // find the quest in the player list
   for (var i = JP.player.quests.length - 1; i >= 0; --i)
   {
     if (this.codename === JP.player.quests[i].codename)
-      return JP.player.quests[i].status;
+      return JP.player.quests[i].status; // and return
   }
-  return JP.Quest.Quest.Status.UNKNOWN;
-}
-JP.Quest.GetStatus = function(quest)
+  return JP.Quest.Status.UNSTARTED; // if we didn't find it, it's not started
+};
+
+JP.Quest.prototype.SetStatus = function(status)
 {
-  return (JP.Quest.list[quest].GetStatus());
+  var data = null;
+  for (var i = JP.player.quests.length - 1; i >= 0; i--)
+  {
+    if (JP.player.quests[i].codename === this.codename)
+    {
+      data = JP.player.quests[i];
+      break;
+    }
+  }
+  if (data === null)
+  {
+    if (status === JP.Quest.Status.INPROGRESS)
+      data = JP.player.quests.push({codename: this.codename, status: status, start: JP.getTickCount()});
+  }
+  else
+  {
+    data.status = status;
+    if (status === JP.Quest.Status.COMPLETE)
+      data.end = JP.getTickCount();
+  }
+}
+
+
+JP.Quest.prototype.CanAccept = function()
+{
+  var status = this.GetStatus();
+  if (status !== JP.Quest.Status.UNSTARTED)
+    return false; // already doing it, or have done it
+
+  if (this.requirements !== null)
+  {
+    var keys = Object.keys(this.requirements);
+    for (var i = keys.length - 1; i >= 0; --i)
+    {
+      var key = keys[i];
+      var a = this.requirements[key];
+      switch (key)
+      {
+        case "questcomplete":
+          for (var i = a.length - 1; i >= 0; i--)
+          {
+            if (JP.Quest.Find(a[i]).GetStatus() !== JP.Quest.Status.COMPLETE)
+              return false;
+          }
+        break;
+      }
+    }
+  }
+  // if we're here, must be good
+  return true;
+};
+
+JP.Quest.prototype.Accept = function()
+{
+  if (this.CanAccept() === false)
+    return false;
+
+  // otherwise, add it in
+  this.SetStatus(JP.Quest.Status.INPROGRESS, JP.getTickCount());
+};
+
+JP.Quest.prototype.Update = function()
+{
+  var status = this.GetStatus();
+  // check goals
+  var goalsMet = true;
+  if (this.goals !== null)
+  {
+    var keys = Object.keys(this.goals);
+    for (var i = keys.length - 1; i >= 0; --i)
+    {
+      var key = keys[i];
+      var a = this.goals[key];
+      switch (key)
+      {
+        case "item":
+          for (var i = a.length - 1; i >= 0; i--)
+          {
+            if (JP.player.ItemQuant(a[i].name) < a[i].quant)
+              goalsMet = false;
+          }
+        break;
+      }
+      if (goalsMet === false) // no point continuing
+        break;
+    }
+  }
+  if (goalsMet === true && status === JP.Quest.Status.INPROGRESS)
+  {
+    this.SetStatus(JP.Quest.Status.COMPLETE);
+    new JP.Logger.LogItem(this.fullname + " - All goals met").Post();
+  }
+  if (goalsMet === false && status === JP.Quest.Status.COMPLETE)
+  {
+    this.SetStatus(JP.Quest.Status.INPROGRESS);
+    new JP.Logger.LogItem(this.fullname + " - Goals no longer met").Post();
+  }
 };
