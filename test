@@ -1,2 +1,4 @@
-sources: test.js
-target: target.js
+source-js: test.js
+target-js: target.js
+source-html: test.js
+target-html: target.js

@@ -46,7 +46,7 @@ JP.Player = function()
   this.canClimb = false;
   this.canSwim = false;
 
-  this.quests = {}; // name: status
+  this.quests = []; // {codename, status, start, end}
 
   // end data
   // saveKeys -- This is what gets saved or loaded -- key names of the JP.Player object

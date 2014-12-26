@@ -4,12 +4,21 @@
   All rights reserved
 */
 
+/*
+
+  Quest system
+  quests have requirements and rewards.
+  quests are split up into sections.
+  quests are given by dialog.
+  sections have dialog tied to them
+
+*/
+
 JP.Quest = JP.Quest || {};
 
-JP.Quest.list = [];
+JP.Quest.registry = [];
 
 JP.Quest.Status = {
-  UNKNOWN:   -1,
   UNSTARTED:  0,
   INPROGRESS: 1,
   COMPLETE:   2
@@ -17,15 +26,28 @@ JP.Quest.Status = {
 
 JP.Quest.Load = function(src)
 {
-  // src should be JSON data to parse into our quest structure
   if (src === undefined || src === null)
     return;
 
-  var q = new JP.Quest();
-  q.LoadData(src);
-
-  JP.Quest.list.push(q);
+  var quest = new JP.Quest();
+  quest.LoadData(src); // load data
+  JP.Quest.Register(quest); // reg
 };
+
+JP.Quest.Register = function(quest)
+{
+  if (JP.Quest.registry[quest.name] === undefined)
+    JP.Quest.registry[quest.name] = quest;
+  else
+    throw quest.name + " used more than once for quest codename";
+};
+
+JP.Quest.Find = function(codename)
+{
+  var quest = JP.Quest.registry[codename];
+  return quest || null;
+};
+
 
 JP.Quest = function()
 {
@@ -33,9 +55,9 @@ JP.Quest = function()
   this.fullname = "";
   this.description = "";
 
-  this.requirements = [];
-  this.goals        = [];
-  this.rewards      = [];
+  this.requirements = []; // JP.Quest.Requiment*
+  this.sections     = []; // JP.Quest.Section
+  this.rewards      = []; // JP.Quest.Reward*
 };
 
 JP.Quest.prototype.LoadData = function(data)
@@ -47,19 +69,13 @@ JP.Quest.prototype.LoadData = function(data)
   this.fullname = data.fullname;
   this.description = data.description;
 
-  this.requirements = data.requirements;
-  this.goals = data.goals;
-  this.rewards = data.rewards;
-};
-
-JP.Quest.Find = function(codename)
-{
-  for (var i = JP.Quest.list.length - 1; i >= 0; --i)
+  var sections = data.sections;
+  var keys = Object.keys(sections);
+  for (var i = keys.length - 1; i >= 0; i--)
   {
-    if (JP.Quest.list[i].codename === codename)
-      return JP.Quest.list[i];
+    var section = new JP.Quest.Section();
+    section.LoadData(keys[i], sections[keys[i]]);
   }
-  return null;
 };
 
 JP.Quest.prototype.GetStatus = function()
@@ -173,3 +189,76 @@ JP.Quest.prototype.Update = function()
     new JP.Logger.LogItem(this.fullname + " - Goals no longer met").Post();
   }
 };
+
+
+// REQUIREMENTS
+JP.Quest.RequirementQuest = function(quest, status)
+{
+  this.codename = quest;
+  this.status = status;
+};
+
+JP.Quest.RequirementQuest.prototype.Satisfied = function()
+{
+  return JP.Quest.Find(this.quest).GetStatus() === this.status;
+};
+
+
+// SECTION
+JP.Quest.Section = function()
+{
+  this.name = "";
+  this.goals = [];
+};
+
+JP.Quest.Section.prototype.LoadData = function(name, section)
+{
+  this.name = name;
+
+  var keys = Object.keys(section);
+  for (var i = keys.length - 1; i >= 0; i--)
+  {
+    if (keys[i] === "goals")
+    {
+      var goals = Object.keys(section[keys[i]]);
+      for (var j = goals.length - 1; j >= 0; j--)
+      {
+        var goal = section[keys[i][goals[j]];
+        switch(goals[j])
+        {
+          case "item":
+            this.goals.push(new JP.Quest.Section.GoalItem(goal.name, goal.quant, goal.target));
+          break;
+        }
+      }
+    }
+  }
+};
+
+JP.Quest.Section.prototype.Satisfied = function()
+{
+  for (var i = this.goals.length - 1; i >= 0; i--)
+  {
+    if (this.goals[i].Satisfied() === false)
+      return false;
+  }
+  return true;
+};
+
+// GOALS
+JP.Quest.Section.GoalItem = function(item, quant, target)
+{
+  this.item = item;
+  this.quant = quant || 1;
+  this.target = target || null; // null means just get the item
+};
+
+JP.Quest.Section.GoalItem.prototype.Satisfied = function()
+{
+  var count = JP.player.ItemQuant(this.item);
+
+  if (count >= this.quant)
+    return true;
+  return false;
+};
+

@@ -4,10 +4,14 @@
     "fullname":"Test Quest",
     "description":"I'll give you 5 gold and an Evergreen Log for an Oak Log",
     "requirements":null,
-    "goals":{
-      "item":[
-        {"name":"Oak Log","quant":1}
-      ]
+    "sections":{
+      "":{
+        "goals":{
+          "item":[
+            {"name":"Oak Log","quant":1}
+          ]
+        }
+      }
     },
     "rewards":{
       "item":[
@@ -21,14 +25,18 @@
     "fullname":"Test Quest II",
     "description":"I'll give you 500 gold for 5 Oak Logs",
     "requirements":{
-      "questcomplete":[
+      "questfinished":[
         "TestQuest"
       ]
     },
-    "goals":{
-      "item":[
-        {"name":"Oak Log","quant":5}
-      ]
+    "sections":{
+    "":{
+      "goals":{
+        "item":[
+          {"name":"Oak Log","quant":5}
+        ]
+      }
+    }
     },
     "rewards":{
       "gold":5
