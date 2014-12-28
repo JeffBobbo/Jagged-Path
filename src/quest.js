@@ -14,7 +14,16 @@
 
 */
 
-JP.Quest = JP.Quest || {};
+JP.Quest = function()
+{
+  this.codename = "";
+  this.fullname = "";
+  this.description = "";
+
+  this.requirements = []; // JP.Quest.Requiment*
+  this.sections     = []; // JP.Quest.Section
+  this.rewards      = []; // JP.Quest.Reward*
+};
 
 JP.Quest.registry = [];
 
@@ -36,28 +45,16 @@ JP.Quest.Load = function(src)
 
 JP.Quest.Register = function(quest)
 {
-  if (JP.Quest.registry[quest.name] === undefined)
-    JP.Quest.registry[quest.name] = quest;
+  if (JP.Quest.registry[quest.codename] === undefined)
+    JP.Quest.registry[quest.codename] = quest;
   else
-    throw quest.name + " used more than once for quest codename";
+    throw quest.codename + " used more than once for quest codename";
 };
 
 JP.Quest.Find = function(codename)
 {
   var quest = JP.Quest.registry[codename];
   return quest || null;
-};
-
-
-JP.Quest = function()
-{
-  this.codename = "";
-  this.fullname = "";
-  this.description = "";
-
-  this.requirements = []; // JP.Quest.Requiment*
-  this.sections     = []; // JP.Quest.Section
-  this.rewards      = []; // JP.Quest.Reward*
 };
 
 JP.Quest.prototype.LoadData = function(data)
@@ -69,12 +66,36 @@ JP.Quest.prototype.LoadData = function(data)
   this.fullname = data.fullname;
   this.description = data.description;
 
-  var sections = data.sections;
-  var keys = Object.keys(sections);
-  for (var i = keys.length - 1; i >= 0; i--)
+  this.requirements = [];
+  var requirements = data.requirements;
+  if (requirements !== null)
   {
-    var section = new JP.Quest.Section();
-    section.LoadData(keys[i], sections[keys[i]]);
+    var keys = Object.keys(requirements);
+    for (var i = keys.length - 1; i >= 0; i--)
+    {
+      switch(keys[i])
+      {
+        case "questcomplete":
+          for (var j = requirements[keys[i]].length - 1; j >= 0; j--)
+          {
+            var req = new JP.Quest.RequirementQuest(requirements[keys[i]][j], JP.Quest.Status.COMPLETE);
+            this.requirements.push(req);
+          }
+        break;
+      }
+    }
+  }
+
+  var sections = data.sections;
+  if (sections !== null)
+  {
+    keys = Object.keys(sections);
+    for (var i = keys.length - 1; i >= 0; i--)
+    {
+      var section = new JP.Quest.Section();
+      section.LoadData(keys[i], sections[keys[i]]);
+      this.sections.push(section);
+    }
   }
 };
 
@@ -111,8 +132,22 @@ JP.Quest.prototype.SetStatus = function(status)
     if (status === JP.Quest.Status.COMPLETE)
       data.end = JP.getTickCount();
   }
-}
+};
 
+JP.Quest.prototype.Write = function()
+{
+  var str = "";
+  str += this.fullname + "\n\n";
+
+  if (this.GetStatus() === JP.Quest.Status.COMPLETE)
+    str += "Completed\n\n";
+
+  for (var i = this.sections.length - 1; i >= 0; i--)
+  {
+    str += this.sections[i].Write();
+  }
+  return str;
+};
 
 JP.Quest.prototype.CanAccept = function()
 {
@@ -120,23 +155,12 @@ JP.Quest.prototype.CanAccept = function()
   if (status !== JP.Quest.Status.UNSTARTED)
     return false; // already doing it, or have done it
 
-  if (this.requirements !== null)
+  if (this.requirements.length)
   {
-    var keys = Object.keys(this.requirements);
-    for (var i = keys.length - 1; i >= 0; --i)
+    for (var i = this.requirements.length - 1; i >= 0; i--)
     {
-      var key = keys[i];
-      var a = this.requirements[key];
-      switch (key)
-      {
-        case "questcomplete":
-          for (var i = a.length - 1; i >= 0; i--)
-          {
-            if (JP.Quest.Find(a[i]).GetStatus() !== JP.Quest.Status.COMPLETE)
-              return false;
-          }
-        break;
-      }
+      if (this.requirements[i].Satisfied() === false)
+        return false;
     }
   }
   // if we're here, must be good
@@ -150,51 +174,15 @@ JP.Quest.prototype.Accept = function()
 
   // otherwise, add it in
   this.SetStatus(JP.Quest.Status.INPROGRESS, JP.getTickCount());
-};
 
-JP.Quest.prototype.Update = function()
-{
-  var status = this.GetStatus();
-  // check goals
-  var goalsMet = true;
-  if (this.goals !== null)
-  {
-    var keys = Object.keys(this.goals);
-    for (var i = keys.length - 1; i >= 0; --i)
-    {
-      var key = keys[i];
-      var a = this.goals[key];
-      switch (key)
-      {
-        case "item":
-          for (var i = a.length - 1; i >= 0; i--)
-          {
-            if (JP.player.ItemQuant(a[i].name) < a[i].quant)
-              goalsMet = false;
-          }
-        break;
-      }
-      if (goalsMet === false) // no point continuing
-        break;
-    }
-  }
-  if (goalsMet === true && status === JP.Quest.Status.INPROGRESS)
-  {
-    this.SetStatus(JP.Quest.Status.COMPLETE);
-    new JP.Logger.LogItem(this.fullname + " - All goals met").Post();
-  }
-  if (goalsMet === false && status === JP.Quest.Status.COMPLETE)
-  {
-    this.SetStatus(JP.Quest.Status.INPROGRESS);
-    new JP.Logger.LogItem(this.fullname + " - Goals no longer met").Post();
-  }
+  // tell the player
+  new JP.Logger.LogItem("Quest " + this.fullname + " accepted").Post();
 };
-
 
 // REQUIREMENTS
 JP.Quest.RequirementQuest = function(quest, status)
 {
-  this.codename = quest;
+  this.quest = quest;
   this.status = status;
 };
 
@@ -208,11 +196,13 @@ JP.Quest.RequirementQuest.prototype.Satisfied = function()
 JP.Quest.Section = function()
 {
   this.name = "";
+  this.description = "";
   this.goals = [];
 };
 
 JP.Quest.Section.prototype.LoadData = function(name, section)
 {
+  // this is a bit eww and should probably be rewritten
   this.name = name;
 
   var keys = Object.keys(section);
@@ -223,16 +213,36 @@ JP.Quest.Section.prototype.LoadData = function(name, section)
       var goals = Object.keys(section[keys[i]]);
       for (var j = goals.length - 1; j >= 0; j--)
       {
-        var goal = section[keys[i][goals[j]];
+        var goal = section[keys[i]][goals[j]];
         switch(goals[j])
         {
           case "item":
-            this.goals.push(new JP.Quest.Section.GoalItem(goal.name, goal.quant, goal.target));
+            for (var k = goal.length - 1; k >= 0; k--)
+            {
+              var g = goal[k];
+              this.goals.push(new JP.Quest.Section.GoalItem(g.name, g.quant, g.target));
+            }
           break;
         }
       }
     }
+    if (keys[i] === "description")
+    {
+      this.description = section[keys[i]];
+    }
   }
+};
+
+JP.Quest.Section.prototype.Write = function()
+{
+  var str = "";
+
+  if (this.description !== null && this.description !== "")
+    str += this.description + "\n\n";
+
+  for (var i = this.goals.length - 1; i >= 0; i--)
+    str += this.goals[i].Write();
+  return str;
 };
 
 JP.Quest.Section.prototype.Satisfied = function()
@@ -262,3 +272,7 @@ JP.Quest.Section.GoalItem.prototype.Satisfied = function()
   return false;
 };
 
+JP.Quest.Section.GoalItem.prototype.Write = function()
+{
+  return "Obtained " + JP.player.ItemQuant(this.item) + " of " + this.quant + " " + this.item + (this.quant > 1 ? "s" : "");
+};
