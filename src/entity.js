@@ -351,6 +351,16 @@ JP.Entity.TalkPane = function(ent, end)
     if (dialog.goldTransfer !== undefined)
       JP.player.GoldDelta(dialog.goldTransfer);
 
+    // question actions
+    if (dialog.startQuest !== undefined)
+    {
+      var quest = JP.Quest.Find(dialog.startQuest);
+      if (quest === null)
+        throw "Unknown quest (" + dialog.startQuest + ") handed out";
+
+      quest.Accept();
+    }
+
     // temporary measure for tweaking player stats until skills are done
     if (dialog.playerStat !== undefined)
     {

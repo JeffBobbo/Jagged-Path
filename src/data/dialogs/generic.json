@@ -27,5 +27,19 @@
   {
     "codename": "generic_acceptance0",
     "message": "Okay then."
+  },
+
+  {
+    "codename": "quest_test",
+    "message": "Would you like a quest?",
+    "options": {
+      "quest_accept": "Yes!",
+      "generic_farewell0": "I doubt anyone west of Bree has much interest in adventers."
+    }
+  },
+  {
+    "codename": "quest_accept",
+    "message": "Good luck!",
+    "startQuest": "TestQuest"
   }
 ]

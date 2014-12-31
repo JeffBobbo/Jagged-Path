@@ -11,5 +11,12 @@
     "imgPath": "player_front.png",
     "conversation": "generic_greeting0",
     "giveName": true
+  },
+  {
+    "class": "npc",
+    "name": "QuestTest",
+    "imgPath": "player_back.png",
+    "conversation": "quest_test",
+    "giveName": true
   }
 ]
