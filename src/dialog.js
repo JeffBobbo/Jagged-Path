@@ -9,7 +9,7 @@ JP.Dialog = function()
   this.codename = "";
   this.message = "";
 
-  this.options = [];
+  this.options = {};
 
   this.requirements = []; // JP.Dialog.Requirement*
   this.rewards = [];      // JP.Dialog.Reward*
@@ -44,6 +44,9 @@ JP.Dialog.prototype.LoadData = function(data)
 {
   this.codename = data.codename;
   this.message = data.message;
+
+  // refactor this
+  this.options = data.options;
 
   if (data.requirements !== undefined && data.requirements !== null)
   {
