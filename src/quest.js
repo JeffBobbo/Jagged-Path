@@ -59,9 +59,6 @@ JP.Quest.Find = function(codename)
 
 JP.Quest.prototype.LoadData = function(data)
 {
-  if (data === undefined || data === null)
-    return;
-
   this.codename = data.codename;
   this.fullname = data.fullname;
   this.description = data.description;
