@@ -12,7 +12,7 @@ JP.Dialog = function()
   this.options = {};
 
   this.requirements = []; // JP.Dialog.Requirement*
-  this.rewards = [];      // JP.Dialog.Reward*
+  this.actions = [];      // JP.Dialog.Action*
 }
 
 JP.Dialog.registry = {};
@@ -79,6 +79,35 @@ JP.Dialog.prototype.LoadData = function(data)
       {
         var req = new JP.Dialog.RequirementStat(dreq.stat, dreq.value);
         this.requirements.push(req);
+        continue;
+      }
+    }
+  }
+
+  if (data.actions !== undefined && data.actions !== null)
+  {
+    var dacts = data.actions;
+    for (var i = dacts.length - 1; i >= 0; i--)
+    {
+      var dact = dacts[i];
+      if (dact.giveItem !== undefined || dact.takeItem !== undefined)
+      {
+        var quant = dact.quant * (dact.takeItem === undefined ? 1 : -1);
+        var act = new JP.Dialog.ActionItem(dact.giveItem, quant);
+        this.actions.push(act);
+        continue;
+      }
+      if (dact.giveGold !== undefined || dact.takeGold !== undefined)
+      {
+        var amount = dact.giveGold || -dact.takeGold;
+        var act = new JP.Dialog.ActionItem(amount);
+        this.actions.push(act);
+        continue;
+      }
+      if (dact.setStat !== undefined)
+      {
+        var act = new JP.Dialog.ActionStat(dact.setStat, dact.value);
+        this.actions.push(act);
         continue;
       }
     }
@@ -183,4 +212,41 @@ JP.Dialog.RequirementStat = function(stat, value)
 JP.Dialog.RequirementStat.prototype.Satisfied = function()
 {
   return JP.player[this.stat] === value;
+};
+
+
+// ACTIONS
+JP.Dialog.ActionItem = function(item, quant)
+{
+  this.item = item;
+  this.quant = quant || 1;
+};
+JP.Dialog.ActionItem.prototype.Give = function()
+{
+  if (this.quant < 0 && JP.player.ItemQuant(this.item) < -this.quant)
+    return false; // they don't have enough to take
+  JP.player.ItemDelta(this.item, this.quant);
+  return true;
+};
+
+JP.Dialog.ActionGold = function(amount)
+{
+  this.amount = amount;
+};
+JP.Dialog.ActionGold.prototype.Give = function()
+{
+  if (JP.player.gold < -this.amount) // they don't have enough to take
+    return false;
+  JP.player.GoldDelta(this.amount);
+  return true;
+};
+
+JP.Dialog.ActionStat = function(stat, value)
+{
+  this.stat = stat;
+  this.value = value;
+};
+JP.Dialog.ActionStat.prototype.Give = function()
+{
+  JP.player[this.stat] = this.value;
 };
