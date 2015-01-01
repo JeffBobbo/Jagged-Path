@@ -46,7 +46,8 @@ JP.Dialog.prototype.LoadData = function(data)
   this.message = data.message;
 
   // refactor this
-  this.options = data.options;
+  if (data.options !== undefined && data.options !== null)
+    this.options = data.options;
 
   if (data.requirements !== undefined && data.requirements !== null)
   {
@@ -83,6 +84,20 @@ JP.Dialog.prototype.LoadData = function(data)
     }
   }
 };
+
+JP.Dialog.prototype.Satisfied = function()
+{
+  if (this.requirements.length === 0)
+    return true;
+
+  for (var i = this.requirements.length - 1; i >= 0; i--)
+  {
+    if (this.requirements[i].Satisfied() === false)
+      return false;
+  }
+  return true;
+};
+
 
 JP.Dialog.Get = function(dialog)
 {
@@ -125,4 +140,47 @@ JP.Dialog.Get = function(dialog)
     }
   }
   return dialog;
-}
+};
+
+// REQUIREMENTS
+JP.Dialog.RequirementType = function(itemClass, min, max)
+{
+  this.itemClass = itemClass;
+  this.min = min || -Infinity;
+  this.max = max ||  Infinity;
+};
+JP.Dialog.RequirementType.prototype.Satisfied = function()
+{
+  return InRange(this.min, this.max, JP.player.ItemQuantOfClass(this.itemClass));
+};
+
+JP.Dialog.RequirementItem = function(item, min, max)
+{
+  this.item = item;
+  this.min = min || -Infinity;
+  this.max = max ||  Infinity;
+};
+JP.Dialog.RequirementItem.prototype.Satisfied = function()
+{
+  return InRange(this.min, this.max, JP.player.ItemQuant(this.item));
+};
+
+JP.Dialog.RequirementGold = function(gold, min, max)
+{
+  this.min = min || -Infinity;
+  this.max = max ||  Infinity;
+};
+JP.Dialog.RequirementGold.prototype.Satisfied = function()
+{
+  return InRange(this.min, this.max, JP.player.gold);
+};
+
+JP.Dialog.RequirementStat = function(stat, value)
+{
+  this.stat = stat;
+  this.value = value;
+};
+JP.Dialog.RequirementStat.prototype.Satisfied = function()
+{
+  return JP.player[this.stat] === value;
+};

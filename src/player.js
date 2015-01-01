@@ -312,7 +312,7 @@ JP.Player.prototype.Move = function(dir)
   for (var i = JP.world.entities.length - 1; i >= 0; i--)
   {
     var ent = JP.world.entities[i];
-    if (ent.convoState !== null)
+    if (ent.convoState != null)
     {
       ent.convoState = null;
       JP.Entity.TalkPane(ent);

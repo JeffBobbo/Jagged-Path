@@ -313,7 +313,7 @@ JP.Entity.TalkPane = function(ent, end)
   var options = document.getElementById("convoOptions");
 
   // reset the pane before adding stuff
-  name.textContent = "";
+  name.textContent    = "";
   message.textContent = "";
   options.textContent = "";
 
@@ -323,81 +323,78 @@ JP.Entity.TalkPane = function(ent, end)
     return;
   }
 
-  var dialog = JP.Dialog.Get(ent.convoState);
+  var dialog = JP.Dialog.Find(ent.convoState);
 
-  if (ent !== null && dialog !== null)
+  if (ent === null || dialog === null || dialog.Satisfied() === false)
+    return;
+
+  var str = ""; // probably a much cleaner way to do this, but cba to think logic atm
+  if (ent.givenFName === "" && ent.givenSName === "")
+    str = ent.name;
+  else if (ent.givenFName === "" && ent.givenSName !== "")
+    str = (ent.gender ? "Mr." : "Miss") + ent.givenSName;
+  else if (ent.givenFName !== "" && ent.givenSName === "")
+    str = ent.givenFName;
+  else
+    str = ent.givenFName + " " + ent.givenSName;
+  name.textContent = str;
+
+  // add the message
+  message.textContent = dialog.message;
+
+
+  // Do transfers which needs to be done for the requirements on the options
+  if (dialog.itemTransfer !== undefined)
   {
-    var str = ""; // probably a much cleaner way to do this, but cba to think logic atm
-    if (ent.givenFName === "" && ent.givenSName === "")
-      str = ent.name;
-    else if (ent.givenFName === "" && ent.givenSName !== "")
-      str = (ent.gender ? "Mr." : "Miss") + ent.givenSName;
-    else if (ent.givenFName !== "" && ent.givenSName === "")
-      str = ent.givenFName;
-    else
-      str = ent.givenFName + " " + ent.givenSName;
-    name.textContent = str;
+    for (var i = dialog.itemTransfer.length - 1; i >= 0; i--)
+      JP.player.ItemDelta(dialog.itemTransfer[i].itemName, dialog.itemTransfer[i].itemQuant);
+  }
+  if (dialog.goldTransfer !== undefined)
+    JP.player.GoldDelta(dialog.goldTransfer);
 
-    // add the message
-    message.textContent = dialog.message;
+  // quest actions
+  if (dialog.startQuest !== undefined)
+  {
+    var quest = JP.Quest.Find(dialog.startQuest);
 
+    quest.Accept(); // checks for capability
+  }
 
-    // Do transfers which needs to be done for the requirements on the options
-    if (dialog.itemTransfer !== undefined)
+  // temporary measure for tweaking player stats until skills are done
+  if (dialog.playerStat !== undefined)
+  {
+    var keys = Object.keys(dialog.playerStat);
+    for (var i = keys.length - 1; i >= 0; i--)
+      JP.player[keys[i]] = dialog.playerStat[keys[i]];
+  }
+
+  // add options
+  var keys = Object.keys(dialog.options);
+  if (keys.length > 0)
+  {
+    for (var i = 0, len = keys.length; i < len; ++i)
     {
-      for (var i = dialog.itemTransfer.length - 1; i >= 0; i--)
-        JP.player.ItemDelta(dialog.itemTransfer[i].itemName, dialog.itemTransfer[i].itemQuant);
+      if (JP.Dialog.Find(keys[i]).Satisfied() === false) // reqs not met
+        continue;
+      var opt = document.createElement("a");
+      opt.textContent = dialog.options[keys[i]];
+      opt.href = "#";
+      opt.setAttribute("data-option", keys[i]);
+      opt.onclick = function() { JP.Entity.TalkOption(ent.id, this); };
+      options.appendChild(opt);
+      options.appendChild(document.createElement("br"));
     }
-    if (dialog.goldTransfer !== undefined)
-      JP.player.GoldDelta(dialog.goldTransfer);
-
-    // question actions
-    if (dialog.startQuest !== undefined)
-    {
-      var quest = JP.Quest.Find(dialog.startQuest);
-      if (quest === null)
-        throw "Unknown quest (" + dialog.startQuest + ") handed out";
-
-      quest.Accept();
-    }
-
-    // temporary measure for tweaking player stats until skills are done
-    if (dialog.playerStat !== undefined)
-    {
-      var keys = Object.keys(dialog.playerStat);
-      for (var i = keys.length - 1; i >= 0; i--)
-        JP.player[keys[i]] = dialog.playerStat[keys[i]];
-    }
-
-    // add options
-    if (dialog.options !== undefined)
-    {
-      var keys = Object.keys(dialog.options);
-      var len = keys.length;
-      for (var i = 0; i < len; ++i)
-      {
-        if (JP.Dialog.Get(keys[i]) === null) // don't add it if we don't meet the requirements
-          continue;
-        var opt = document.createElement("a");
-        opt.textContent = dialog.options[keys[i]];
-        opt.href = "#";
-        opt.setAttribute("data-option", keys[i]);
-        opt.onclick = function() { JP.Entity.TalkOption(ent.id, this); };
-        options.appendChild(opt);
-        options.appendChild(document.createElement("br"));
-      }
-    }
-    else
-    {
-      // this is the end of the conversation, add a close button
-      var close = document.createElement("a");
-      close.textContent = "Close";
-      close.className = "closeConvo";
-      close.href = "#";
-      close.setAttribute("data-ent", ent.id);
-      close.onclick = function() { JP.Entity.TalkPane(this.getAttribute("data-ent"), true); };
-      options.appendChild(close);
-    }
+  }
+  else
+  {
+    // this is the end of the conversation, add a close button
+    var close = document.createElement("a");
+    close.textContent = "Close";
+    close.className = "closeConvo";
+    close.href = "#";
+    close.setAttribute("data-ent", ent.id);
+    close.onclick = function() { JP.Entity.TalkPane(this.getAttribute("data-ent"), true); };
+    options.appendChild(close);
   }
 };
 
@@ -407,7 +404,7 @@ JP.Entity.TalkOption = function(ent, opt)
 
   if (ent === null)
     return;
-  var dialog = JP.Dialog.registry[opt.getAttribute("data-option")];
+  var dialog = JP.Dialog.Find([opt.getAttribute("data-option")]);
 
   ent.convoState = dialog.codename;
   JP.Entity.TalkPane(ent);
@@ -418,11 +415,7 @@ JP.Entity.Entity.prototype.Talk = function()
   if (this.conversation === undefined)
     return false;
 
-  var dialog = JP.Dialog.Get(this.conversation);
-
-  // we want the conversation to start again if they hit T
-//  if (this.convoState !== null)
-//    return;
+  var dialog = JP.Dialog.Find(this.conversation);
 
   this.convoState = this.conversation;
   JP.Entity.TalkPane(this);
