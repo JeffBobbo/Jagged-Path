@@ -343,14 +343,8 @@ JP.Entity.TalkPane = function(ent, end)
   message.textContent = dialog.message;
 
 
-  // Do transfers which needs to be done for the requirements on the options
-  if (dialog.itemTransfer !== undefined)
-  {
-    for (var i = dialog.itemTransfer.length - 1; i >= 0; i--)
-      JP.player.ItemDelta(dialog.itemTransfer[i].itemName, dialog.itemTransfer[i].itemQuant);
-  }
-  if (dialog.goldTransfer !== undefined)
-    JP.player.GoldDelta(dialog.goldTransfer);
+  // do actions
+  dialogs.DoActions();
 
   // quest actions
   if (dialog.startQuest !== undefined)
