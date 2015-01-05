@@ -386,4 +386,14 @@ JP.Player.prototype.Fire = function()
     return;
   }
   JP.Item.Use(tb);
-}
+};
+
+JP.Player.prototype.QuestProgress = function(quest)
+{
+  for (var i = this.quests.length - 1; i >= 0; i--)
+  {
+    if (this.quests[i].codename === quest)
+      return this.quests[i];
+  }
+  return null;
+};
