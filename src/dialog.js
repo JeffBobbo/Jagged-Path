@@ -127,6 +127,12 @@ JP.Dialog.prototype.Satisfied = function()
   return true;
 };
 
+JP.Dialog.prototype.DoActions = function()
+{
+  for (var i = this.actions.length - 1; i >= 0; i--)
+    this.actions[i].DoAction();
+};
+
 
 JP.Dialog.Get = function(dialog)
 {
@@ -221,7 +227,7 @@ JP.Dialog.ActionItem = function(item, quant)
   this.item = item;
   this.quant = quant || 1;
 };
-JP.Dialog.ActionItem.prototype.Give = function()
+JP.Dialog.ActionItem.prototype.DoAction = function()
 {
   if (this.quant < 0 && JP.player.ItemQuant(this.item) < -this.quant)
     return false; // they don't have enough to take
@@ -233,7 +239,7 @@ JP.Dialog.ActionGold = function(amount)
 {
   this.amount = amount;
 };
-JP.Dialog.ActionGold.prototype.Give = function()
+JP.Dialog.ActionGold.prototype.DoAction = function()
 {
   if (JP.player.gold < -this.amount) // they don't have enough to take
     return false;
@@ -246,7 +252,24 @@ JP.Dialog.ActionStat = function(stat, value)
   this.stat = stat;
   this.value = value;
 };
-JP.Dialog.ActionStat.prototype.Give = function()
+JP.Dialog.ActionStat.prototype.DoAction = function()
 {
   JP.player[this.stat] = this.value;
+};
+
+JP.Dialog.ActionQuest = function(quest, section)
+{
+  this.quest = quest;
+  this.section = section || null;
+};
+JP.Dialog.ActionQuest.prototype.DoAction = function()
+{
+  var q = JP.Quest.Find(this.quest);
+  if (q === null)
+    return;
+
+  if (q.GetStatus() === JP.Quest.Status.UNSTARTED)
+    q.Accept();
+  else
+    q.SetStatus(this.section)
 };
