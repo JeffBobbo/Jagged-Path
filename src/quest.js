@@ -25,7 +25,7 @@ JP.Quest = function()
   this.rewards      = []; // JP.Quest.Reward*
 };
 
-JP.Quest.registry = [];
+JP.Quest.registry = {};
 
 JP.Quest.Status = {
   UNSTARTED:  0,
@@ -98,37 +98,42 @@ JP.Quest.prototype.LoadData = function(data)
 
 JP.Quest.prototype.GetStatus = function()
 {
-  // find the quest in the player list
-  for (var i = JP.player.quests.length - 1; i >= 0; --i)
-  {
-    if (this.codename === JP.player.quests[i].codename)
-      return JP.player.quests[i].status; // and return
-  }
-  return JP.Quest.Status.UNSTARTED; // if we didn't find it, it's not started
+  var qp = JP.player.QuestProgress(this.codename);  
+  return qp !== null ? qp.status : JP.Quest.Status.UNSTARTED;
 };
 
 JP.Quest.prototype.SetStatus = function(status)
 {
-  var data = null;
-  for (var i = JP.player.quests.length - 1; i >= 0; i--)
+  var qp = JP.player.QuestProgress(this.codename);
+
+  if (qp === null)
   {
-    if (JP.player.quests[i].codename === this.codename)
-    {
-      data = JP.player.quests[i];
-      break;
-    }
+    qp = {codename: this.codename, status: status, start: JP.getTickCount(), end: null, section: null};
+    JP.player.quests.push(qp);
   }
-  if (data === null)
-  {
-    if (status === JP.Quest.Status.INPROGRESS)
-      data = JP.player.quests.push({codename: this.codename, status: status, start: JP.getTickCount()});
-  }
+  if (status === JP.Quest.Status.COMPLETE)
+    qp.end = JP.getTickCount();
+};
+
+JP.Quest.prototype.GetSection = function()
+{
+  var qp = JP.player.QuestProgress(this.codename);
+  return qp !== null ? qp.section : null;
+};
+
+JP.Quest.prototype.SetSection = function(section)
+{
+  var qp = JP.player.QuestProgress(this.codename);
+  if (qp === null)
+    return; // they're not on this quest
+
+  if (qp.end !== null || qp.status === JP.Quest.Status.COMPLETE)
+    return; // already completed
+
+  if (section === this.sections[this.sections.length - 1].codename) // this is the last section, so the quest is complete
+    this.Complete();
   else
-  {
-    data.status = status;
-    if (status === JP.Quest.Status.COMPLETE)
-      data.end = JP.getTickCount();
-  }
+    qp.section = section;
 };
 
 JP.Quest.prototype.Write = function()
@@ -170,10 +175,40 @@ JP.Quest.prototype.Accept = function()
     return false;
 
   // otherwise, add it in
-  this.SetStatus(JP.Quest.Status.INPROGRESS, JP.getTickCount());
+  this.SetStatus(JP.Quest.Status.INPROGRESS);
+  this.SetSection(this.sections[0].codename);
 
   // tell the player
   new JP.Logger.LogItem("Quest " + this.fullname + " accepted").Post();
+};
+
+JP.Quest.prototype.Complete = function()
+{
+  var data = null;
+  for (var i = JP.player.quests.length - 1; i >= 0; i--)
+  {
+    if (JP.player.quests[i].codename === this.codename)
+    {
+      data = JP.player.quests[i];
+      break;
+    }
+  }
+  if (data === null)
+    return; // they're not on this quest
+
+  if (data.end !== null || data.status === JP.Quest.Status.COMPLETE)
+    return; // already done it
+
+  data.section = null;
+  data.end = JP.getTickCount();
+  data.status = JP.Quest.Status.COMPLETE;
+
+  // tell the player
+  new JP.Logger.LogItem("Quest " + this.fullname + " completed").Post();
+
+  // hand out rewards
+  for (var i = this.rewards.length - 1; i >= 0; i--)
+    this.rewards[i].Give();
 };
 
 // REQUIREMENTS
@@ -182,25 +217,44 @@ JP.Quest.RequirementQuest = function(quest, status)
   this.quest = quest;
   this.status = status;
 };
-
 JP.Quest.RequirementQuest.prototype.Satisfied = function()
 {
   return JP.Quest.Find(this.quest).GetStatus() === this.status;
+};
+
+// REWARDS
+JP.Quest.RewardItem = function(item, quant)
+{
+  this.item = item;
+  this.quant = quant || 1;
+};
+JP.Quest.RewardItem.prototype.Give = function()
+{
+  JP.player.ItemDelta(this.item, this.quant);
+};
+
+JP.Quest.RewardGold = function(amount)
+{
+  this.amount = amount;
+};
+JP.Quest.RewardGold.prototype.Give = function()
+{
+  JP.player.GoldDelta(this.amount);
 };
 
 
 // SECTION
 JP.Quest.Section = function()
 {
-  this.name = "";
+  this.codename = "";
   this.description = "";
   this.goals = [];
 };
 
-JP.Quest.Section.prototype.LoadData = function(name, section)
+JP.Quest.Section.prototype.LoadData = function(codename, section)
 {
   // this is a bit eww and should probably be rewritten
-  this.name = name;
+  this.codename = codename;
 
   var keys = Object.keys(section);
   for (var i = keys.length - 1; i >= 0; i--)
