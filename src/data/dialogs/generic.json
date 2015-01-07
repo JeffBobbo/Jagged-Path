@@ -40,6 +40,8 @@
   {
     "codename": "quest_accept",
     "message": "Good luck!",
-    "startQuest": "TestQuest"
+    "actions": [
+      {"questStart": "TestQuest"}
+    ]
   }
 ]

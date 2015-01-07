@@ -130,10 +130,7 @@ JP.Quest.prototype.SetSection = function(section)
   if (qp.end !== null || qp.status === JP.Quest.Status.COMPLETE)
     return; // already completed
 
-  if (section === this.sections[this.sections.length - 1].codename) // this is the last section, so the quest is complete
-    this.Complete();
-  else
-    qp.section = section;
+  qp.section = section;
 };
 
 JP.Quest.prototype.Write = function()

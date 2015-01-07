@@ -344,15 +344,7 @@ JP.Entity.TalkPane = function(ent, end)
 
 
   // do actions
-  dialogs.DoActions();
-
-  // quest actions
-  if (dialog.startQuest !== undefined)
-  {
-    var quest = JP.Quest.Find(dialog.startQuest);
-
-    quest.Accept(); // checks for capability
-  }
+  dialog.DoActions();
 
   // temporary measure for tweaking player stats until skills are done
   if (dialog.playerStat !== undefined)

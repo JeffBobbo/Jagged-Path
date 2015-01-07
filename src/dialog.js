@@ -45,10 +45,11 @@ JP.Dialog.prototype.LoadData = function(data)
   this.codename = data.codename;
   this.message = data.message;
 
-  // refactor this
+  // options
   if (data.options !== undefined && data.options !== null)
     this.options = data.options;
 
+  // requirements
   if (data.requirements !== undefined && data.requirements !== null)
   {
     var dreqs = data.requirements; // save some typing
@@ -84,6 +85,7 @@ JP.Dialog.prototype.LoadData = function(data)
     }
   }
 
+  // actions
   if (data.actions !== undefined && data.actions !== null)
   {
     var dacts = data.actions;
@@ -110,6 +112,12 @@ JP.Dialog.prototype.LoadData = function(data)
         this.actions.push(act);
         continue;
       }
+      if (dact.quest !== undefined)
+      {
+        var act = new JP.Dialog.ActionQuest(dact.quest, dact.section || null, dact.start === true ? 0 : 1);
+        this.actions.push(act);
+        continue;
+      }
     }
   }
 };
@@ -133,49 +141,6 @@ JP.Dialog.prototype.DoActions = function()
     this.actions[i].DoAction();
 };
 
-
-JP.Dialog.Get = function(dialog)
-{
-  var dialog = JP.Dialog.registry[dialog];
-
-  if (dialog === undefined)
-    return null;
-
-  // check for requirements
-  var reqs = dialog.requirements;
-  if (reqs !== undefined)
-  {
-    for (var i = reqs.length - 1; i >= 0; i--)
-    {
-      var req = reqs[i];
-      if (req.itemType !== undefined)
-      {
-        if (InRange(req.itemQuantMin, req.itemQuantMax, JP.player.ItemQuantOfClass(JP.Item.Class[req.itemType])) === false)
-          return null;
-      }
-      if (req.itemName !== undefined)
-      {
-        if (InRange(req.itemQuantMin, req.itemQuantMax, JP.player.ItemQuant(req.itemName)) === false)
-          return null;
-      }
-      if (req.goldMin !== undefined || req.goldMax !== undefined)
-      {
-        if (InRange(req.goldMin, req.goldMax, JP.player.gold) === false)
-          return null;
-      }
-      if (req.playerStat !== undefined)
-      {
-        var keys = Object.keys(req.playerStat);
-        for (var i = keys.length - 1; i >= 0; i--)
-        {
-          if (JP.player[keys[i]] !== req.playerStat[keys[i]])
-            return null; 
-        }
-      }
-    }
-  }
-  return dialog;
-};
 
 // REQUIREMENTS
 JP.Dialog.RequirementType = function(itemClass, min, max)
@@ -257,10 +222,11 @@ JP.Dialog.ActionStat.prototype.DoAction = function()
   JP.player[this.stat] = this.value;
 };
 
-JP.Dialog.ActionQuest = function(quest, section)
+JP.Dialog.ActionQuest = function(quest, section, state)
 {
   this.quest = quest;
   this.section = section || null;
+  this.state = state || -1;
 };
 JP.Dialog.ActionQuest.prototype.DoAction = function()
 {
@@ -268,8 +234,10 @@ JP.Dialog.ActionQuest.prototype.DoAction = function()
   if (q === null)
     return;
 
-  if (q.GetStatus() === JP.Quest.Status.UNSTARTED)
+  if (this.state === 0)
     q.Accept();
+  else if (this.state === 1)
+    q.Complete();
   else
-    q.SetStatus(this.section)
+    q.SetSection(this.section);
 };
