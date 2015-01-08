@@ -200,13 +200,27 @@ function SIfy(x)
   return Math.floor(x);
 }
 
-function strtob(str)
+if (typeof(parseBool) !== 'function')
 {
-  if (str === undefined)
+  window.parseBool = function(x)
+  {
+    x = "" + x || null;
+    if (x === null)
+      return false;
+
+    switch (x.toLowerCase())
+    {
+      case "true":
+      case "yes":
+        return true;
+      break;
+      default:
+        if (parseInt(x) > 0)
+          return true;
+      break;
+    }
     return false;
-  if (str === 0 || str === "0" || str === "false" || str === "FALSE" || str === "no" || str === "NO")
-    return false;
-  return true;
+  };
 }
 
 // window focus

@@ -6,6 +6,10 @@
 
 "use strict";
 
+/**
+ * Global game namesapce 
+ * @namespace
+ */
 var JP = JP || {
   canvas: null,
   tcanvas: null,
@@ -27,24 +31,21 @@ var JP = JP || {
   needDraw: false
 };
 
+/**
+ * game state
+ * @enum
+*/
 JP.STATE = {
   INIT: 0,
   GEN:  1,
   RUN:  2
 };
 
+/** mouse state */
 JP.MouseState = JP.MouseState || {
   x: -1,
   y: -1,
   button: -1
-};
-
-JP.CallbackType = {
-  MOUSE1:   0, // LM
-  MOUSE2:   1, // RM
-  MOUSE3:   2, // MM
-  MOUSEIN:  3, // inside the elem
-  MOUSEOUT: 4  // outside the elem
 };
 
 JP.Initialize = function()
