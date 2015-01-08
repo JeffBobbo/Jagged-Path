@@ -58,13 +58,13 @@ JP.Dialog.prototype.LoadData = function(data)
       var dreq = dreqs[i];
       if (dreq.itemType !== undefined)
       {
-        var req = new JP.Dialog.RequirementType(dreq.itemType, dreq.itemQuantMin, dreq.itemQuantMax);
+        var req = new JP.Dialog.RequirementType(dreq.itemType, dreq.min, dreq.max);
         this.requirements.push(req);
         continue;
       }
       if (dreq.itemName !== undefined)
       {
-        var req = new JP.Dialog.RequirementItem(dreq.itemName, dreq.itemQuantMin, dreq.itemQuantMax);
+        var req = new JP.Dialog.RequirementItem(dreq.itemName, dreq.min, dreq.max);
         this.requirements.push(req);
         continue;
       }
@@ -78,7 +78,7 @@ JP.Dialog.prototype.LoadData = function(data)
 
       if (dreq.playerStat !== undefined)
       {
-        var req = new JP.Dialog.RequirementStat(dreq.stat, dreq.value);
+        var req = new JP.Dialog.RequirementStat(dreq.playerStat, dreq.value);
         this.requirements.push(req);
         continue;
       }
@@ -226,7 +226,7 @@ JP.Dialog.ActionQuest = function(quest, section, state)
 {
   this.quest = quest;
   this.section = section || null;
-  this.state = state || -1;
+  this.state = state === undefined ? -1 : state;  
 };
 JP.Dialog.ActionQuest.prototype.DoAction = function()
 {
@@ -234,10 +234,10 @@ JP.Dialog.ActionQuest.prototype.DoAction = function()
   if (q === null)
     return;
 
-  if (this.state === 0)
-    q.Accept();
+  if (this.section !== null)
+    q.SetSection(this.section)
   else if (this.state === 1)
     q.Complete();
   else
-    q.SetSection(this.section);
+    q.Accept();
 };

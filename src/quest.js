@@ -181,24 +181,15 @@ JP.Quest.prototype.Accept = function()
 
 JP.Quest.prototype.Complete = function()
 {
-  var data = null;
-  for (var i = JP.player.quests.length - 1; i >= 0; i--)
-  {
-    if (JP.player.quests[i].codename === this.codename)
-    {
-      data = JP.player.quests[i];
-      break;
-    }
-  }
-  if (data === null)
+  var qp = JP.player.QuestProgress(this.codename);
+  if (qp === null)
     return; // they're not on this quest
 
-  if (data.end !== null || data.status === JP.Quest.Status.COMPLETE)
-    return; // already done it
+  if (qp.end !== null || qp.status === JP.Quest.Status.COMPLETE)
+    return; // already completed
 
-  data.section = null;
-  data.end = JP.getTickCount();
-  data.status = JP.Quest.Status.COMPLETE;
+  qp.end = JP.getTickCount();
+  qp.status = JP.Quest.Status.COMPLETE;
 
   // tell the player
   new JP.Logger.LogItem("Quest " + this.fullname + " completed").Post();
@@ -206,6 +197,40 @@ JP.Quest.prototype.Complete = function()
   // hand out rewards
   for (var i = this.rewards.length - 1; i >= 0; i--)
     this.rewards[i].Give();
+};
+
+JP.Quest.prototype.Update = function()
+{
+  var qp = JP.player.QuestProgress(this.codename);
+  if (qp === null)
+    return; // they're not on this quest
+
+  if (qp.end !== null || qp.status === JP.Quest.Status.COMPLETE)
+    return; // already completed
+
+  var sid = -1;
+  for (var i = this.sections.length - 1; i >= 0; i--)
+  {
+    if (this.sections[i].codename === qp.section)
+      sid = i;
+  }
+
+  if (sid === -1)
+    return;
+
+  var section = this.sections[sid];
+  if (section === undefined || section === null)
+    return;
+
+  if (section.Satisfied() === true && section.autoAdvance === true)
+  {
+    // go to the next section
+    var nid = sid + 1;
+    if (nid >= this.sections.length) // this isn't a section, because we've completed the quest
+      this.Complete(); // so complete it
+    else
+      this.SetSection(this.sections[nid].codename);
+  }
 };
 
 // REQUIREMENTS
@@ -246,6 +271,7 @@ JP.Quest.Section = function()
   this.codename = "";
   this.description = "";
   this.goals = [];
+  this.autoAdvance = false;
 };
 
 JP.Quest.Section.prototype.LoadData = function(codename, section)
@@ -274,6 +300,10 @@ JP.Quest.Section.prototype.LoadData = function(codename, section)
       }
     }
   }
+
+  if (section.autoAdvance != null)
+    this.autoAdvance = parseBool(section.autoAdvance);
+
 };
 
 JP.Quest.Section.prototype.Write = function()
