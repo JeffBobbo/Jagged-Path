@@ -253,30 +253,25 @@ JP.Quest.Section.prototype.LoadData = function(codename, section)
   // this is a bit eww and should probably be rewritten
   this.codename = codename;
 
-  var keys = Object.keys(section);
-  for (var i = keys.length - 1; i >= 0; i--)
+  if (section.description != null)
+    this.description = section.description
+
+  if (section.goals != null)
   {
-    if (keys[i] === "goals")
+    var goals = Object.keys(section.goals);
+    for (var j = goals.length - 1; j >= 0; j--)
     {
-      var goals = Object.keys(section[keys[i]]);
-      for (var j = goals.length - 1; j >= 0; j--)
+      var goal = section.goals[goals[j]];
+      switch(goals[j])
       {
-        var goal = section[keys[i]][goals[j]];
-        switch(goals[j])
-        {
-          case "item":
-            for (var k = goal.length - 1; k >= 0; k--)
-            {
-              var g = goal[k];
-              this.goals.push(new JP.Quest.Section.GoalItem(g.name, g.quant, g.target));
-            }
-          break;
-        }
+        case "item":
+          for (var k = goal.length - 1; k >= 0; k--)
+          {
+            var g = goal[k];
+            this.goals.push(new JP.Quest.Section.GoalItem(g.name, g.quant, g.target));
+          }
+        break;
       }
-    }
-    if (keys[i] === "description")
-    {
-      this.description = section[keys[i]];
     }
   }
 };
