@@ -20,10 +20,10 @@
       "generic_farewell0": "Thanks mister! Bye."
     },
     "requirements": [
-      {"itemType": "AXE", "itemQuantMax": 0}
+      {"itemType": "AXE", "max": 0}
     ],
-    "itemTransfer": [
-      {"itemName": "Axe", "itemQuant": 1}
+    "actions": [
+      {"giveItem": "Axe", "itemQuant": 1}
     ]
   },
   {
@@ -33,7 +33,7 @@
       "generic_farewell0": "Thanks mister!"
     },
     "requirements": [
-      {"itemType": "AXE", "itemQuantMin": 1}
+      {"itemType": "AXE", "min": 1}
     ]
   },
 
@@ -46,10 +46,10 @@
       "generic_farewell0": "Thanks! Bye."
     },
     "requirements": [
-      {"itemType": "TINDERBOX", "itemQuantMax": 0}
+      {"itemType": "TINDERBOX", "max": 0}
     ],
-    "itemTransfer": [
-      {"itemName": "Tinderbox", "itemQuant": 1}
+    "actions": [
+      {"giveItem": "Tinderbox", "itemQuant": 1}
     ]
   },
   {
@@ -59,7 +59,7 @@
       "generic_farewell0": "Thanks!"
     },
     "requirements": [
-      {"itemType": "TINDERBOX", "itemQuantMin": 1}
+      {"itemType": "TINDERBOX", "min": 1}
     ]
   },
 
@@ -70,8 +70,8 @@
       "lumberjack_swim1": "Could you teach me?"
     },
     "requirements": [
-      {"itemType": "WOOD", "itemQuantMin": 1},
-      {"playerStat": {"canSwim": false}}
+      {"itemType": "WOOD", "min": 1},
+      {"playerStat": "canSwim", "value": false}
     ]
   },
   {
@@ -90,27 +90,25 @@
       "generic_welcome0": "Thank you"
     },
     "requirements": [
-      {"itemName": "Oak Log", "itemQuantMin": 20}
+      {"itemName": "Oak Log", "min": 20}
     ],
-    "itemTransfer": [
-      {"itemName": "Oak Log", "itemQuant": -20}
-    ],
-    "playerStat": {
-      "canSwim": true
-    }
+    "actions": [
+      {"takeItem": "Oak Log", "itemQuant": 20},
+      {"setStat": "canSwim", "value": true}
+    ]
   },
   {
     "codename": "lumberjack_swimNotRightNow",
     "message": "Okay then, see you later.",
     "requirements": [
-      {"itemName": "Oak Log", "itemQuantMin": 20}
+      {"itemName": "Oak Log", "min": 20}
     ]
   },
   {
     "codename": "lumberjack_swimTooPoor",
     "message": "Okay then, see you later.",
     "requirements": [
-      {"itemName": "Oak Log", "itemQuantMax": 20}
+      {"itemName": "Oak Log", "max": 20}
     ]
   }
 ]

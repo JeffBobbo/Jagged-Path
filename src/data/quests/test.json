@@ -11,7 +11,8 @@
           "item":[
             {"name":"Oak Log","quant":1}
           ]
-        }
+        },
+        "autoAdvance": true
       }
     },
     "rewards":{
