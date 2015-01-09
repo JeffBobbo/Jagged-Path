@@ -326,7 +326,7 @@ JP.Entity.TalkPane = function(ent, end)
   var dialog = JP.Dialog.Find(ent.convoState);
 
   if (ent === null || dialog === null || dialog.Satisfied() === false)
-    return;
+    return false;
 
   var str = ""; // probably a much cleaner way to do this, but cba to think logic atm
   if (ent.givenFName === "" && ent.givenSName === "")
@@ -382,6 +382,7 @@ JP.Entity.TalkPane = function(ent, end)
     close.onclick = function() { JP.Entity.TalkPane(this.getAttribute("data-ent"), true); };
     options.appendChild(close);
   }
+  return true;
 };
 
 JP.Entity.TalkOption = function(ent, opt)
@@ -404,9 +405,9 @@ JP.Entity.Entity.prototype.Talk = function()
   var dialog = JP.Dialog.Find(this.conversation);
 
   this.convoState = this.conversation;
-  JP.Entity.TalkPane(this);
+  var t = JP.Entity.TalkPane(this);
 
-  return true;
+  return t === undefined ? true : t;
 };
 
 JP.Entity.Entity.prototype.Move = function()
