@@ -84,7 +84,6 @@ JP.Dialog.prototype.LoadData = function(data)
       }
       if (dreq.quest !== undefined)
       {
-
         var status = -1;
         switch (dreq.status)
         {
