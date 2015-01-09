@@ -54,5 +54,14 @@
       "Snow": 0.025,
       "Savanna": 0.0025
     }
+  },
+  {
+    "entity": "QuestTest2",
+    "tiles":
+    {
+      "Grass": 0.025,
+      "Snow": 0.025,
+      "Savanna": 0.0025
+    }
   }
 ]

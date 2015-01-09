@@ -82,6 +82,26 @@ JP.Dialog.prototype.LoadData = function(data)
         this.requirements.push(req);
         continue;
       }
+      if (dreq.quest !== undefined)
+      {
+
+        var status = -1;
+        switch (dreq.status)
+        {
+          case "completed":
+            status = JP.Quest.Status.COMPLETE;
+          break;
+          case "unstarted":
+            status = JP.Quest.Status.UNSTARTED;
+          break;
+          case "inprogress":
+            status = JP.Quest.Status.INPROGRESS;
+          break;
+        }
+        var req = new JP.Dialog.RequirementQuest(dreq.quest, dreq.section || null, status);
+        this.requirements.push(req);
+        continue;
+      }
     }
   }
 
@@ -114,7 +134,20 @@ JP.Dialog.prototype.LoadData = function(data)
       }
       if (dact.quest !== undefined)
       {
-        var act = new JP.Dialog.ActionQuest(dact.quest, dact.section || null, dact.start === true ? 0 : 1);
+        var status = -1;
+        switch (dact.status)
+        {
+          case "completed":
+            status = JP.Quest.Status.COMPLETE;
+          break;
+          case "unstarted":
+            status = JP.Quest.Status.UNSTARTED;
+          break;
+          case "inprogress":
+            status = JP.Quest.Status.INPROGRESS;
+          break;
+        }
+        var act = new JP.Dialog.ActionQuest(dact.quest, dact.section || null, status);
         this.actions.push(act);
         continue;
       }
@@ -185,6 +218,30 @@ JP.Dialog.RequirementStat.prototype.Satisfied = function()
   return JP.player[this.stat] === value;
 };
 
+JP.Dialog.RequirementQuest = function(quest, section, status)
+{
+  this.quest = quest;
+  this.section = section || null;
+  this.status = status === undefined ? -1 : status;
+};
+JP.Dialog.RequirementQuest.prototype.Satisfied = function()
+{
+  var qp = JP.player.QuestProgress(this.quest);
+
+  if (qp === null)
+  {
+    if (this.status === JP.Quest.Status.UNSTARTED)
+      return true;
+    return false;
+  }
+  if (qp.status === this.status)
+    return true;
+  if (this.seciton !== null && this.section === qp.section)
+    return true;
+
+  return false;
+};
+
 
 // ACTIONS
 JP.Dialog.ActionItem = function(item, quant)
@@ -222,11 +279,11 @@ JP.Dialog.ActionStat.prototype.DoAction = function()
   JP.player[this.stat] = this.value;
 };
 
-JP.Dialog.ActionQuest = function(quest, section, state)
+JP.Dialog.ActionQuest = function(quest, section, status)
 {
   this.quest = quest;
   this.section = section || null;
-  this.state = state === undefined ? -1 : state;  
+  this.status = status === undefined ? -1 : status;  
 };
 JP.Dialog.ActionQuest.prototype.DoAction = function()
 {
@@ -236,8 +293,8 @@ JP.Dialog.ActionQuest.prototype.DoAction = function()
 
   if (this.section !== null)
     q.SetSection(this.section)
-  else if (this.state === 1)
+  else if (this.status === JP.Quest.Status.COMPLETE)
     q.Complete();
-  else
+  else if (this.status === JP.Quest.Status.INPROGRESS)
     q.Accept();
 };

@@ -40,8 +40,52 @@
   {
     "codename": "quest_accept",
     "message": "Good luck!",
+    "requirements": [
+      {"quest": "TestQuest", "status": "unstarted"}
+    ],
     "actions": [
-      {"quest": "TestQuest", "start": true}
+      {"quest": "TestQuest", "status": "inprogress"}
+    ]
+  },
+
+  {
+    "codename": "quest_test2_lobby",
+    "message": "Hello there, would you like to discuss another quest?",
+    "options": {
+      "quest_test2": "Give me another!",
+      "quest_finish": "I'm done!",
+      "generic_farewell0": "No thanks!"
+    },
+    "requirements": [
+      {"quest": "TestQuest", "status": "completed"}
+    ]
+  },
+  {
+    "codename": "quest_test2",
+    "message": "Would you like a second quest?",
+    "options": {
+      "quest_accept2": "Yes!",
+      "generic_farewell0": "I doubt anyone west of Bree has much interest in adventers."
+    },
+    "requirements": [
+      {"quest": "TestQuest2", "status": "unstarted"}
+    ]
+  },
+  {
+    "codename": "quest_accept2",
+    "message": "Good luck!",
+    "actions": [
+      {"quest": "TestQuest2", "status": "inprogress"}
+    ]
+  },
+  {
+    "codename": "quest_finish",
+    "message": "Well done!",
+    "requirements": [
+      {"quest": "TestQuest2", "status": "inprogress"}
+      ],
+    "actions": [
+      {"quest": "TestQuest2", "status": "completed"}
     ]
   }
 ]

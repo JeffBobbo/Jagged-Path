@@ -18,5 +18,12 @@
     "imgPath": "player_back.png",
     "conversation": "quest_test",
     "giveName": true
+  },
+  {
+    "class": "npc",
+    "name": "QuestTest2",
+    "imgPath": "player_left.png",
+    "conversation": "quest_test2_lobby",
+    "giveName": true
   }
 ]
