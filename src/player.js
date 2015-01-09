@@ -172,7 +172,10 @@ JP.Player.prototype.ItemDelta = function(name, quant, absolute, update)
     delete this.inventory[name];
 
   if (update === true)
+  {
     this.ItemUpdate();
+    this.QuestUpdate();
+  }
 };
 
 JP.Player.prototype.ItemUpdate = function()
@@ -194,9 +197,10 @@ JP.Player.prototype.ItemUpdate = function()
   }
 };
 
-JP.Player.prototype.GoldDelta = function(quant, absolute)
+JP.Player.prototype.GoldDelta = function(quant, absolute, update)
 {
   absolute = absolute || false;
+  update = update || true;
   if (quant === undefined)
     return false;
 
@@ -207,7 +211,12 @@ JP.Player.prototype.GoldDelta = function(quant, absolute)
   if (gold < 0)
     return false;
   this.gold = gold;
-  this.GoldUpdate();
+
+  if (update)
+  {
+    this.GoldUpdate();
+    this.QuestUpdate();
+  }
   return true;
 };
 
@@ -401,4 +410,10 @@ JP.Player.prototype.QuestProgress = function(quest)
       return this.quests[i];
   }
   return null;
+};
+
+JP.Player.prototype.QuestUpdate = function()
+{
+  for (var i = this.quests.length - 1; i >= 0; i--)
+    JP.Quest.Find(this.quests[i].codename).Update();
 };
