@@ -210,7 +210,7 @@ JP.Item.Tinderbox.prototype.Use = function()
   var wood = JP.player.ItemClass(JP.Item.Class.WOOD);
   if (wood === null)
   {
-    new JP.Logger.LogItem("You have no wood.", false, false, false).Post();
+    new JP.Logger.LogItem("You have no wood.").Post();
     return;
   }
 
@@ -270,11 +270,11 @@ JP.Item.Tinderbox.prototype.Use = function()
   }
   if (clearSpot === null)
   {
-    new JP.Logger.LogItem("There is nowhere clear to make a fire.", false, false, false).Post();
+    new JP.Logger.LogItem("There is nowhere clear to make a fire.").Post();
     return false;
   }
   JP.world.entities.push(new JP.Entity.Fire(clearSpot.x - 0.5, clearSpot.y - 0.5, 10000 * JP.Item.Spec(wood, "power")));
   JP.player.ItemDelta(wood, -1);
-  new JP.Logger.LogItem("You started a fire.", false, false, false).Post();
+  new JP.Logger.LogItem("You started a fire.").Post();
   JP.needDraw = true;
 };
