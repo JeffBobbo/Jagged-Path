@@ -4,54 +4,32 @@
   All rights reserved
 */
 
+/** Logger namespace
+ * @namespace Logger
+ * @memberOf JP
+ */
 JP.Logger = JP.Logger || {};
-JP.Logger.events = [];
 
-JP.Logger.LoadData = function(text)
-{
-  var logs = undefined;
-  if (typeof text === "string")
-    logs = JSON.parse(text);
-  else
-    logs = JSON.parse(localStorage.getItem("JP.events"));
-  if (logs === undefined || logs === null)
-    return;
-  
-  logs.sort(function (a, b) {
-    if (a.when < b.when)
-      return 1;
-    if (a.when > b.when)
-      return -1;
-    return 0;
-  });
-
-  for (var i = 0; i < logs.length; i++)
-  {
-    var log = new LogItem();
-    log.merge(logs[i]);
-    log.post();
-  }
-};
-
-JP.Logger.DeleteData = function()
-{
-  localStorage.removeItem("JP.events");
-
-  JP.Logger.events.clear();
-};
-
-JP.Logger.Draw = function()
-{
-}
-
-JP.Logger.LogItem = function(text, save, bold, italic)
+/**
+ * Constructs a LogItem object used to log events and actions with to player
+ * @constructor
+ * @this {JP.Logger.LogItem}
+ * @param {string} [text=""] - Log message text
+ * @param {boolean} [bold=false] - Message formatting bold
+ * @param {boolean} [italic=false] - Message formatting italics
+ * @memberOf JP.Logger
+ */
+JP.Logger.LogItem = function(text, bold, italic)
 {
   this.msg  = text || "";
-  this.save = save || false;
   this.bold = bold || false;
   this.italic = italic || false;
 };
 
+/**
+ * Post the message to the player
+ * @this {JP.Logger.LogItem}
+ */
 JP.Logger.LogItem.prototype.Post = function()
 {
   if (this.msg.length === 0)
@@ -69,13 +47,5 @@ JP.Logger.LogItem.prototype.Post = function()
   p.appendChild(document.createTextNode(this.msg));
   JP.Logger.logNode.insertBefore(p, JP.Logger.logNode.firstChild);
 
-  if (this.save === true) // save it
-  {
-    var tmp = JSON.parse(localStorage.getItem("JP.events"));
-    if (tmp === undefined || tmp === null)
-      tmp = new Array();
-    tmp.push(this);
-    localStorage.setItem("JP.events", JSON.stringify(tmp));
-  }
   JP.needDraw = true;
 };

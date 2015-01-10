@@ -6,6 +6,13 @@
 
 var JP = JP || {};
 
+
+/**
+ * Returns the number of ms Jagged Path has been running in total
+ * @function
+ * @param {boolean} [update=false] - Should only be called with true once a frame
+ * @return number tickCount
+ */
 JP.getTickCount = function(update)
 {
   if (JP.getTickCount.tick === undefined)
@@ -25,6 +32,12 @@ JP.getTickCount = function(update)
   return JP.getTickCount.tick; // our total since the start of time (when the world started)
 };
 
+/**
+ * Returns the number of ms the last frame took to do
+ * @function
+ * @param {boolean} [update=false] - Never call this with update=true outside of {@link JP.getTickCount}
+ * @return number tickDelta
+ */
 JP.getTickDelta = function(update)
 {
   if (JP.getTickDelta.now === undefined)
@@ -40,6 +53,13 @@ JP.getTickDelta = function(update)
   return JP.getTickDelta.now - JP.getTickDelta.last; // different
 };
 
+
+/**
+ * Returns the reciprocal of the average frame time for the last 60 frames
+ * @function
+ * @param {boolean} [update=false] - Never call this with update=true outside of {@link JP.getTickCount}
+ * @return number fps
+ */
 JP.getFPS = function(update)
 {
   if (JP.getFPS.cache === undefined)
@@ -64,6 +84,13 @@ JP.getFPS = function(update)
   return JP.getFPS.fps;
 }
 
+/**
+ * Generate a random floating point number in the range [min, max]
+ * @function
+ * @param {number} min
+ * @param {number} max
+ * @return {number}
+ */
 function randRange(min, max)
 {
   if (min === max)
@@ -77,31 +104,70 @@ function randRange(min, max)
   return min + ((max - min) * Math.random());
 }
 
+/**
+ * Generate a random integer in the range [min, max]
+ * @function
+ * @param {number} min
+ * @param {number} max
+ * @return {number}
+ */
 function randIntRange(min, max)
 {
   return Math.floor(randRange(min, max + 1));
 }
 
+/**
+ * Returns true 50% of the time randomly
+ * @function
+ * @return {boolean}
+ */
 function randTrue()
 {
   return Math.random() > 0.5;
 }
 
+/**
+ * Truncates x towards zero for the next multiple of r
+ * @function
+ * @param {number} x
+ * @param {number} r
+ * @return {number}
+ */
 function TruncateTo(x, r)
 {
   return x - (x % r);
 }
 
+/**
+ * Return milliseconds since epoch
+ * @function
+ * @return {number} ms
+ */
 function getTime()
 {
   return new Date().getTime();
 }
 
+/**
+ * Bound a value a to a range of [min, max]
+ * @function
+ * @param {number} min
+ * @param {number} max
+ * @param {number} a
+ * @return {number}
+ */
 function Bound(min, max, a)
 {
   return (a < min ? min : (a > max ? max : a));
 }
 
+/**
+ * Returns true if a lies within the range of [min, max]
+ * @function
+ * @param {number} [min=-Infinity]
+ * @param {number} [max=Infinity]
+ * @return {boolean} randomFloat
+ */
 function InRange(min, max, a)
 {
   min = min !== undefined ? min : -Infinity;
@@ -109,16 +175,34 @@ function InRange(min, max, a)
   return min <= a && a <= max;
 }
 
+/**
+ * Returns the square of a, for reability
+ * @function
+ * @param {number} a
+ * @return {number} a²
+ */
 function Squared(a)
 {
   return a*a;
 }
 
+/**
+ * Returns the cube of a, for reability
+ * @function
+ * @param {number} a
+ * @return {number} a³
+ */
 function Cubed(a)
 {
   return a*a*a;
 }
 
+/**
+ * Calculates the hypotenuse for any list of points
+ * @function
+ * @param {...number} a
+ * @return {number} hypot
+ */
 function Hypotenuse()
 {
   var ret = 0;
@@ -127,16 +211,39 @@ function Hypotenuse()
   return Math.sqrt(ret);
 }
 
+/**
+ * Calculates the distance between (x1, y1) and (x2, y2)
+ * @function
+ * @param {number} x1
+ * @param {number} y1
+ * @param {number} x2
+ * @param {number} y2
+ * @return {number} dist
+ */
 function Distance(x1, y1, x2, y2)
 {
   return Hypotenuse(x1 - x2, y1 - y2);
 }
 
+/**
+ * Linear interpolation of p between min and max
+ * @function
+ * @param {number} min
+ * @param {number} max
+ * @param {number} p
+ * @return {number} lerp
+ */
 function Interpolate(min, max, p)
 {
   return (1 - p) * min + (p * max);
 }
 
+/**
+ * Normalize an array of values, that is, so the sum of the values equals 1
+ * @function
+ * @param {array}
+ * @return {array}
+ */
 function Normalize(arr)
 {
   var sum = 0;
@@ -147,6 +254,16 @@ function Normalize(arr)
   return arr;
 }
 
+/**
+ * Calculates if a point is within a segment of a circle that has a radius at location origin specified by tMin and tMax
+ * @function
+ * @param {object} origin - Where the circle is, eg, {x: 4, y: 5}
+ * @param {object} point - Where the point is, eg, {x:3. y: 4.5}
+ * @param {number} tMin - Lower bound for segment, in radians
+ * @param {number} tMax - Upper bound for segment, in radians
+ * @param {number} radius
+ * @return {boolean}
+ */
 JP.InsideSegment = function(origin, point, tMin, tMax, radius)
 {
   var rel = {
@@ -169,28 +286,58 @@ JP.InsideSegment = function(origin, point, tMin, tMax, radius)
     return t >= tMin || t <= tMax;
 };
 
+/**
+ * Convenience function for putting x and y the right way rounf for Math.atan2
+ * @param {number} x
+ * @param {number} y
+ * @returns {number}
+ */
 JP.atan = function(x, y) // params the right way round... ffs
 {
   return Math.atan2(y, x);
 };
 
+/**
+ * Convenience function for converting degrees into radians
+ * @param {number} degrees
+ * @returns {number} radians
+ * @memberOf JP
+ */
 JP.rad = function(d)
 {
   return d * Math.PI / 180;
 }
 
+/**
+ * Convenience function for converting radians into degrees
+ * @param {number} radians
+ * @returns {number} degrees
+ * @memberOf JP
+ */
 JP.deg = function(r)
 {
   return r * 180 / Math.PI;
 }
 
+/**
+ * Commify large numbers for easier reading, eg 123456 -> 123,456
+ * @param {number}
+ * @returns {string}
+ */
 function Commify(x)
 {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+/**
+ * Turns a number into it's 'SI'ish form, eg 2,500 -> 2.5k
+ * @param {number}
+ * @returns {string}
+ */
 function SIfy(x)
 {
+  if (x > 1000000000000)
+    return Math.floor(x / 10000000000) / 100 + "t";
   if (x > 1000000000)
     return Math.floor(x / 10000000) / 100 + "b";
   if (x > 1000000)
@@ -200,27 +347,28 @@ function SIfy(x)
   return Math.floor(x);
 }
 
-if (typeof(parseBool) !== 'function')
+/** Parses a native type for boolean data
+ * @param {string|number|boolean}
+ * @returns {boolean}
+ */
+function parseBool(x)
 {
-  window.parseBool = function(x)
-  {
-    x = "" + x || null;
-    if (x === null)
-      return false;
-
-    switch (x.toLowerCase())
-    {
-      case "true":
-      case "yes":
-        return true;
-      break;
-      default:
-        if (parseInt(x) > 0)
-          return true;
-      break;
-    }
+  x = "" + x || null;
+  if (x === null)
     return false;
-  };
+
+  switch (x.toLowerCase())
+  {
+    case "true":
+    case "yes":
+      return true;
+    break;
+    default:
+      if (parseInt(x) > 0)
+        return true;
+    break;
+  }
+  return false;
 }
 
 // window focus

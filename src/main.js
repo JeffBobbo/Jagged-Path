@@ -8,14 +8,21 @@
 
 /**
  * Global game namesapce 
- * @namespace
+ * @namespace JP
  */
 var JP = JP || {
+  /** @type {HTMLCanvas} */
   canvas: null,
+  /** @type {HTMLCanvas} */
   tcanvas: null,
+  /** @type {HTMLCanvas} */
   context: null,
+  /** @type {HTMLCanvas} */
   tcontext: null,
+  
   world: null,
+  player:null,
+  
   // how big is our world in tiles
   WIDTH:  920,
   HEIGHT: 480,
@@ -41,13 +48,10 @@ JP.STATE = {
   RUN:  2
 };
 
-/** mouse state */
-JP.MouseState = JP.MouseState || {
-  x: -1,
-  y: -1,
-  button: -1
-};
-
+/**
+ * Pregame setup, retrieves content files and loads the world data if there's a one to load
+ * @function
+ */
 JP.Initialize = function()
 {
   if (JP.Data.filesReq === 0)
@@ -71,6 +75,10 @@ JP.Initialize = function()
   JP.gameState++;
 };
 
+/**
+ * World generation, preperation and player loading
+ * @function
+ */
 JP.Generate = function()
 {
   if (JP.world.generationLevel < JP.World.Gen.DONE)
@@ -101,6 +109,10 @@ JP.Generate = function()
   JP.gameState++;
 };
 
+/**
+ * Main loop, queued by requestAnimationFrame, hands off to appropriate state functions.
+ * @function
+ */
 JP.GameLoop = function()
 {
   JP.getTickCount(true); // update the tickcount
@@ -121,6 +133,10 @@ JP.GameLoop = function()
   requestAnimationFrame(JP.GameLoop);
 };
 
+/**
+ * Game loop. Checks for input, idles spawners and entities, renders, remove dead entities, save
+ * @function
+ */
 JP.Idle = function()
 {
   JP.KeyProcessing();
@@ -155,6 +171,10 @@ JP.Idle = function()
   JP.Save();
 };
 
+/**
+ * Save player state every 5s
+ * @function
+ */
 JP.Save = function()
 {
   var interval = 5000; // ms
@@ -169,6 +189,10 @@ JP.Save = function()
   }
 };
 
+/**
+ * Render the world, if required
+ * @function
+ */
 JP.Draw = function()
 {
   JP.context = JP.canvas.getContext("2d");
@@ -184,6 +208,26 @@ JP.Draw = function()
   JP.needDraw = false;
 };
 
+/**
+  @typedef MouseState
+  @type {object}
+  @property {number} x - x coordinate in view
+  @property {number} x - y coordinate in view
+  @property {number} button - button press
+ */
+/**
+ * @type {MouseState}
+ */
+JP.MouseState = JP.MouseState || {
+  x: -1,
+  y: -1,
+  button: -1
+};
+
+/**
+ * Process mouse input event, pushing data into {@link JP.MouseState}
+ * @function
+ */
 JP.ProcessMouse = function(event)
 {
   JP.MouseState.x = event.clientX || JP.MouseState.x;
@@ -198,7 +242,15 @@ JP.ProcessMouse = function(event)
   return false;
 };
 
-
+/**
+  @typedef KeyMap
+  @type {object}
+  @property {number} keyCode - keyState
+ */
+/**
+ * @type {KeyMap}
+ */
+JP.KeyMap = {};
 // controls
 JP.Keys = JP.Keys || {
   A: 65,
@@ -219,7 +271,11 @@ JP.Keys = JP.Keys || {
   NUM_PLUS: 107,
   NUM_MINUS: 109
 };
-JP.KeyMap = {};
+
+/**
+ * Process key input event, pushing data into {@link JP.KeyMap}
+ * @function
+ */
 JP.ProcessKey = function(evt)
 {
   evt = evt || event;
@@ -228,7 +284,12 @@ JP.ProcessKey = function(evt)
   JP.KeyMap[keyCode] = (JP.KeyMap[keyCode] !== null ? evt.type === 'keydown' : evt.type === 'keyup' ? false : null);
 };
 
-JP.KeyProcessing = function(key)
+/**
+ * Does actions on keys in {@link JP.KeyMap}
+ * @function
+ * @retuns {Boolean} false
+ */
+JP.KeyProcessing = function()
 {
   var keys = Object.keys(JP.KeyMap);
   for (var i = keys.length - 1; i >= 0; i--)
@@ -300,6 +361,10 @@ JP.KeyProcessing = function(key)
   return false;
 };
 
+/** 
+ * window.onresize function to set new game resolution, causes rerender to happen next frame
+ * @function
+ */
 JP.SetResolution = function()
 {
   if (JP.canvas === null)
@@ -323,7 +388,10 @@ JP.SetResolution = function()
 };
 window.onresize = JP.SetResolution;
 
-
+/**
+ * Called by 'New World' button at main menu. Deletes the world with no prompt and then passes off to {@link loadWorld}
+ * @function
+ */
 function newWorld()
 {
   JP.Delete();
@@ -331,6 +399,10 @@ function newWorld()
   loadWorld();
 };
 
+/**
+ * Called by 'Load World' button at main menu, otherwise shouldn't be called once it has already been called once
+ * @function
+ */
 function loadWorld()
 {
   if (JP.world !== null)
@@ -360,6 +432,10 @@ function loadWorld()
   requestAnimationFrame(JP.GameLoop);
 };
 
+/**
+ * Deletes the world and player save, then calls {@link pageLoad}. No confirmation
+ * @function
+ */
 JP.Delete = function()
 {
   JP.world = JP.world || new JP.World();
@@ -375,6 +451,10 @@ JP.Delete = function()
   pageLoad();
 };
 
+/**
+ * Called on page load, load options, sets up the canvases and event handlers as well as main menu buttons
+ * @function
+ */
 function pageLoad()
 {
   JP.Option.Load();

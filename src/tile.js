@@ -4,10 +4,45 @@
   All rights reserved
 */
 
-JP.Tile = JP.Tile || {};
+/**
+ * @class
+ * @this {JP.Tile}
+ * @memberOf JP
+ */
+JP.Tile = function()
+{
+  /* @instance */
+  this.name = null;
+  /* @instance */
+  this.colourMin = null;
+  /* @instance */
+  this.colourMax = null;
+  /* @instance */
+  this.colour = null;
+  /* @instance */
+  this.img = null;
+  /* @instance */
+  this.imgPath = null;
+  /* @instance */
+  this.spawnSafe = false;
+  /* @instance */
+  this.swimmable = false;
+  /* @instance */
+  this.climbable = false;
+  /* @instance */
+  this.data = null;
+};
 
+/**
+ * @static
+ */
 JP.Tile.registry = {};
 
+/**
+ * Load tile data and register a tile
+ * @function
+ * @param {object} data
+ */
 JP.Tile.Load = function(data)
 {
   if (data === undefined || data === null)
@@ -19,6 +54,11 @@ JP.Tile.Load = function(data)
   JP.Tile.Register(tile);
 };
 
+/**
+ * Adds a tile to the registry, throws if the tile already exists (indexed by name)
+ * @function
+ * @param {object} tile
+ */
 JP.Tile.Register = function(tile)
 {
   if (JP.Tile.registry[tile.name] === undefined)
@@ -27,12 +67,20 @@ JP.Tile.Register = function(tile)
     throw tile.name + " used more than once for tiles";
 };
 
+/**
+ * Creates a new tile
+ * @function
+ * @param {string} tileName
+ * @param {number} x
+ * @param {number} y
+ * @returns {JP.Tile} tile
+ */
 JP.Tile.Create = function(tile, x, y)
 {
   var reg = JP.Tile.registry[tile];
   if (reg === undefined)
     return undefined;
-  var tile = new JP.Tile.Tile();
+  var tile = new JP.Tile();
   tile.merge(reg.data);
 
   if (x !== undefined && y !== undefined)
@@ -40,21 +88,12 @@ JP.Tile.Create = function(tile, x, y)
   return tile;
 }
 
-JP.Tile.Tile = function()
-{
-  this.name = null;
-  this.colourMin = null;
-  this.colourMax = null;
-  this.colour = null;
-  this.img = null;
-  this.imgPath = null;
-  this.spawnSafe = false;
-  this.swimmable = false;
-  this.climbable = false;
-  this.data = null;
-};
-
-JP.Tile.Tile.prototype.Colour = function()
+/**
+ * Obtains the css-style colour this tile should be rendered as on the map; calculates it if it's not already been calculated
+ * @function
+ * @returns {string} colour
+ */
+JP.Tile.prototype.Colour = function()
 {
   if (this.name === "Invalid") // invalid tiles are always black
     return "#000000";
@@ -80,8 +119,6 @@ JP.Tile.Tile.prototype.Colour = function()
       max = setting.maxHeight || 100;
       break;
     }
-
-
 
     var colMin = parseInt(this.colourMin.substr(1), 16);
     var colMax = parseInt(this.colourMax.substr(1), 16);
@@ -120,7 +157,11 @@ JP.Tile.Tile.prototype.Colour = function()
   return this.calcColour;
 }
 
-JP.Tile.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
+/**
+ * Draws the tile
+ * @deprecated
+ */
+JP.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
 {
   var col = this.Colour();
   if (col !== null)
@@ -144,7 +185,12 @@ JP.Tile.Tile.prototype.Draw = function(x, y, xoffset, yoffset)
   }
 };
 
-JP.Tile.Tile.prototype.IsPassable = function()
+/**
+ * Test if the player can walk on this tile
+ * @function
+ * @returns {boolean}
+ */
+JP.Tile.prototype.IsPassable = function()
 {
   if (this.swimmable === true)
     return JP.player.canSwim;
