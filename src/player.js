@@ -370,13 +370,13 @@ JP.Player.prototype.Talk = function()
         return;
       }
     }
-    new JP.Logger.LogItem("There's nothing to talk to.", false, false, true).Post();
+    new JP.Logger.LogItem("There's nothing to talk to.").Post();
   }
   else
   {
     var npc = JP.Entity.FindAroundPlayer(JP.Entity.Type.NPC, 2.5);
     if (npc === null || npc.Talk() === false)
-      new JP.Logger.LogItem("There's nothing to talk to.", false, false, true).Post();
+      new JP.Logger.LogItem("There's nothing to talk to.").Post();
   }
 };
 
@@ -385,7 +385,7 @@ JP.Player.prototype.ChopTree = function()
   var axe = this.ItemClass(JP.Item.Class.AXE);
   if (axe === null)
   {
-    new JP.Logger.LogItem("You have no axe.", false, false, true).Post();
+    new JP.Logger.LogItem("You have no axe.").Post();
     return; // no axe, no dice
   }
   JP.Item.Use(axe);
@@ -396,7 +396,7 @@ JP.Player.prototype.Fire = function()
   var tb = this.ItemClass(JP.Item.Class.TINDERBOX);
   if (tb === null)
   {
-    new JP.Logger.LogItem("You have no tinder box.", false, false, true).Post();
+    new JP.Logger.LogItem("You have no tinder box.").Post();
     return;
   }
   JP.Item.Use(tb);
