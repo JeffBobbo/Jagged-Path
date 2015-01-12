@@ -14,6 +14,11 @@
 
 */
 
+/**
+ * Quests are large stories the player can embark on
+ * @class
+ * @memberOf JP
+ */
 JP.Quest = function()
 {
   this.codename = "";
@@ -25,14 +30,26 @@ JP.Quest = function()
   this.rewards      = []; // JP.Quest.Reward*
 };
 
+/**
+ * Registry of quests, don't access directly. Use {@link JP.Quest.Register} to add and {@link JP.Quest.Find} to retrieve
+ * @type {Object}
+ */
 JP.Quest.registry = {};
 
+/**
+ * @enum
+ */
 JP.Quest.Status = {
   UNSTARTED:  0,
   INPROGRESS: 1,
   COMPLETE:   2
 };
 
+/**
+ * Creates, loads and registers a new quest from src
+ * @param {Object} src json object
+ * @static
+ */
 JP.Quest.Load = function(src)
 {
   if (src === undefined || src === null)
@@ -43,6 +60,12 @@ JP.Quest.Load = function(src)
   JP.Quest.Register(quest); // reg
 };
 
+/**
+ * Adds a quest to the registry
+ * @param {JP.Quest} quest
+ * @static
+ * @throws {string} If codename previously used
+ */
 JP.Quest.Register = function(quest)
 {
   if (JP.Quest.registry[quest.codename] === undefined)
@@ -51,12 +74,23 @@ JP.Quest.Register = function(quest)
     throw quest.codename + " used more than once for quest codename";
 };
 
+/**
+ * Retrieve a quest from the registry
+ * @param {string} codename codename for the desired quest
+ * @returns {JP.Quest|null}
+ * @static
+ */
 JP.Quest.Find = function(codename)
 {
   var quest = JP.Quest.registry[codename];
   return quest || null;
 };
 
+/**
+ * Loads data
+ * @param {object} data JSON data from {@link JP.Quest.Load}
+ * @this {JP.Quest}
+ */
 JP.Quest.prototype.LoadData = function(data)
 {
   this.codename = data.codename;
@@ -96,12 +130,22 @@ JP.Quest.prototype.LoadData = function(data)
   }
 };
 
+/**
+ * Retrieve a players quest status
+ * @this {JP.Quest}
+ * @returns {JP.Quest.Status}
+ */
 JP.Quest.prototype.GetStatus = function()
 {
   var qp = JP.player.QuestProgress(this.codename);  
   return qp !== null ? qp.status : JP.Quest.Status.UNSTARTED;
 };
 
+/**
+ * Sets a players quest status
+ * @param {JP.Quest.Status} status new status
+ * @this {JP.Quest}
+ */
 JP.Quest.prototype.SetStatus = function(status)
 {
   var qp = JP.player.QuestProgress(this.codename);
