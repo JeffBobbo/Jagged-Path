@@ -4,6 +4,11 @@
   All rights reserved
 */
 
+/**
+ * Dialog is used for dialog trees for conversations with NPCs.
+ * @class
+ * @memberOf {JP}
+ */
 JP.Dialog = function()
 {
   this.codename = "";
@@ -15,8 +20,19 @@ JP.Dialog = function()
   this.actions = [];      // JP.Dialog.Action*
 }
 
+/**
+ * Registry of dialogs
+ * @type {Object}
+ * @static
+ * @private
+ */
 JP.Dialog.registry = {};
 
+/**
+ * Creates, loads and registers a dialog
+ * @param {Object}
+ * @static
+ */
 JP.Dialog.Load = function(src)
 {
   if (src === undefined || src === null)
@@ -27,19 +43,34 @@ JP.Dialog.Load = function(src)
   JP.Dialog.Register(dialog);
 };
 
+/**
+ * Adds a dialog to the registry
+ * @param {JP.Dialog}
+ * @throws {String} If codename already exists
+ */
 JP.Dialog.Register = function(dialog)
 {
   if (JP.Dialog.registry[dialog.codename] === undefined)
     JP.Dialog.registry[dialog.codename] = dialog;
   else
-    alert(dialog.codename + " used more than once for dialogs");
+    throw dialog.codename + " used more than once for dialogs";
 };
 
+/**
+ * Finds a dialog within the reigstry
+ * @param {String}
+ * @returns {JP.Dialog|null}
+ */
 JP.Dialog.Find = function(codename)
 {
   return JP.Dialog.registry[codename] || null;
 };
 
+/**
+ * Loads data from JSON object into this
+ * @param {Object}
+ * @this {JP.Dialog}
+ */
 JP.Dialog.prototype.LoadData = function(data)
 {
   this.codename = data.codename;
@@ -154,6 +185,10 @@ JP.Dialog.prototype.LoadData = function(data)
   }
 };
 
+/**
+ * Tests if the player meets all the requirements of the dialog
+ * @returns {Boolean}
+ */
 JP.Dialog.prototype.Satisfied = function()
 {
   if (this.requirements.length === 0)
@@ -167,6 +202,9 @@ JP.Dialog.prototype.Satisfied = function()
   return true;
 };
 
+/**
+ * Convenience action for executing all the actions
+ */
 JP.Dialog.prototype.DoActions = function()
 {
   for (var i = this.actions.length - 1; i >= 0; i--)
@@ -175,11 +213,17 @@ JP.Dialog.prototype.DoActions = function()
 
 
 // REQUIREMENTS
+/**
+ * Requirement to obtain a certain amount of an item class
+ * @param {string}
+ * @param {number} [min=0]
+ * @param {number} [max=Infinity]
+ */
 JP.Dialog.RequirementType = function(itemClass, min, max)
 {
   this.itemClass = itemClass;
-  this.min = min || -Infinity;
-  this.max = max ||  Infinity;
+  this.min = min || 0;
+  this.max = max || Infinity;
 };
 JP.Dialog.RequirementType.prototype.Satisfied = function()
 {
@@ -282,7 +326,7 @@ JP.Dialog.ActionQuest = function(quest, section, status)
 {
   this.quest = quest;
   this.section = section || null;
-  this.status = status === undefined ? -1 : status;  
+  this.status = status === undefined ? -1 : status;
 };
 JP.Dialog.ActionQuest.prototype.DoAction = function()
 {
