@@ -159,12 +159,23 @@ JP.Quest.prototype.SetStatus = function(status)
     qp.end = JP.getTickCount();
 };
 
+
+/**
+ * Retrieves the section the player is on
+ * @returns {string} section
+ * @this {JP.Quest}
+ */
 JP.Quest.prototype.GetSection = function()
 {
   var qp = JP.player.QuestProgress(this.codename);
   return qp !== null ? qp.section : null;
 };
 
+/**
+ * Sets the section this quest
+ * @param {string} section
+ * @this {JP.Quest}
+ */
 JP.Quest.prototype.SetSection = function(section)
 {
   var qp = JP.player.QuestProgress(this.codename);
