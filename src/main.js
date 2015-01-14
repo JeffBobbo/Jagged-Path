@@ -479,3 +479,18 @@ function pageLoad()
   JP.canvas.onmousemove = function(event) {JP.ProcessMouse(event); };
   JP.canvas.onmousedown = function(event) {JP.ProcessMouse(event); };
 };
+
+function UISwitch(node)
+{
+  switch (node.textContent)
+  {
+    case "Inventory":
+      document.getElementById('inventory').style.display = '';
+      document.getElementById('questPage').style.display = 'none';
+    break;
+    case "Quest List":
+      document.getElementById('inventory').style.display = 'none';
+      document.getElementById('questPage').style.display = '';
+    break;
+  }
+};

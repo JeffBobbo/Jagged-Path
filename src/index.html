@@ -96,6 +96,7 @@
         <br/>
           <a href="#" onclick="JP.Option.Close()"><h4>Close</h4></a>
       </div>
+
     </div>
 
 
@@ -114,6 +115,7 @@
       <span id="goldDisplay">
         <p id="goldCount"></p>
       </span>
+
       <div id="inventory" style="display:none;">
         <h3>Inventory</h3>
         <span class="inventHeader">Item</span><span class="inventHeader">Quantity</span>
@@ -122,8 +124,27 @@
           </table>
         </div>
       </div>
+
+      <div id="questPage" style="display:none;">
+        <h3>Quest Log</h2>
+        <div id="questListPane">
+          <ul id="questList">
+          </ul>
+        </div>
+        <div id="questInfoPane">
+          <p id="questTitle">
+          </p>
+          <p id="questDesc">
+          </p>
+          <p id="questStatus">
+          </p>
+        </div>
+      </div>
+
       <span id="rightPanelBottom">
         <p id="fpsCounter" style="display:none;">NaN fps</p>
+        <a href="#" onclick="UISwitch(this)">Inventory</a>
+        <a href="#" onclick="UISwitch(this)">Quest List</a>
         <a href="#" onclick="JP.Option.Open()">Options</a>
       </span>
     </div>
