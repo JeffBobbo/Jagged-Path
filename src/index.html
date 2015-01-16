@@ -94,9 +94,18 @@
         <input type="radio" name="controlStyle" value="ARCADE" title="No mouse use, instead the movement keys refer to that direction">Arcade</input>
         <input type="radio" name="controlStyle" value="ASTEROID" title="No mouse use, sideways movement keys rotate you">Asteroid</input>
         <br/>
-          <a href="#" onclick="JP.Option.Close()"><h4>Close</h4></a>
       </div>
 
+
+      <div id="questInfoPane" style="display: none;">
+        <h2 id="questTitle">
+        </h2>
+        <p id="questDesc">
+        </p>
+        <pre id="questStatus">
+        </pre>
+        <a href="#" onclick="document.getElementById('questInfoPane').style.display = 'none';"><h4>Close</h4></a>
+      </div>
     </div>
 
 
@@ -131,14 +140,6 @@
           <p id="questList">
           </p>
         </div>
-        <!--div id="questInfoPane">
-          <p id="questTitle">
-          </p>
-          <p id="questDesc">
-          </p>
-          <p id="questStatus">
-          </p>
-        </div-->
       </div>
 
       <span id="rightPanelBottom">

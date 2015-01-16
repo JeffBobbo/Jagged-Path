@@ -137,7 +137,7 @@ JP.Quest.prototype.LoadData = function(data)
  */
 JP.Quest.prototype.GetStatus = function()
 {
-  var qp = JP.player.QuestProgress(this.codename);  
+  var qp = JP.player.QuestProgress(this.codename);
   return qp !== null ? qp.status : JP.Quest.Status.UNSTARTED;
 };
 
@@ -191,7 +191,6 @@ JP.Quest.prototype.SetSection = function(section)
 JP.Quest.prototype.Write = function()
 {
   var str = "";
-  str += this.fullname + "\n\n";
 
   if (this.GetStatus() === JP.Quest.Status.COMPLETE)
     str += "Completed\n\n";

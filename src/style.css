@@ -145,7 +145,7 @@ div#convoOptions
   text-align:center;
 }
 
-div#splash,div#creation,div#loading,div#instruction,div#options
+div#splash,div#creation,div#loading,div#instruction,div#options,div#questInfoPane
 {
   background-color:#444;
   position:relative;

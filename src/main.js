@@ -513,4 +513,11 @@ function OpenQuest(elem)
 {
   var codename = elem.getAttribute("data-quest");
 
+  var quest = JP.Quest.Find(codename);
+
+  document.getElementById('questTitle').textContent = quest.fullname;
+  document.getElementById('questDesc').textContent = quest.description;
+  document.getElementById('questStatus').textContent = quest.Write();
+
+  document.getElementById('questInfoPane').style.display = '';
 }
