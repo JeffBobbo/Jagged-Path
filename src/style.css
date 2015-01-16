@@ -102,7 +102,7 @@ table#inventTable
 }
 table#inventTable>tr>*
 {
-  width:50%;
+  max-width:50%;
 }
 span#rightPanelBottom
 {
