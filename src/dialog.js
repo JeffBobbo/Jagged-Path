@@ -188,6 +188,7 @@ JP.Dialog.prototype.LoadData = function(data)
 /**
  * Tests if the player meets all the requirements of the dialog
  * @returns {Boolean}
+ * @this {JP.Dialog}
  */
 JP.Dialog.prototype.Satisfied = function()
 {
@@ -204,6 +205,7 @@ JP.Dialog.prototype.Satisfied = function()
 
 /**
  * Convenience action for executing all the actions
+ * @this {JP.Dialog}
  */
 JP.Dialog.prototype.DoActions = function()
 {
@@ -214,10 +216,11 @@ JP.Dialog.prototype.DoActions = function()
 
 // REQUIREMENTS
 /**
- * Requirement to obtain a certain amount of an item class
- * @param {string}
+ * @class Requirement to obtain a certain amount of an item class
+ * @param {string} itemClass
  * @param {number} [min=0]
  * @param {number} [max=Infinity]
+ * @this {JP.Dialog}
  */
 JP.Dialog.RequirementType = function(itemClass, min, max)
 {
@@ -225,48 +228,98 @@ JP.Dialog.RequirementType = function(itemClass, min, max)
   this.min = min || 0;
   this.max = max || Infinity;
 };
+/**
+ * Test if this condition is satisfied
+ * @returns {Boolean}
+ * @this {JP.Dialog.RequirementType}
+ */
 JP.Dialog.RequirementType.prototype.Satisfied = function()
 {
   return InRange(this.min, this.max, JP.player.ItemQuantOfClass(this.itemClass));
 };
 
+/**
+ * @class Requirement to obtain a certain amount of an item
+ * @param {string} itemName
+ * @param {number} [min=0]
+ * @param {number} [max=Infinity]
+ * @this {JP.Dialog}
+ */
 JP.Dialog.RequirementItem = function(item, min, max)
 {
   this.item = item;
-  this.min = min || -Infinity;
-  this.max = max ||  Infinity;
+  this.min = min || 0;
+  this.max = max || Infinity;
 };
+/**
+ * Test if this condition is satisfied
+ * @returns {Boolean}
+ * @this {JP.Dialog.RequirementItem}
+ */
 JP.Dialog.RequirementItem.prototype.Satisfied = function()
 {
   return InRange(this.min, this.max, JP.player.ItemQuant(this.item));
 };
 
-JP.Dialog.RequirementGold = function(gold, min, max)
+/**
+ * @class JP.Dialog.RequirementGold
+ * @param {number} [min=0]
+ * @param {number} [max=Infinity]
+ * @this {JP.Dialog.RequirementGold}
+ */
+JP.Dialog.RequirementGold = function(min, max)
 {
-  this.min = min || -Infinity;
-  this.max = max ||  Infinity;
+  this.min = min || 0;
+  this.max = max || Infinity;
 };
+/**
+ * Test if this condition is satisfied
+ * @returns {Boolean}
+ * @this {JP.Dialog.RequirementGold}
+ */
 JP.Dialog.RequirementGold.prototype.Satisfied = function()
 {
   return InRange(this.min, this.max, JP.player.gold);
 };
 
+/**
+ * @class Test if the player a particular stat
+ * @param {string} stat
+ * @param {*} value The value stat must equal, using the === comparison
+ */
 JP.Dialog.RequirementStat = function(stat, value)
 {
   this.stat = stat;
   this.value = value;
 };
+/**
+ * Test if this condition is satisfied
+ * @returns {Boolean}
+ * @this {JP.Dialog.RequirementStat}
+ */
 JP.Dialog.RequirementStat.prototype.Satisfied = function()
 {
   return JP.player[this.stat] === value;
 };
 
+/**
+ * @class Test if the player has a particular quest progress
+ * @param {string} quest
+ * @param {String} section
+ * @param {JP.Quest.Status} status
+ * @this {JP.Dialog.RequirementQuest}
+ */
 JP.Dialog.RequirementQuest = function(quest, section, status)
 {
   this.quest = quest;
   this.section = section || null;
   this.status = status === undefined ? -1 : status;
 };
+/**
+ * Test if this condition is met
+ * @returns {Boolean}
+ * @this {JP.Dialog.RequirementQuest}
+ */
 JP.Dialog.RequirementQuest.prototype.Satisfied = function()
 {
   var qp = JP.player.QuestProgress(this.quest);
