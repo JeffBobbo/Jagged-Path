@@ -94,8 +94,7 @@ div#inventory>div
 }
 table#inventTable
 {
-  position:fixed;
-  width:100%;
+  min-width:100%;
   text-align:left;
 }
 table#inventTable>tr>*
