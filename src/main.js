@@ -104,6 +104,7 @@ JP.Generate = function()
 
     JP.world.Prerender();
     document.getElementById('eventLog').style.display = "";
+    document.getElementById('playerUI').style.display = "";
     document.getElementById('inventory').style.display = "";
   }
   JP.gameState++;

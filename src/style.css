@@ -75,6 +75,9 @@ div#eventLog
   height:calc(50% - 16px);
   overflow-y:auto;
 }
+div#playerUI
+{
+}
 div#inventory
 {
   max-height:calc(50% - 32px);
