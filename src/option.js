@@ -79,14 +79,13 @@ JP.Option.SaveOptions = function()
 
 JP.Option.LoadOptions = function()
 {
-  var controlOpt = document.getElementsByName('controlStyle');
+  var controlOpt = document.getElementsByName('controlStyle'); // static list
   var setting = JP.Option.Get('controlStyle');
   for (var i = controlOpt.length - 1; i >= 0; i--)
   {
     if (JP.Option.ControlStyle[controlOpt[i].value] === setting)
-    {
       controlOpt.checked = true;
-      break;
-    }
+    else
+      controlOpt.checked = true;
   }
 };
