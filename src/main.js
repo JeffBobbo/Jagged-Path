@@ -7,7 +7,7 @@
 "use strict";
 
 /**
- * Global game namesapce 
+ * Global game namesapce
  * @namespace JP
  */
 var JP = JP || {
@@ -19,10 +19,10 @@ var JP = JP || {
   context: null,
   /** @type {HTMLCanvas} */
   tcontext: null,
-  
+
   world: null,
   player:null,
-  
+
   // how big is our world in tiles
   WIDTH:  920,
   HEIGHT: 480,
@@ -157,7 +157,7 @@ JP.Idle = function()
     if (ent.seppuku === true)
     {
       JP.world.entities.splice(i, 1);
-      
+
       if (ent.spawner !== null)
       {
         for (var j = ent.spawner.children.length - 1; j >= 0; j--)
@@ -361,7 +361,7 @@ JP.KeyProcessing = function()
   return false;
 };
 
-/** 
+/**
  * window.onresize function to set new game resolution, causes rerender to happen next frame
  * @function
  */
@@ -491,6 +491,26 @@ function UISwitch(node)
     case "Quest List":
       document.getElementById('inventory').style.display = 'none';
       document.getElementById('questPage').style.display = '';
+      // update the quest list
+      var list = document.getElementById('questList');
+      list = RemoveChildren(list);
+      for (var i = JP.player.quests.length - 1; i >= 0; i--)
+      {
+        var qp = JP.player.quests[i];
+
+        var q = document.createElement("a");
+        q.textContent = JP.Quest.Find(qp.codename).fullname;
+        q.href = "#";
+        q.setAttribute("data-quest", qp.codename);
+        q.onclick = function() { OpenQuest(this); };
+        list.appendChild(q);
+      };
     break;
   }
 };
+
+function OpenQuest(elem)
+{
+  var codename = elem.getAttribute("data-quest");
+
+}

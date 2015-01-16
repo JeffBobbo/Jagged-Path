@@ -435,7 +435,7 @@ Object.prototype.merge = function(other)
     {
       if (other[keys[i]].isArray() === true)
         this[keys[i]] = other[keys[i]];
-      else 
+      else
         this[keys[i]].merge(other[keys[i]]);
     }
     else
@@ -446,4 +446,11 @@ Object.prototype.merge = function(other)
 Object.prototype.isArray = function()
 {
   return Object.prototype.toString.call(this) === '[object Array]';
+};
+
+function RemoveChildren(node)
+{
+  while (node.lastChild)
+    node.removeChild(node.lastChild);
+  return node;
 };
