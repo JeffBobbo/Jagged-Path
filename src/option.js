@@ -66,26 +66,26 @@ JP.Option.Close = function()
 
 JP.Option.SaveOptions = function()
 {
-  var controlOpt = document.getElementsByName('controlStyle');
+  var controlOpt = document.getElementById('controlStyle').getElementsByTagName('input');
   for (var i = controlOpt.length - 1; i >= 0; i--)
   {
     if (controlOpt[i].checked === true)
     {
       JP.Option.Set('controlStyle', JP.Option.ControlStyle[controlOpt[i].value]);
-      break; 
+      break;
     }
   }
 };
 
 JP.Option.LoadOptions = function()
 {
-  var controlOpt = document.getElementsByName('controlStyle'); // static list
+  var controlOpt = document.getElementById('controlStyle').getElementsByTagName('input');
   var setting = JP.Option.Get('controlStyle');
   for (var i = controlOpt.length - 1; i >= 0; i--)
   {
     if (JP.Option.ControlStyle[controlOpt[i].value] === setting)
       controlOpt.checked = true;
     else
-      controlOpt.checked = true;
+      controlOpt.checked = false;
   }
 };
