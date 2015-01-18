@@ -87,8 +87,8 @@
           <a href="#" onclick="document.getElementById('instruction').style.display = 'none'; document.getElementById('splash').style.display = ''"><h4>Close</h4></a>
       </div>
       <div id="options" style="display:none;">
-        <h1>Options</h1>
-        <br/>
+        <h1 style="display: inline-block; left: calc(50% - 74px / 2); position: relative;">Options</h1>
+        <a class="close" href="#" onclick="JP.Option.Close()">Close</a>
         <div id="controlStyle"><h3>Control Style</h3>
           <input type="radio" name="controlStyle" value="FPS" title="The mouse controls where you look, sideways movement keys strafe">FPS</input>
           <input type="radio" name="controlStyle" value="ARCADE" title="No mouse use, instead the movement keys refer to that direction">Arcade</input>
