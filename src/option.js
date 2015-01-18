@@ -84,8 +84,8 @@ JP.Option.LoadOptions = function()
   for (var i = controlOpt.length - 1; i >= 0; i--)
   {
     if (JP.Option.ControlStyle[controlOpt[i].value] === setting)
-      controlOpt.checked = true;
+      controlOpt[i].checked = true;
     else
-      controlOpt.checked = false;
+      controlOpt[i].checked = false;
   }
 };
