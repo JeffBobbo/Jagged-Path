@@ -178,6 +178,16 @@ div#creation>span>input
   width:80px;
 }
 
+div#options>div
+{
+  position:relative;
+  margin:4px 16px 8px;
+}
+div#options>div>h3
+{
+  text-align:left;
+}
+
 a
 {
   color:#ffa500;
