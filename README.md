@@ -15,12 +15,13 @@ Setting up on local (for development or just to play)
 Because of the safety restrictions imposed in XMLHttpRequest, *Jagged Path* can't be run over the file:// protocol. As such it requires a webserver (or somehow disabling these checks)
 
 Personal recommended steps (ubuntu specific):
-1. Clone the repo: ```bash git clone https://github.com/JeffBobbo/JaggedPath.git```
-2. Install a webserver: ```bash sudo apt-get install apache2```
-...* Optinally install jsdoc at this time for documentation generation: ```bash sudo apt-get install apache2 jsdoc-toolkit```
-3. Create a symlink to webserver: ```bash cd /var/www && sudo ln -s /home/$USER/JaggedPath/src jp```
-...* In recent apache installations, /var/www gets a html directory, and it doens't seem to work, so check apache config
-4. Navigate to [localhost/jp] in your browser
+
+1. Clone the repo: ```git clone https://github.com/JeffBobbo/JaggedPath.git```
+2. Install a webserver: ```sudo apt-get install apache2```
+   * Optinally install jsdoc at this time for documentation generation: ```sudo apt-get install apache2 jsdoc-toolkit```
+3. Create a symlink to webserver: ```cd /var/www && sudo ln -s /home/$USER/JaggedPath/src jp```
+   * In recent apache installations, /var/www gets a html directory, and it doens't seem to work, so check apache config
+4. Navigate to [http://localhost/jp/](http://localhost/jp/) in your browser
 
 License
 ------
