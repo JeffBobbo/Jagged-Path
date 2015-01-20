@@ -14,6 +14,7 @@
 
 use warnings;
 use strict;
+
 use Switch;
 
 # config class?
@@ -54,7 +55,7 @@ sub Read
     my @tokens = split(/[:,] /, $line);
 
     my $param =  shift(@tokens);
-    $self->{config}->{$param} = join(' ', @tokens); # store the values as a space deliminated list 
+    $self->{config}->{$param} = join(' ', @tokens); # store the values as a space deliminated list
   }
   close($fh);
 }
@@ -214,64 +215,58 @@ sub HTMLReplaceSources
 # main
 package main;
 
+use LWP::Simple;
+use IO::Uncompress::Unzip qw(unzip $UnzipError);
+
 my $configFile = '';
-my $version = ''; # target version
+#my $version = ''; # target version
 my $vcs = 'git';
-my $username = '';
-my $password = '';
+#my $username = '';
+#my $password = '';
+my $makeDoc = 0;
+my $update = 0;
 
 # get our args
 foreach my $ARG (@ARGV)
 {
+  $makeDoc = 1 if (index($ARG, 'make-doc') != -1 || index($ARG, 'doc') != -1);
+  $update  = 1 if (index($ARG, 'update')   != -1 || index($ARG, 'up')  != -1);
+
   $configFile = substr($ARG, 3) if (index($ARG, '-c=') != -1);
-  $version = substr($ARG, 3) if (index($ARG, '-v=') != -1);
-  $vcs = 'svn' if (index($ARG, '-s'));
-  $vcs = 'hg' if (index($ARG, '-m'));
+  #$version = substr($ARG, 3) if (index($ARG, '-v=') != -1);
 
-  $username = substr($ARG, 3) if (index($ARG, '-u=') != -1);
+  #$username = substr($ARG, 3) if (index($ARG, '-u=') != -1);
   # change this to be done on request so that we can mask the input
-  $password = substr($ARG, 3) if (index($ARG, '-p=') != -1);
+  #$password = substr($ARG, 3) if (index($ARG, '-p=') != -1);
 
-  help() if ($ARG eq '-h');
+  help() if ($ARG eq 'help');
 }
 
-# do the update
-my $updateEnabled = 0;
-if ($updateEnabled == 1)
-{
-  switch ($vcs)
-  {
-    case 'git'
-    {
-      my $ret = `git pull`;
-      # should probably include some kind of checking here
-      $ret = `git checkout $version`;
-      # and again here
-    }
-    case 'svn'
-    {
-      my $ret = `svn up -r$version --non-interactive`;
-      if ($ret =~ /Exported revision ([0-9]+)\./)
-      {
-        $version = $1;
-      }
-      else
-      {
-        print STDERR "svn up failed: $ret\n";
-        exit(1);
-      }
-    }
-    case 'hg'
-    {
-      print STDERR "hg not implemented, sorry\n";
-      exit(1);
-    }
-  }
-}
 
 my $config = Config->new($configFile); # create config file object
 $config->Read(); # read in data
 
+# do the update
+if ($update == 1)
+{
+  my $url = $config->GetParam('repo-archive');
+  if (!defined $url || $url eq '')
+  {
+    print STDERR "repo-archive not specified in config file\n";
+    exit(1);
+  }
+  my $zip = '/tmp/JaggedPath.zip';
+  my $code = mirror($url, $zip);
+  if ($code != 200)
+  {
+    print STDERR "Downloading failed, returned code: " . $code . "\n";
+    exit(1);
+  }
+
+  unzip($zip, '/tmp/JaggedPath') or die "Extraction failed: $UnzipError\n";
+}
+
+exit(0);
 # parse the js stuff
 my $fileList = $config->GetParam('source-js');
 my @files = split(' ', $fileList);
