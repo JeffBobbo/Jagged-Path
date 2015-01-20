@@ -215,9 +215,6 @@ sub HTMLReplaceSources
 # main
 package main;
 
-use LWP::Simple;
-use IO::Uncompress::Unzip qw(unzip $UnzipError);
-
 my $configFile = '';
 #my $version = ''; # target version
 my $vcs = 'git';
@@ -225,12 +222,14 @@ my $vcs = 'git';
 #my $password = '';
 my $makeDoc = 0;
 my $update = 0;
+my $updateSelf = 0;
 
 # get our args
 foreach my $ARG (@ARGV)
 {
   $makeDoc = 1 if (index($ARG, 'make-doc') != -1 || index($ARG, 'doc') != -1);
   $update  = 1 if (index($ARG, 'update')   != -1 || index($ARG, 'up')  != -1);
+  $updateSelf = 1 if (index($ARG, 'update-dep') != -1 || index($ARG, 'up-dep') != -1);
 
   $configFile = substr($ARG, 3) if (index($ARG, '-c=') != -1);
   #$version = substr($ARG, 3) if (index($ARG, '-v=') != -1);
@@ -247,8 +246,10 @@ my $config = Config->new($configFile); # create config file object
 $config->Read(); # read in data
 
 # do the update
-if ($update == 1)
+if ($update == 1 || $updateSelf == 1)
 {
+  use LWP::Simple;
+
   my $url = $config->GetParam('repo-archive');
   if (!defined $url || $url eq '')
   {
@@ -263,7 +264,37 @@ if ($update == 1)
     exit(1);
   }
 
-  unzip($zip, '/tmp/JaggedPath') or die "Extraction failed: $UnzipError\n";
+  use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
+
+  my $ar = Archive::Zip->new();
+  unless ($ar->read($zip) == AZ_OK)
+  {
+    die "Failed to read $zip\n";
+  }
+  $ar->extractTree('', '/tmp/JaggedPath/');
+
+  if ($updateSelf == 1)
+  {
+    opendir(my $dh, '/tmp/JaggedPath') or die "Failed to open /tmp/JaggedPath: $!\n";
+    my @files = grep(!/^\.\.?$/, readdir($dh));
+    closedir($dh);
+
+    use File::Copy "mv";
+
+    if ($#files != 0)
+    {
+      print STDERR "Found " . ($#files == -1 ? "no" : $#files+1) . " files in '/tmp/JaggedPath/', exiting\n";
+      exit(1);
+    }
+
+    use FindBin;
+
+    print "Updated deployment script\n";
+    mv('/tmp/JaggedPath/' . $files[0] . '/jcomp.pl', $FindBin::Bin . '/jcomp.pl');
+
+    CleanUp();
+    exit(0);
+  }
 }
 
 exit(0);
@@ -333,4 +364,11 @@ Options:
 
 EOH
   exit(0);
+}
+
+sub CleanUp
+{
+  use File::Path qw(remove_tree);
+  remove_tree('/tmp/JaggedPath', '/tmp/JaggedPath.zip');
+  print "Cleaned up\n";
 }
