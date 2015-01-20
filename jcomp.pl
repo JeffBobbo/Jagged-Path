@@ -238,7 +238,7 @@ foreach my $ARG (@ARGV)
   # change this to be done on request so that we can mask the input
   #$password = substr($ARG, 3) if (index($ARG, '-p=') != -1);
 
-  help() if ($ARG eq 'help');
+  Help() if ($ARG eq 'help');
 }
 
 
@@ -273,31 +273,54 @@ if ($update == 1 || $updateSelf == 1)
   }
   $ar->extractTree('', '/tmp/JaggedPath/');
 
+  opendir(my $dh, '/tmp/JaggedPath') or die "Failed to open /tmp/JaggedPath: $!\n";
+  my @files = grep(!/^\.\.?$/, readdir($dh));
+  closedir($dh);
+
+  if ($#files != 0)
+  {
+    print STDERR "Found " . ($#files == -1 ? "no" : $#files+1) . " files in '/tmp/JaggedPath/', exiting\n";
+    exit(1);
+  }
+
+  use File::Copy "mv";
+
   if ($updateSelf == 1)
   {
-    opendir(my $dh, '/tmp/JaggedPath') or die "Failed to open /tmp/JaggedPath: $!\n";
-    my @files = grep(!/^\.\.?$/, readdir($dh));
-    closedir($dh);
+    use FindBin;
 
-    use File::Copy "mv";
-
-    if ($#files != 0)
+    mv('/tmp/JaggedPath/' . $files[0] . '/jcomp.pl', $FindBin::Bin . '/jcomp.pl') or Fatal("Failed update self: $!\n");
+    mv('/tmp/JaggedPath/' . $files[0] . '/conf', $FindBin::Bin . '/conf') or Fatal("Failed update config: $!\n");
+    print "Updated deployment script\n";
+  }
+  else
+  {
+    use File::Path qw(remove_tree);
+    my $dest = $config->GetParam('serve-location');
+    if (!defined $dest || $dest eq "")
     {
-      print STDERR "Found " . ($#files == -1 ? "no" : $#files+1) . " files in '/tmp/JaggedPath/', exiting\n";
+      print STDERR "serve-location not set in config\n";
       exit(1);
     }
 
-    use FindBin;
+    # miniturization stuff...
 
-    print "Updated deployment script\n";
-    mv('/tmp/JaggedPath/' . $files[0] . '/jcomp.pl', $FindBin::Bin . '/jcomp.pl');
 
-    CleanUp();
-    exit(0);
+    # remove the directory
+    remove_tree($dest);
+
+    print "Updating into $dest ...\n";
+    mv('/tmp/JaggedPath/' . $files[0] . '/src', $dest) or Fatal("Failed update release: $!\n");
+
   }
+  CleanUp();
 }
-
+else
+{
+  Help();
+}
 exit(0);
+
 # parse the js stuff
 my $fileList = $config->GetParam('source-js');
 my @files = split(' ', $fileList);
@@ -350,25 +373,35 @@ for (my $i = 0; $i <= $#htmlFiles; $i++)
 }
 exit(0);
 
-sub help
+sub Help
 {
   print <<EOH;
-$0 - JavaScript deployment script for Jagged Path
+$0 - Deployment/update script for Jagged Path
+
+Commands:
+  update       (or 'up')       -- update the currently release
+  update-dep   (or 'up-dep')   -- update this script and conf
+  make-doc     (or 'doc')      -- generate documentation
+  help                         -- this help text
 
 Options:
---help
-    Displays this text.
-
---conf=file
-    Configuration file to do the deployment for
+--c=file
+    Configuration file, required for pretty much everything
 
 EOH
   exit(0);
+}
+
+sub Fatal
+{
+  my $error = shift;
+  print STDERR "Execution failed: $error\nCleaning up mess...\n";
+  CleanUp();
+  exit(1);
 }
 
 sub CleanUp
 {
   use File::Path qw(remove_tree);
   remove_tree('/tmp/JaggedPath', '/tmp/JaggedPath.zip');
-  print "Cleaned up\n";
 }
