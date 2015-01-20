@@ -340,11 +340,22 @@ JP.Dialog.RequirementQuest.prototype.Satisfied = function()
 
 
 // ACTIONS
+/**
+ * @class Give or take a certain amount of item
+ * @param {string} itemname
+ * @param {Number} quant - negative numbers to take
+ * @this {JP.Dialog.ActionItem}
+ */
 JP.Dialog.ActionItem = function(item, quant)
 {
   this.item = item;
   this.quant = quant || 1;
 };
+/**
+ * Do this action
+ * @returns {Boolean} success
+ * @this {JP.Dialog.ActionItem}
+ */
 JP.Dialog.ActionItem.prototype.DoAction = function()
 {
   if (this.quant < 0 && JP.player.ItemQuant(this.item) < -this.quant)
@@ -353,10 +364,20 @@ JP.Dialog.ActionItem.prototype.DoAction = function()
   return true;
 };
 
+/**
+ * @class Give or take a certain amount of gold
+ * @param {Number} amount - negative numbers to take
+ * @this {JP.Dialog.ActionGold}
+ */
 JP.Dialog.ActionGold = function(amount)
 {
   this.amount = amount;
 };
+/**
+ * Do this action
+ * @returns {Boolean} success
+ * @this {JP.Dialog.ActionGold}
+ */
 JP.Dialog.ActionGold.prototype.DoAction = function()
 {
   if (JP.player.gold < -this.amount) // they don't have enough to take
@@ -365,32 +386,56 @@ JP.Dialog.ActionGold.prototype.DoAction = function()
   return true;
 };
 
+/**
+ * @class Set the player's stat to this value
+ * @param {string} stat
+ * @param {*} value
+ * @this {JP.Dialog.ActionStat}
+ */
 JP.Dialog.ActionStat = function(stat, value)
 {
   this.stat = stat;
   this.value = value;
 };
+/**
+ * Do this action
+ * @returns {Boolean} success
+ * @this {JP.Dialog.ActionStat}
+ */
 JP.Dialog.ActionStat.prototype.DoAction = function()
 {
   JP.player[this.stat] = this.value;
+  return true;
 };
 
+/**
+ * @class Manipulate the state of a quest -- must be called with section or status -- section overrides status
+ * @param {string} quest
+ * @param {(string|null)} section
+ * @param {JP.Quest.Status|null} status
+ */
 JP.Dialog.ActionQuest = function(quest, section, status)
+ * @this {JP.Dialog.ActionQuest}
 {
   this.quest = quest;
   this.section = section || null;
   this.status = status === undefined ? -1 : status;
 };
+/**
+ * Do this action
+ * @returns {Boolean} success
+ * @this {JP.Dialog.ActionQuest}
+ */
 JP.Dialog.ActionQuest.prototype.DoAction = function()
 {
   var q = JP.Quest.Find(this.quest);
   if (q === null)
-    return;
+    return false;
 
   if (this.section !== null)
-    q.SetSection(this.section)
+    return q.SetSection(this.section);
   else if (this.status === JP.Quest.Status.COMPLETE)
-    q.Complete();
+    return q.Complete();
   else if (this.status === JP.Quest.Status.INPROGRESS)
-    q.Accept();
+    return q.Accept();
 };
