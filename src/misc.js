@@ -385,14 +385,23 @@ window.onblur = function()
   JP.KeyMap = []; // reset the key state
 };
 
-// prototype'd functions
+/**
+ * Empities the array by popping off all the elements; not that different to array.length = 0 or array = []
+ * @this {Array}
+ */
 Array.prototype.clear = function()
 {
   while (this.length > 0)
     this.pop();
 };
 
-// string erase function
+/**
+ * Erase a chunk of a string, like an inverted substring op
+ * @param  {Number} start Where to start erasing from
+ * @param  {Number} [end] Where to stop erasing, default to gobble the rest of the string
+ * @return {String} The modified string
+ * @this {String}
+ */
 String.prototype.erase = function(s, e)
 {
   // erase from s up to e
@@ -405,6 +414,11 @@ String.prototype.erase = function(s, e)
   return ret;
 };
 
+/**
+ * Converts strings to title case, eg, 'The quick brown fox' -> 'The Quick Brown Fox'
+ * @return {String} title-cased string
+ * @this {String}
+ */
 String.prototype.toTitleCase = function()
 {
   var words = this.split(' ');
@@ -417,7 +431,11 @@ String.prototype.toTitleCase = function()
   return results.join(' ');
 };
 
-// merge stuff from other into this if it exists in other
+/**
+ * Merges the properties of the object other into this, NaN and undefs are skipped, objects of the object other are deep copied
+ * @param {Object} other [description]
+ * @this {Object}
+ */
 Object.prototype.merge = function(other)
 {
   if (other === undefined || other === null)
@@ -443,11 +461,20 @@ Object.prototype.merge = function(other)
   };
 };
 
+/**
+ * Test if this object is an array
+ * @return {Boolean}
+ */
 Object.prototype.isArray = function()
 {
   return Object.prototype.toString.call(this) === '[object Array]';
 };
 
+/**
+ * Removes all child nodes from node
+ * @param {HTMLElement} node - the parent
+ * @returns {HTMLElement} node - returns the node for chain ops or something?
+ */
 function RemoveChildren(node)
 {
   while (node.lastChild)
