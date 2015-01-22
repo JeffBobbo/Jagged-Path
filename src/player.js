@@ -147,7 +147,7 @@ JP.Player.prototype.ItemQuantOfClass = function(itemClass)
   var keys = Object.keys(this.inventory);
   for (var i = keys.length - 1; i >= 0; i--)
   {
-    if (JP.Item.Spec(keys[i], "class") === itemClass)
+    if (JP.Item.Spec(keys[i], "class") === JP.Item.Class[itemClass])
       quant += this.inventory[keys[i]];
   };
   return quant;
