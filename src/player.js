@@ -312,15 +312,16 @@ JP.Player.prototype.Move = function(dir)
       return;
     this.relx += dx;
     this.rely += dy;
+
+    // make sure direction is in range -- bit dirty but does the job
+    while (this.direction > Math.PI)
+      this.direction -= 2 * Math.PI;
+    while (this.direction < -Math.PI)
+      this.direction += 2 * Math.PI;
   }
   // update non-floats
   this.posx = Math.floor(this.relx);
   this.posy = Math.floor(this.rely);
-  // make sure direction is in range -- bit dirty but does the job
-  while (this.direction > Math.PI)
-    this.direction -= 2 * Math.PI;
-  while (this.direction < -Math.PI)
-    this.direction += 2 * Math.PI;
 
   // close any running dialogs
   for (var i = JP.world.entities.length - 1; i >= 0; i--)
