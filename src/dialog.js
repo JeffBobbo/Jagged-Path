@@ -144,8 +144,9 @@ JP.Dialog.prototype.LoadData = function(data)
       var dact = dacts[i];
       if (dact.giveItem !== undefined || dact.takeItem !== undefined)
       {
+        var item = dact.giveItem || dact.takeItem;
         var quant = dact.quant * (dact.takeItem === undefined ? 1 : -1);
-        var act = new JP.Dialog.ActionItem(dact.giveItem, quant);
+        var act = new JP.Dialog.ActionItem(item, quant);
         this.actions.push(act);
         continue;
       }
@@ -225,8 +226,8 @@ JP.Dialog.prototype.DoActions = function()
 JP.Dialog.RequirementType = function(itemClass, min, max)
 {
   this.itemClass = itemClass;
-  this.min = min || 0;
-  this.max = max || Infinity;
+  this.min = (min != null ? min : 0);
+  this.max = (max != null ? max : Infinity);
 };
 /**
  * Test if this condition is satisfied
@@ -248,8 +249,8 @@ JP.Dialog.RequirementType.prototype.Satisfied = function()
 JP.Dialog.RequirementItem = function(item, min, max)
 {
   this.item = item;
-  this.min = min || 0;
-  this.max = max || Infinity;
+  this.min = (min != null ? min : 0);
+  this.max = (max != null ? max : Infinity);
 };
 /**
  * Test if this condition is satisfied
@@ -269,8 +270,8 @@ JP.Dialog.RequirementItem.prototype.Satisfied = function()
  */
 JP.Dialog.RequirementGold = function(min, max)
 {
-  this.min = min || 0;
-  this.max = max || Infinity;
+  this.min = (min != null ? min : 0);
+  this.max = (max != null ? max : Infinity);
 };
 /**
  * Test if this condition is satisfied
@@ -299,7 +300,7 @@ JP.Dialog.RequirementStat = function(stat, value)
  */
 JP.Dialog.RequirementStat.prototype.Satisfied = function()
 {
-  return JP.player[this.stat] === value;
+  return JP.player[this.stat] === this.value;
 };
 
 /**
@@ -313,7 +314,7 @@ JP.Dialog.RequirementQuest = function(quest, section, status)
 {
   this.quest = quest;
   this.section = section || null;
-  this.status = status === undefined ? -1 : status;
+  this.status = (status === undefined ? -1 : status);
 };
 /**
  * Test if this condition is met
@@ -371,7 +372,7 @@ JP.Dialog.ActionItem.prototype.DoAction = function()
  */
 JP.Dialog.ActionGold = function(amount)
 {
-  this.amount = amount;
+  this.amount = amount || 1;
 };
 /**
  * Do this action
@@ -413,13 +414,13 @@ JP.Dialog.ActionStat.prototype.DoAction = function()
  * @param {string} quest
  * @param {(string|null)} section
  * @param {JP.Quest.Status|null} status
+ * @this {JP.Dialog.ActionQuest}
  */
 JP.Dialog.ActionQuest = function(quest, section, status)
- * @this {JP.Dialog.ActionQuest}
 {
   this.quest = quest;
   this.section = section || null;
-  this.status = status === undefined ? -1 : status;
+  this.status = (status === undefined ? -1 : status);
 };
 /**
  * Do this action
