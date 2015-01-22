@@ -108,7 +108,7 @@
     "codename": "lumberjack_swimTooPoor",
     "message": "Okay then, see you later.",
     "requirements": [
-      {"itemName": "Oak Log", "max": 20}
+      {"itemName": "Oak Log", "max": 19}
     ]
   }
 ]
