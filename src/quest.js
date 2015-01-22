@@ -188,6 +188,11 @@ JP.Quest.prototype.SetSection = function(section)
   qp.section = section;
 };
 
+/**
+ * Retrieves quest status description
+ * @returns {string}
+ * @this {JP.Quest}
+ */
 JP.Quest.prototype.Write = function()
 {
   var str = "";
