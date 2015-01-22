@@ -246,7 +246,7 @@ JP.Player.prototype.Move = function(dir)
 {
   var dt = JP.getTickDelta();
   var dist = this.speed * (dt / 1000);
-  if (JP.world.terrain[this.posx][this.posy].name === "Sea")
+  if (JP.world.terrain[this.posx][this.posy].name === "Sea" || JP.world.terrain[this.posx][this.posy].name === "River")
     dist *= 0.5; // slower in water
 
   if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ARCADE)
