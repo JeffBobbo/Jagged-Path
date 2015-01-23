@@ -217,9 +217,6 @@ package main;
 
 my $configFile = '';
 #my $version = ''; # target version
-my $vcs = 'git';
-#my $username = '';
-#my $password = '';
 my $makeDoc = 0;
 my $update = 0;
 my $updateSelf = 0;
@@ -239,6 +236,11 @@ foreach my $ARG (@ARGV)
   #$password = substr($ARG, 3) if (index($ARG, '-p=') != -1);
 
   Help() if ($ARG eq 'help');
+}
+
+if ($#ARG == -1)
+{
+  Help();
 }
 
 
