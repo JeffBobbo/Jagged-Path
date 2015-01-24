@@ -44,7 +44,7 @@ sub File
 sub Read
 {
   my $self = shift;
-  open(my $fh, '<', $self->{file}) or die "Can't open $self->{file} for reading: $!\n";
+  open(my $fh, '<', $self->{file}) or main::Fatal("Can't open $self->{file} for reading: $!\n", __LINE__);
   while (<$fh>)
   {
     chomp(); # remove tailing whitespace
@@ -95,7 +95,7 @@ sub Read
 {
   my $self = shift;
 
-  open(my $fh, '<', $self->{file}) or die "Couldn't open $self->{file} for reading: $!\n";
+  open(my $fh, '<', $self->{file}) or Fatal("Couldn't open $self->{file} for reading: $!\n", __LINE__);
   my @lines = <$fh>;
   close($fh);
   $self->{text} = \@lines;
@@ -238,11 +238,16 @@ foreach my $ARG (@ARGV)
   Help() if ($ARG eq 'help');
 }
 
-if ($#ARG == -1)
+if ($#ARGV == -1)
 {
   Help();
 }
 
+if ($configFile eq '')
+{
+  print STDERR "No config file specified\n";
+  Help();
+}
 
 my $config = Config->new($configFile); # create config file object
 $config->Read(); # read in data
@@ -255,8 +260,7 @@ if ($update == 1 || $updateSelf == 1)
   my $url = $config->GetParam('repo-archive');
   if (!defined $url || $url eq '')
   {
-    print STDERR "repo-archive not specified in config file\n";
-    exit(1);
+    Fatal("repo-archive not specified in config file\n", __LINE__);
   }
   my $zip = '/tmp/JaggedPath.zip';
   my $code = mirror($url, $zip);
@@ -271,11 +275,11 @@ if ($update == 1 || $updateSelf == 1)
   my $ar = Archive::Zip->new();
   unless ($ar->read($zip) == AZ_OK)
   {
-    die "Failed to read $zip\n";
+    Fatal("Failed to read $zip\n", __LINE__);
   }
   $ar->extractTree('', '/tmp/JaggedPath/');
 
-  opendir(my $dh, '/tmp/JaggedPath') or die "Failed to open /tmp/JaggedPath: $!\n";
+  opendir(my $dh, '/tmp/JaggedPath') or Fatal("Failed to open /tmp/JaggedPath: $!\n", __LINE__);
   my @files = grep(!/^\.\.?$/, readdir($dh));
   closedir($dh);
 
@@ -291,8 +295,8 @@ if ($update == 1 || $updateSelf == 1)
   {
     use FindBin;
 
-    mv('/tmp/JaggedPath/' . $files[0] . '/jcomp.pl', $FindBin::Bin . '/jcomp.pl') or Fatal("Failed update self: $!\n");
-    mv('/tmp/JaggedPath/' . $files[0] . '/conf', $FindBin::Bin . '/conf') or Fatal("Failed update config: $!\n");
+    mv('/tmp/JaggedPath/' . $files[0] . '/jcomp.pl', $FindBin::Bin . '/jcomp.pl') or Fatal("Failed update self: $!\n", __LINE__);
+    mv('/tmp/JaggedPath/' . $files[0] . '/conf', $FindBin::Bin . '/conf') or Fatal("Failed update config: $!\n", __LINE__);
     print "Updated deployment script\n";
   }
   else
@@ -312,14 +316,14 @@ if ($update == 1 || $updateSelf == 1)
     remove_tree($dest);
 
     print "Updating into $dest ...\n";
-    mv('/tmp/JaggedPath/' . $files[0] . '/src', $dest) or Fatal("Failed update release: $!\n");
+    mv('/tmp/JaggedPath/' . $files[0] . '/src', $dest) or Fatal("Failed update release: $!\n", __LINE__);
 
   }
   CleanUp();
 }
-else
+if ($makeDoc == 1)
 {
-  Help();
+  system("jsdoc src/* -d=src/doc");
 }
 exit(0);
 
@@ -356,7 +360,7 @@ if (defined $copyrightFile)
 
 # write the data out
 my $target = $config->GetParam('target-js');
-open(my $fh, '>', $target) or die "Couldn't open $target for writing: $!\n";
+open(my $fh, '>', $target) or Fatal("Couldn't open $target for writing: $!\n", __LINE__);
 print $fh $precontent;
 print $fh $content;
 print $fh $postcontent;
@@ -397,7 +401,8 @@ EOH
 sub Fatal
 {
   my $error = shift;
-  print STDERR "Execution failed: $error\nCleaning up mess...\n";
+  my $line = shift;
+  print STDERR "Execution failed" . (defined $line ? " on line " . $line : '') . ": $error\nCleaning up mess...\n";
   CleanUp();
   exit(1);
 }
