@@ -11,13 +11,29 @@
  * @namespace JP
  */
 var JP = JP || {
-  /** @type {HTMLCanvas} */
+  /**
+   * render target
+   * @type {HTMLCanvas}
+   * @memberOf JP
+   */
   canvas: null,
-  /** @type {HTMLCanvas} */
+  /**
+   * render cache target
+   * @type {HTMLCanvas}
+   * @memberOf JP
+   */@type {HTMLCanvas} */
   tcanvas: null,
-  /** @type {HTMLCanvas} */
+  /**
+   * render context
+   * @type {HTMLCanvas}
+   * @memberOf JP
+   */@type {HTMLCanvas} */
   context: null,
-  /** @type {HTMLCanvas} */
+  /**
+   * render cache context
+   * @type {HTMLCanvas}
+   * @memberOf JP
+   */@type {HTMLCanvas} */
   tcontext: null,
 
   world: null,
