@@ -13,7 +13,11 @@ JP.World = function()
   this.generationLevel = 0;
 };
 
-JP.World.Generation = {};
+JP.World.Generation = {
+  entities: [],
+  spawnlist: [],
+  tileset: []
+};
 
 JP.World.prototype.Save = function()
 {
@@ -439,10 +443,10 @@ JP.World.prototype.TileMap = function()
     var tile = undefined;
 
     var possibleTiles = [];
-    for (var i = JP.World.Generation.tiles.length - 1; i >= 0; i--)
+    for (var i = JP.World.Generation.tileset.length - 1; i >= 0; i--)
     {
       // data about where one particular tile should appear
-      var setting = JP.World.Generation.tiles[i];
+      var setting = JP.World.Generation.tileset[i];
 
       // note, using two instead of three comparison to cover null and undefined
       if (setting.minHeight != null && height < setting.minHeight)
@@ -631,6 +635,42 @@ JP.World.prototype.AddRivers = function()
   }
   return true; // and we're done
 };
+
+JP.World.prototype.SpawnerMap = function()
+{
+  if (JP.World.prototype.SpawnerMap.i === undefined)
+    JP.World.prototype.SpawnerMap.i = 0;
+
+  var i = JP.World.prototype.SpawnerMap.i++;
+
+  var spawnList = JP.World.Generation.spawnlist;
+
+  if (i === spawnList.length)
+    return true;
+
+  var spawnLocations = [];
+  var spawncfg = spawnList[i];
+
+  var tiles = spawncfg.tiles;
+  for (var x = this.mapData.length - 1; x >= 0; x--)
+  {
+    for (var y = this.mapData[x].length - 1; y >= 0; y--)
+    {
+      for (var j = tiles.length - 1; j >= 0; j--) {
+        if (tiles[j] === this.terrain[x][y].name)
+          spawnLocations.push({x: x, y: y});
+      }
+    }
+  }
+  var spawnsToMake = (spawncfg.quant > 0 ? spawncfg.quant : Math.floor(spawnLocations.length * spawncfg.quantfrac));
+  while (spawnsToMake-- > 0)
+  {
+    var r = randIntRange(0, spawnLocations.length - 1);
+    var spawn = JP.Spawn.Create(spawncfg.name, spawnLocations[r].x, spawnLocations[r].y);
+
+    JP.world.spawners.unshift(spawn);
+  }
+}
 
 JP.World.prototype.EntityMap = function()
 {

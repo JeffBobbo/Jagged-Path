@@ -1,0 +1,8 @@
+{
+  "comment": "where tiles are speciified",
+  "tileset":  "normal/tiles.json",
+  "comment": "any randomly placed entities",
+  "entities": "",
+  "comment": "spawn list",
+  "spawnlist": "normal/spawnlist.json"
+}

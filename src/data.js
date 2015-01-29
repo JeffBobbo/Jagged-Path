@@ -68,21 +68,20 @@ JP.Data.Load = function()
 JP.Data.RequestWorldGen = function(worldType)
 {
   worldType = worldType || "normal";
-  JP.Data.Request("generation/" + worldType + "_tiles.json", JP.Data.LoadWorldGen, "tiles", "");
-  JP.Data.Request("generation/" + worldType + "_entities.json", JP.Data.LoadWorldGen, "entities", "");
+  JP.Data.Request("generation/" + worldType + ".json", JP.Data.LoadWorldGen, null, "");
 };
 /**
  * Callback for {@link JP.Data.RequestWorldGen}.
  * Possibly convert this to one file.
  * @param {json} data
- * @param {string} which - The type of data this is
  */
-JP.Data.LoadWorldGen = function(data, which)
+JP.Data.LoadWorldGen = function(data)
 {
-  if (which === "tiles")
-    JP.World.Generation.tiles = data;
-  else
-    JP.World.Generation.entities = data;
+  JP.Data.Request("generation/" + data.tileset, function(data){JP.World.Generation.tileset = data});
+  if (data.entities.length > 0)
+    JP.Data.Request("generation/" + data.entities, function(data){JP.World.Generation.entities = data});
+  if (data.spawnlist.length > 0)
+  JP.Data.Request("generation/" + data.spawnlist, function(data){JP.World.Generation.spawnlist = data});
 };
 
 /**

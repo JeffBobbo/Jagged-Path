@@ -1,0 +1,13 @@
+[
+  {
+    "quant": 100,
+    "name": "MoneySpawn10",
+    "override": {
+      "radius": 2
+    },
+    "tiles":
+    [
+      "Dirt"
+    ]    
+  }
+]

@@ -108,9 +108,9 @@ JP.Tile.prototype.Colour = function()
 
     var min = null;
     var max = null;
-    for (var i = JP.World.Generation.tiles.length - 1; i >= 0; i--)
+    for (var i = JP.World.Generation.tileset.length - 1; i >= 0; i--)
     {
-      var setting = JP.World.Generation.tiles[i];
+      var setting = JP.World.Generation.tileset[i];
 
       if (setting.tile !== this.name)
         continue;
