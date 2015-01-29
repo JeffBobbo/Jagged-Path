@@ -21,19 +21,22 @@ var JP = JP || {
    * render cache target
    * @type {HTMLCanvas}
    * @memberOf JP
-   */@type {HTMLCanvas} */
+   * @type {HTMLCanvas}
+   */
   tcanvas: null,
   /**
    * render context
    * @type {HTMLCanvas}
    * @memberOf JP
-   */@type {HTMLCanvas} */
+   * @type {HTMLCanvas}
+   */
   context: null,
   /**
    * render cache context
    * @type {HTMLCanvas}
    * @memberOf JP
-   */@type {HTMLCanvas} */
+   * @type {HTMLCanvas}
+   */
   tcontext: null,
 
   world: null,
