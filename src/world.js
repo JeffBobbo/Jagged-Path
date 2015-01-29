@@ -35,7 +35,7 @@ JP.World.prototype.Save = function()
     localStorage.setItem("JP.World.Saved", "true");
     return;
   }*/
-    
+
   if (localStorage.getItem("JP.World.Saved") === "true")
   {
     return true;
@@ -339,7 +339,7 @@ JP.World.prototype.CreateHeatMap = function()
 
   var hotSpotBelt = JP.World.prototype.CreateHeatMap.belt;
   var DIST_MOD = 2; // change this changes how fat the belt is
-    
+
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
     var p = y / this.tmpData[x].length; // position as a fraction comparable to hotSpotBelt
@@ -473,15 +473,15 @@ JP.World.prototype.TileMap = function()
 
 JP.World.prototype.FeatureMap = function()
 {
-  var prog = 0;
+  var prog = 1.0;
 
   var ret = this.AddRivers();
   if (ret !== true)
-    prog += ret;
+    prog *= ret;
 
-  if (prog === 0)
+  if (prog === 1)
     return true;
-  return prog / 1;
+  return prog;
 };
 
 JP.World.prototype.AddRivers = function()
@@ -509,7 +509,7 @@ JP.World.prototype.AddRivers = function()
     if (needToMake === true)
     {
       var num = randIntRange(24, 36);
-      for (var i = num - 1; i >= 0; i--)
+      for (var n = num - 1; n >= 0; n--)
       {
         while (true)
         {
@@ -519,7 +519,7 @@ JP.World.prototype.AddRivers = function()
           var name = this.terrain[x][y].name;
           if (name === "Sea" || name === "Snow" || name === "Ice" || name === "Desert")
             continue;
-       
+
           JP.World.prototype.AddRivers.points.push({x: x, y: y});
           break;
         }
@@ -598,7 +598,7 @@ JP.World.prototype.AddRivers = function()
           break;
       }
     }
-  
+
     // river is now a list of coords for our river
     river.sort(function(a, b) {
       if (a.height > b.height)
@@ -613,9 +613,9 @@ JP.World.prototype.AddRivers = function()
     river.splice(river.length - truncate, Infinity); // remove truncate off the end
 
     // mark the tiles as river
-    for (var i = river.length - 1; i >= 0; i--)
+    for (var k = river.length - 1; k >= 0; k--)
     {
-      var pos = river[i];
+      var pos = river[k];
       this.mapData[pos.x][pos.y].river = true;
     }
   }
@@ -678,7 +678,7 @@ JP.World.prototype.EntityMap = function()
     JP.World.prototype.EntityMap.x = 0;
 
   var x = JP.World.prototype.EntityMap.x++;
-  
+
   if (x === this.mapData.length)
   {
     JP.player.Place();
@@ -766,7 +766,7 @@ JP.World.prototype.Prerender = function()
   }
 };
 
-JP.World.prototype.Draw = function() 
+JP.World.prototype.Draw = function()
 {
   // draw terrain
   var xoffset = JP.player.relx - ((JP.canvas.width / JP.zoomLevel) / 2);
