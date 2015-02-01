@@ -497,15 +497,12 @@ JP.World.prototype.AddRivers = function()
     // find out if we need to make new river points
     JP.World.prototype.AddRivers.points = [];
     var needToMake = true;
-    for (var x = this.mapData.length - 1; x >= 0; x--)
+    for (var x = this.mapData.length - 1 && needToMake === true; x >= 0; x--)
     {
-      for (var y = this.mapData[x].length - 1; y >= 0; y--)
+      for (var y = this.mapData[x].length - 1 && needToMake === true; y >= 0; y--)
       {
         if (this.mapData[x][y].river === true)
-        {
-          needToMake = true;
-          break;
-        }
+          needToMake = false;
       }
     }
 
