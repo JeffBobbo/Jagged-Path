@@ -41,7 +41,7 @@ JP.Entity.Load = function(data)
     default:
       alert("Unknown entity class for " + data.name + ". Class: " + data.class);
       return;
-    break;  
+    break;
   }
   entity.name = data.name
 
@@ -51,7 +51,7 @@ JP.Entity.Load = function(data)
 };
 
 JP.Entity.Register = function(entity)
-{  
+{
   if (JP.Entity.registry[entity.name] === undefined)
     JP.Entity.registry[entity.name] = entity;
   else
@@ -235,6 +235,9 @@ JP.Entity.Entity.prototype.Death = function(dropLevel)
       }
     }
   }
+
+  if (this.spawner !== null)
+    this.spawner.SetLastSpawn(); // do this so that the spawner can't just spawn a new one instantly
 
 
   this.seppuku = true;

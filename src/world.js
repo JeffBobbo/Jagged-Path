@@ -479,6 +479,10 @@ JP.World.prototype.FeatureMap = function()
   if (ret !== true)
     prog *= ret;
 
+  ret = this.SpawnerMap();
+  if (ret !== true)
+    prog *= ret;
+
   if (prog === 1)
     return true;
   return prog;
@@ -645,7 +649,7 @@ JP.World.prototype.SpawnerMap = function()
 
   var spawnList = JP.World.Generation.spawnlist;
 
-  if (i === spawnList.length)
+  if (i >= spawnList.length)
     return true;
 
   var spawnLocations = [];
@@ -663,13 +667,14 @@ JP.World.prototype.SpawnerMap = function()
     }
   }
   var spawnsToMake = (spawncfg.quant > 0 ? spawncfg.quant : Math.floor(spawnLocations.length * spawncfg.quantfrac));
-  while (spawnsToMake-- > 0)
+  while (--spawnsToMake > 0)
   {
     var r = randIntRange(0, spawnLocations.length - 1);
     var spawn = JP.Spawn.Create(spawncfg.name, spawnLocations[r].x, spawnLocations[r].y);
 
     JP.world.spawners.unshift(spawn);
   }
+  return i / spawnLocations.length;
 }
 
 JP.World.prototype.EntityMap = function()

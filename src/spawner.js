@@ -56,7 +56,7 @@ JP.SpawnBase = function(progeny, x, y)
   this.id = JP.SpawnBase.ID++;
   this.num = 1;
   this.interval = 1000;
-  this.lastSpawn = 0;
+  this.lastSpawn = -1;
   this.limited = -1;
 
   this.children = []; // id's of children, no direct access
@@ -114,7 +114,7 @@ JP.SpawnBase.prototype.CanSpawn = function()
   if (count >= this.num) // none free
     return false;
 
-  if (this.lastSpawn + this.interval > JP.getTickCount())
+  if (this.lastSpawn >= 0 && this.lastSpawn + this.interval > JP.getTickCount())
     return false;
 
   return true;
@@ -125,15 +125,14 @@ JP.SpawnBase.prototype.Spawn = function()
   if (this.CanSpawn() === false)
     return;
 
-  this.lastSpawn = JP.getTickCount();
   for (var i = this.ChildCount(); i < this.num && this.limit !== 0; ++i)
   {
     //var dir = randRange(-Math.PI, Math.PI); // pick a random direction
     //var dist = randRange(0, this.radius);   // and a random distance
     //var x = Math.cos(dir) * dist + this.relx; // and work out placement
-    var x = this.relx * randRange(-radius/2, radius/2); // and work out placement
+    var x = this.relx * randRange(-this.radius/2, this.radius/2); // and work out placement
     //var y = Math.sin(dir) * dist + this.rely; // and work out placement
-    var y = this.rely * randRange(-radius/2, radius/2); // and work out placement
+    var y = this.rely * randRange(-this.radius/2, this.radius/2); // and work out placement
 
     var ent = JP.Entity.Create(this.progeny, x, y, null);
     ent.spawner = this;
@@ -144,7 +143,13 @@ JP.SpawnBase.prototype.Spawn = function()
     if (this.limit > 0)
       this.limit--;
   }
+  this.lastSpawn = JP.getTickCount();
 };
+
+JP.SpawnBase.prototype.SetLastSpawn = function()
+{
+  this.lastSpawn = JP.getTickCount();
+}
 
 JP.SpawnItem = function()
 {
@@ -161,7 +166,6 @@ JP.SpawnItem.prototype.Spawn = function()
   if (this.CanSpawn() === false)
     return;
 
-  this.lastSpawn = JP.getTickCount();
   for (var i = this.ChildCount(); i < this.num && this.limit !== 0; ++i)
   {
     //var dir = randRange(-Math.PI, Math.PI); // pick a random direction
@@ -186,5 +190,6 @@ JP.SpawnItem.prototype.Spawn = function()
     if (this.limit > 0)
       this.limit--;
   }
+  this.lastSpawn = JP.getTickCount();
 }
 
