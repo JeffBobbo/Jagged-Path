@@ -19,12 +19,16 @@
       "lumberjack_axeUseage": "Awesome... How do I use it?",
       "generic_farewell0": "Thanks mister! Bye."
     },
-    "requirements": [
-      {"itemType": "AXE", "max": 0}
-    ],
-    "actions": [
-      {"giveItem": "Axe", "itemQuant": 1}
-    ]
+    "requirements": {
+      "itemtype": [
+        {"type": "AXE", "max": 0}
+      ]
+    },
+    "actions": {
+      "giveitem": [
+        {"item": "Axe", "quant": 1}
+      ]
+    }
   },
   {
     "codename": "lumberjack_axeUseage",
@@ -32,9 +36,11 @@
     "options": {
       "generic_farewell0": "Thanks mister!"
     },
-    "requirements": [
-      {"itemType": "AXE", "min": 1}
-    ]
+    "requirements": {
+      "itemtype": [
+        {"type": "AXE", "min": 1}
+      ]
+    }
   },
 
 
@@ -45,12 +51,16 @@
       "lumberjack_tinderboxUseage": "How do I light a fire?",
       "generic_farewell0": "Thanks! Bye."
     },
-    "requirements": [
-      {"itemType": "TINDERBOX", "max": 0}
-    ],
-    "actions": [
-      {"giveItem": "Tinderbox", "itemQuant": 1}
-    ]
+    "requirements": {
+      "itemtype": [
+      {"type": "TINDERBOX", "max": 0}
+      ]
+    },
+    "actions": {
+      "giveitem": [
+        {"item": "Tinderbox", "quant": 1}
+      ]
+    }
   },
   {
     "codename": "lumberjack_tinderboxUseage",
@@ -58,9 +68,11 @@
     "options": {
       "generic_farewell0": "Thanks!"
     },
-    "requirements": [
-      {"itemType": "TINDERBOX", "min": 1}
-    ]
+    "requirements": {
+      "itemtype": [
+        {"type": "TINDERBOX", "min": 1}
+      ]
+    }
   },
 
   {
@@ -69,10 +81,14 @@
     "options": {
       "lumberjack_swim1": "Could you teach me?"
     },
-    "requirements": [
-      {"itemType": "WOOD", "min": 1},
-      {"playerStat": "canSwim", "value": false}
-    ]
+    "requirements": {
+      "itemtype": [
+        {"type": "WOOD", "min": 1}
+      ],
+      "playerstat": [
+        {"stat": "canSwim", "value": false}
+      ]
+    }
   },
   {
     "codename": "lumberjack_swim1",
@@ -89,26 +105,36 @@
     "options": {
       "generic_welcome0": "Thank you"
     },
-    "requirements": [
-      {"itemName": "Oak Log", "min": 20}
-    ],
-    "actions": [
-      {"takeItem": "Oak Log", "itemQuant": 20},
-      {"setStat": "canSwim", "value": true}
-    ]
+    "requirements": {
+      "item": [
+        {"item": "Oak Log", "min": 20}
+      ]
+    },
+    "actions": {
+      "takeitem": [
+        {"item": "Oak Log", "quant": 20}
+      ],
+      "setstat": [
+        {"stat": "canSwim", "value": true}
+      ]
+    }
   },
   {
     "codename": "lumberjack_swimNotRightNow",
     "message": "Okay then, see you later.",
-    "requirements": [
-      {"itemName": "Oak Log", "min": 20}
-    ]
+    "requirements": {
+      "item": [
+        {"item": "Oak Log", "min": 20}
+      ]
+    }
   },
   {
     "codename": "lumberjack_swimTooPoor",
     "message": "Okay then, see you later.",
-    "requirements": [
-      {"itemName": "Oak Log", "max": 19}
-    ]
+    "requirements": {
+      "item": [
+        {"item": "Oak Log", "max": 19}
+      ]
+    }
   }
 ]

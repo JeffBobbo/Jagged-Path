@@ -83,54 +83,50 @@ JP.Dialog.prototype.LoadData = function(data)
   // requirements
   if (data.requirements !== undefined && data.requirements !== null)
   {
-    var dreqs = data.requirements; // save some typing
-    for (var i = dreqs.length - 1; i >= 0; i--)
+    var requirements = data.requirements;
+    var keys = Object.keys(requirements);
+    for (var i = keys.length -1; i >= 0; --i)
     {
-      var dreq = dreqs[i];
-      if (dreq.itemType !== undefined)
+      for (var j = requirements[keys[i]].length - 1; j >= 0; j--)
       {
-        var req = new JP.Dialog.RequirementType(dreq.itemType, dreq.min, dreq.max);
-        this.requirements.push(req);
-        continue;
-      }
-      if (dreq.itemName !== undefined)
-      {
-        var req = new JP.Dialog.RequirementItem(dreq.itemName, dreq.min, dreq.max);
-        this.requirements.push(req);
-        continue;
-      }
-
-      if (dreq.gold !== undefined)
-      {
-        var req = new JP.Dialog.RequirementGold(dreq.min, dreq.max);
-        this.requirements.push(req);
-        continue;
-      }
-
-      if (dreq.playerStat !== undefined)
-      {
-        var req = new JP.Dialog.RequirementStat(dreq.playerStat, dreq.value);
-        this.requirements.push(req);
-        continue;
-      }
-      if (dreq.quest !== undefined)
-      {
-        var status = -1;
-        switch (dreq.status)
+        var req = requirements[keys[i]][j];
+        switch (keys[i])
         {
-          case "completed":
-            status = JP.Quest.Status.COMPLETE;
+          case "itemtype":
+            this.requirements.push(new JP.Dialog.RequirementType(req.type, req.min, req.max));
           break;
-          case "unstarted":
-            status = JP.Quest.Status.UNSTARTED;
+          case "item":
+            this.requirements.push(new JP.Dialog.RequirementItem(req.item, req.min, req.max));
           break;
-          case "inprogress":
-            status = JP.Quest.Status.INPROGRESS;
+          case "gold":
+            this.requirements.push(new JP.Dialog.RequirementGold(req.min, req.max));
+          break;
+          case "playerstat":
+            this.requirements.push(new JP.Dialog.RequirementStat(req.stat, req.value));
+          break;
+          case "quest":
+            var status = -1;
+            switch (req.status)
+            {
+              case "completed":
+               status = JP.Quest.Status.COMPLETE;
+              break;
+              case "unstarted":
+                status = JP.Quest.Status.UNSTARTED;
+              break;
+              case "inprogress":
+                status = JP.Quest.Status.INPROGRESS;
+              break;
+              default:
+                throw "Uknown quest progress, " + req.status + ", for " + this.codename;
+              break;
+            }
+            this.requirements.push(new JP.Dialog.RequirementQuest(req.codename, req.section, status));
+          break;
+          default:
+            throw "Uknown dialog requirement, " + keys[i] + ", for dialog " + this.codename;
           break;
         }
-        var req = new JP.Dialog.RequirementQuest(dreq.quest, dreq.section || null, status);
-        this.requirements.push(req);
-        continue;
       }
     }
   }
@@ -138,49 +134,49 @@ JP.Dialog.prototype.LoadData = function(data)
   // actions
   if (data.actions !== undefined && data.actions !== null)
   {
-    var dacts = data.actions;
-    for (var i = dacts.length - 1; i >= 0; i--)
+    var actions = data.actions;
+    var keys = Object.keys(actions);
+    for (var i = keys.length - 1; i >= 0; i--)
     {
-      var dact = dacts[i];
-      if (dact.giveItem !== undefined || dact.takeItem !== undefined)
+      for (var j = actions[keys[i]].length - 1; j >= 0; j--)
       {
-        var item = dact.giveItem || dact.takeItem;
-        var quant = dact.quant * (dact.takeItem === undefined ? 1 : -1);
-        var act = new JP.Dialog.ActionItem(item, quant);
-        this.actions.push(act);
-        continue;
-      }
-      if (dact.giveGold !== undefined || dact.takeGold !== undefined)
-      {
-        var amount = dact.giveGold || -dact.takeGold;
-        var act = new JP.Dialog.ActionItem(amount);
-        this.actions.push(act);
-        continue;
-      }
-      if (dact.setStat !== undefined)
-      {
-        var act = new JP.Dialog.ActionStat(dact.setStat, dact.value);
-        this.actions.push(act);
-        continue;
-      }
-      if (dact.quest !== undefined)
-      {
-        var status = -1;
-        switch (dact.status)
+        var act = actions[keys[i]][j];
+        switch (keys[i])
         {
-          case "completed":
-            status = JP.Quest.Status.COMPLETE;
+          case "giveitem":
+            var quant = act.quant;
+            this.actions.push(new JP.Dialog.ActionItem(act.item, quant));
+            break;
+          case "takeitem":
+            var quant = -act.quant;
+            this.actions.push(new JP.Dialog.ActionItem(act.item, quant));
           break;
-          case "unstarted":
-            status = JP.Quest.Status.UNSTARTED;
+          case "givegold":
+            this.actions.push(new JP.Dialog.ActionGold(act.amount));
+            break;
+          case "takegold":
+            this.actions.push(new JP.Dialog.ActionGold(-act.amount));
+            break;
+          case "setstat":
+            this.actions.push(new JP.Dialog.ActionStat(act.stat, act.value));
           break;
-          case "inprogress":
-            status = JP.Quest.Status.INPROGRESS;
+          case "quest":
+            var status = -1;
+            switch (act.status)
+            {
+              case "completed":
+                status = JP.Quest.Status.COMPLETE;
+              break;
+              case "unstarted":
+                status = JP.Quest.Status.UNSTARTED;
+              break;
+              case "inprogress":
+                status = JP.Quest.Status.INPROGRESS;
+              break;
+            }
+            this.actions.push(new JP.Dialog.ActionQuest(act.codename, act.section, status));
           break;
         }
-        var act = new JP.Dialog.ActionQuest(dact.quest, dact.section || null, status);
-        this.actions.push(act);
-        continue;
       }
     }
   }
@@ -313,8 +309,8 @@ JP.Dialog.RequirementStat.prototype.Satisfied = function()
 JP.Dialog.RequirementQuest = function(quest, section, status)
 {
   this.quest = quest;
-  this.section = section || null;
-  this.status = (status === undefined ? -1 : status);
+  this.section = section === -1 ? null : section;
+  this.status = status === undefined ? -1 : status;
 };
 /**
  * Test if this condition is met

@@ -40,12 +40,16 @@
   {
     "codename": "quest_accept",
     "message": "Good luck!",
-    "requirements": [
-      {"quest": "TestQuest", "status": "unstarted"}
-    ],
-    "actions": [
-      {"quest": "TestQuest", "status": "inprogress"}
-    ]
+    "requirements": {
+      "quest": [
+        {"codename": "TestQuest", "status": "unstarted"}
+      ]
+    },
+    "actions": {
+      "quest": [
+        {"codename": "TestQuest", "status": "inprogress"}
+      ]
+    }
   },
 
   {
@@ -56,9 +60,11 @@
       "quest_finish": "I'm done!",
       "generic_farewell0": "No thanks!"
     },
-    "requirements": [
-      {"quest": "TestQuest", "status": "completed"}
-    ]
+    "requirements": {
+      "quest": [
+        {"codename": "TestQuest2", "status": "completed"}
+      ]
+    },
   },
   {
     "codename": "quest_test2",
@@ -67,25 +73,33 @@
       "quest_accept2": "Yes!",
       "generic_farewell0": "I doubt anyone west of Bree has much interest in adventers."
     },
-    "requirements": [
-      {"quest": "TestQuest2", "status": "unstarted"}
-    ]
+    "requirements": {
+      "quest": [
+        {"codename": "TestQuest2", "status": "unstarted"}
+      ]
+    }
   },
   {
     "codename": "quest_accept2",
     "message": "Good luck!",
-    "actions": [
-      {"quest": "TestQuest2", "status": "inprogress"}
-    ]
+    "actions": {
+      "quest": [
+        {"codename": "TestQuest2", "status": "inprogress"}
+      ]
+    }
   },
   {
     "codename": "quest_finish",
     "message": "Well done!",
-    "requirements": [
-      {"quest": "TestQuest2", "status": "inprogress"}
-      ],
-    "actions": [
-      {"quest": "TestQuest2", "status": "completed"}
-    ]
+    "requirements": {
+      "quest": [
+        {"codename": "TestQuest2", "status": "inprogress"}
+      ]
+    },
+    "actions": {
+      "quest": [
+        {"codename": "TestQuest2", "status": "completed"}
+      ]
+    }
   }
 ]
