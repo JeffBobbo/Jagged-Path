@@ -20,8 +20,7 @@ JP.Spawn.Load = function(data)
       spawn.cstruct = JP.SpawnItem;
     break;
     default:
-      alert("Unknown spawn class for " + data.name + ". Class: " + data.class);
-      return;
+      throw "Unknown spawn class for " + data.name + ". Class: " + data.class;
     break;
   }
   spawn.name = data.name;
