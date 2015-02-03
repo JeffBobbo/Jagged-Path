@@ -9,5 +9,14 @@
     [
       "Dirt"
     ]    
+  },
+  {
+    "quant": 10,
+    "name": "TestOakSpawner",
+    "tiles":
+    [
+      "Grass",
+      "Dirt"
+    ]
   }
 ]

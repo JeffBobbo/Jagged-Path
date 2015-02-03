@@ -9,5 +9,15 @@
 
     "progeny": "Gold",
     "boxQuant": 10
+  },
+  {
+    "class": "plant",
+    "name": "TestOakSpawner",
+    "num": 20,
+    "interval": 15000,
+    "limited": -1,
+    "radius": 10,
+    "minDist": 2,
+    "progeny": "Oak Tree"
   }
 ]
