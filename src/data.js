@@ -36,10 +36,19 @@ JP.Data.Request = function(file, listcb, filecb, path)
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.onreadystatechange = function()
   {
-    if (xmlhttp.readyState === 4 && xmlhttp.status === 200)
+    if (xmlhttp.readyState === 4)
     {
-      JP.Data.filesRec++;
-      listcb(JSON.parse(xmlhttp.responseText), filecb, path);
+      if (xmlhttp.status === 200)
+      {
+        JP.Data.filesRec++;
+        listcb(JSON.parse(xmlhttp.responseText), filecb, path);
+      }
+      else
+      {
+        console.error("Couldn't retrieve file");
+        alert("File retrieval failed, please try again");
+        location.reload();
+      }
     }
   }
   xmlhttp.open("GET", "data/" + path + file, true);
