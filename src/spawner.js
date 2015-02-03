@@ -19,6 +19,9 @@ JP.Spawn.Load = function(data)
     case "item":
       spawn.cstruct = JP.SpawnItem;
     break;
+    case "plant":
+      spawn.cstruct = JP.SpawnPlant;
+    break;
     default:
       throw "Unknown spawn class for " + data.name + ". Class: " + data.class;
     break;
@@ -192,3 +195,46 @@ JP.SpawnItem.prototype.Spawn = function()
   this.lastSpawn = JP.getTickCount();
 }
 
+JP.SpawnPlant = function()
+{
+  JP.SpawnBase.apply(this, arguments)
+
+  this.minDist = 2;
+  this.radius = 10;
+};
+JP.SpawnPlant.prototype = Object.create(JP.SpawnBase.prototype);
+JP.SpawnPlant.prototype.constructor = JP.SpawnBase;
+
+JP.SpawnPlant.prototype.Spawn = function()
+{
+  if (this.CanSpawn() === false)
+    return;
+
+  for (var i = this.ChildCount(); i < this.num && this.limit !== 0; i++)
+  {
+    var x;
+    var y;
+
+    var tries = 0;
+    while (++tries)
+    {
+      x = this.relx + randRange(-this.radius / 2, this.radius / 2);
+      y = this.rely + randRange(-this.radius / 2, this.radius / 2);
+      // make sure there's nothing in the way
+      if (JP.Entity.FindByPos(x, y, JP.Entity.Type.NONE, this.minDist, this.minDist) === null)
+        break;
+      if (tries > 20)
+        return; // give up
+    }
+
+    var ent = JP.Entity.Create(this.progeny, x, y, null);
+    ent.spawner = this;
+
+    this.children.push(ent.id);
+    JP.world.entities.push(ent);
+
+    if (this.limit > 0)
+      this.limit--;
+  }
+  this.lastSpawn = JP.getTickCount();
+};
