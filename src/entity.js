@@ -270,7 +270,7 @@ JP.Entity.FindByPos = function(x, y, type, xtol, ytol)
   for (var i = JP.world.entities.length - 1; i >= 0; --i)
   {
     var ent = JP.world.entities[i];
-    if (ent.type !== type)
+    if (type > JP.Entity.Type.NONE && ent.type !== type)
       continue;
     if (InRange(x - xtol, x + xtol, ent.relx) === false)
       continue;
