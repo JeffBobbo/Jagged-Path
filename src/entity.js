@@ -125,7 +125,7 @@ JP.Entity.Entity = function(x, y, lifespan)
   this.posy = this.rely | 0;
   this.size = 1.0;
   this.moveGoal = {x: x, y: y, cx: x, cy: y};
-  this.timeToLive = JP.getTickCount() + lifespan || -1;
+  this.timeToLive = (lifespan == null ? -1 : JP.getTickCount() + lifespan);
 
   this.spawner = null;
 
