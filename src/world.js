@@ -669,6 +669,13 @@ JP.World.prototype.SpawnerMap = function()
     var r = randIntRange(0, spawnLocations.length - 1);
     var spawn = JP.Spawn.Create(spawncfg.name, spawnLocations[r].x, spawnLocations[r].y);
 
+    if (spawncfg.override != null)
+    {
+      var keys = Object.keys(spawncfg.override);
+      for (var j = keys.length - 1; j >= 0; j--)
+        spawn[keys[j]] = spawncfg.override[keys[j]];
+    }
+
     JP.world.spawners.unshift(spawn);
   }
   return i / spawnLocations.length;
