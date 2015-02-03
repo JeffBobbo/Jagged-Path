@@ -62,9 +62,9 @@
     },
     "requirements": {
       "quest": [
-        {"codename": "TestQuest2", "status": "completed"}
+        {"codename": "TestQuest", "status": "completed"}
       ]
-    },
+    }
   },
   {
     "codename": "quest_test2",
