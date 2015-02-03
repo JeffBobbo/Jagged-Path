@@ -663,7 +663,7 @@ JP.World.prototype.SpawnerMap = function()
       }
     }
   }
-  var spawnsToMake = (spawncfg.quant > 0 ? spawncfg.quant : Math.floor(spawnLocations.length * spawncfg.quantfrac));
+  var spawnsToMake = Math.min(spawnLocations.length, (spawncfg.quant > 0 ? spawncfg.quant : Math.floor(spawnLocations.length * spawncfg.quantfrac)));
   while (--spawnsToMake > 0)
   {
     var r = randIntRange(0, spawnLocations.length - 1);
