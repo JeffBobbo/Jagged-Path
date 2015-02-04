@@ -560,9 +560,9 @@ JP.Entity.ItemBox.prototype.Move = function()
     dx *= speed * JP.getTickDelta();
     dy *= speed * JP.getTickDelta();
     this.relx += dx;
-    Bound(0, JP.world.terrain.length - 1, this.relx)
+    this.relx = Bound(0, JP.world.terrain.length - 1, this.relx);
     this.rely += dy;
-    Bound(0, JP.world.terrain[0].length - 1, this.rely)
+    this.rely = Bound(0, JP.world.terrain[0].length - 1, this.rely);
     JP.needDraw = true;
   }
   this.posx = Math.floor(this.relx);
