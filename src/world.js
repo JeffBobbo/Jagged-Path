@@ -668,7 +668,7 @@ JP.World.prototype.SpawnerMap = function()
   {
     var r = randIntRange(0, spawnLocations.length - 1);
     var spawn = JP.Spawn.Create(spawncfg.name, spawnLocations[r].x, spawnLocations[r].y);
-
+    spawnLocations.splice(r, 1); // remote it from the list
     if (spawncfg.override != null)
     {
       var keys = Object.keys(spawncfg.override);
