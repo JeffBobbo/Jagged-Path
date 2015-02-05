@@ -255,12 +255,8 @@ JP.Entity.Entity.prototype.InRangeOfPlayer = function(range)
 
 JP.Entity.FindByID = function(id)
 {
-  for (var i = JP.world.entities.length - 1; i >= 0; --i)
-  {
-    if (JP.world.entities[i].id === id)
-      return JP.world.entities[i];
-  };
-  return null;
+  var i = JP.world.entities.binarySearch(id, function(a, b) { return a - b.id; });
+  return JP.world.entities[i] || null;
 };
 
 JP.Entity.FindByPos = function(x, y, type, xtol, ytol)
