@@ -85,6 +85,30 @@ JP.getFPS = function(update)
 }
 
 /**
+ * Test if a location is clipped from player view
+ * @param  {Object}  pos Position of location
+ * @return {Boolean}
+ */
+JP.isClipped = function(pos)
+{
+  if (pos == null)
+    return true;
+
+  var origin = {x: JP.player.posx, y: JP.player.posy};
+
+  // calculate size of view
+  var w = JP.canvas.width  / JP.zoomLevel;
+  var h = JP.canvas.height / JP.zoomLevel;
+
+  w *= 1.5; // increase it a bit so stuff doesn't seem laggy
+  h *= 1.5;
+
+  if (InRange(0, w, Math.abs(origin.x - pos.x)) || InRange(0, h, Math.abs(origin.y - pos.y)))
+    return false;
+  return true;
+}
+
+/**
  * Generate a random floating point number in the range [min, max]
  * @function
  * @param {number} min
@@ -394,6 +418,36 @@ Array.prototype.clear = function()
   while (this.length > 0)
     this.pop();
 };
+
+/**
+ * Performs a binary search on the array
+ * @param  {*} what What to search for
+ * @param  {Function} compare Comparison function for the search
+ * @param  {Function|Null} sort Sort function, if null the array isn't sorted
+ * @return {Number|Null} index of what in this, or null if not found
+ * @this {Array}
+ */
+Array.prototype.binarySearch = function(what, compare, sort)
+{
+  compare = compare || function(a, b) { return a - b; };
+  sort = sort || null;
+
+  if (sort !== null)
+    this.sort(sort);
+
+  var min = 0;
+  var max = this.length - 1;
+  while (min <= max)
+  {
+    var i = Math.floor((min + max) / 2);
+    var e = compare(what, this[i]);
+    if (e !== 0)
+      (e > 0 ? min = ++i : max = --i);
+    else
+      return i;
+  }
+  return null;
+}
 
 /**
  * Erase a chunk of a string, like an inverted substring op
