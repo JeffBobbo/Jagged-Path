@@ -221,8 +221,10 @@ JP.SpawnPlant.prototype.Spawn = function()
     var tries = 0;
     while (++tries)
     {
-      x = this.relx + randRange(-this.radius / 2, this.radius / 2);
-      y = this.rely + randRange(-this.radius / 2, this.radius / 2);
+      var dir = randRange(-Math.PI, Math.PI);
+      var dist = randRange(0, this.radius);
+      x = this.relx + Math.cos(dir) * dist;
+      y = this.rely + Math.sin(dir) * dist;
       // make sure there's nothing in the way
       if (JP.Entity.FindByPos(x, y, JP.Entity.Type.NONE, this.minDist, this.minDist) === null)
         break;
