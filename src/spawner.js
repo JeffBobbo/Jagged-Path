@@ -203,7 +203,6 @@ JP.SpawnPlant = function()
   JP.SpawnBase.apply(this, arguments)
 
   this.minDist = 2;
-  this.radius = 10;
 };
 JP.SpawnPlant.prototype = Object.create(JP.SpawnBase.prototype);
 JP.SpawnPlant.prototype.constructor = JP.SpawnBase;
@@ -213,36 +212,19 @@ JP.SpawnPlant.prototype.Spawn = function()
   if (this.CanSpawn() === false)
     return;
 
-  for (var i = this.ChildCount(); i < this.num && this.limit !== 0; i++)
-  {
-    var x;
-    var y;
+  if (this.ChildCount() !== 0)
+    return;
 
-    var tries = 0;
-    while (++tries)
-    {
-      var dir = randRange(-Math.PI, Math.PI);
-      var dist = randRange(0, this.radius);
-      x = this.relx + Math.cos(dir) * dist;
-      y = this.rely + Math.sin(dir) * dist;
-      // make sure there's nothing in the way
-      if (JP.Entity.FindByPos(x, y, JP.Entity.Type.NONE, this.minDist, this.minDist) === null)
-        break;
-      if (tries > 20)
-        return; // give up
-    }
+  var ent = JP.Entity.Create(this.progeny, this.relx, this.rely, null);
+  ent.spawner = this;
 
-    var ent = JP.Entity.Create(this.progeny, x, y, null);
-    ent.spawner = this;
-
-    this.children.push(ent.id);
-    JP.world.entities.push(ent);
-    JP.world.entities.sort(function(a, b) {
-      return a.id - b.id;
-    });
+  this.children.push(ent.id);
+  JP.world.entities.push(ent);
+  JP.world.entities.sort(function(a, b) {
+    return a.id - b.id;
+  });
 
     if (this.limit > 0)
       this.limit--;
-  }
   this.lastSpawn = JP.getTickCount();
 };
