@@ -184,6 +184,9 @@ JP.Idle = function()
       }
     }
   };
+  JP.world.entities.sort(function(a, b) {
+    return a.id - b.id;
+  });
   JP.Save();
 };
 
