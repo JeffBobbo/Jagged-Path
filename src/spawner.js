@@ -237,6 +237,9 @@ JP.SpawnPlant.prototype.Spawn = function()
 
     this.children.push(ent.id);
     JP.world.entities.push(ent);
+    JP.world.entities.sort(function(a, b) {
+      return a.id - b.id;
+    });
 
     if (this.limit > 0)
       this.limit--;
