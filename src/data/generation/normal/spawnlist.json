@@ -8,13 +8,14 @@
     "tiles":
     [
       "Dirt"
-    ]    
+    ]
   },
   {
-    "quant": 10,
+    "quantfrac": 0.30,
     "name": "TestOakSpawner",
-    "tiles":
-    [
+    "override": {
+    },
+    "tiles": [
       "Grass",
       "Dirt"
     ]
