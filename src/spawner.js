@@ -93,6 +93,9 @@ JP.SpawnBase.prototype.ChildCount = function(valid)
 
 JP.SpawnBase.prototype.Idle = function()
 {
+  if (JP.isClipped({x: this.relx, y: this.relx}) === true)
+    return;
+
   for (var i = this.children.length - 1; i >= 0; i--)
   {
     var child = JP.Entity.FindByID(this.children[i]);
