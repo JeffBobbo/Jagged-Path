@@ -559,6 +559,11 @@ JP.Entity.ItemBox.prototype.Move = function()
     this.relx = Bound(0, JP.world.terrain.length - 1, this.relx);
     this.rely += dy;
     this.rely = Bound(0, JP.world.terrain[0].length - 1, this.rely);
+    if (!JP.world.terrain[Math.floor(this.relx + 0.5)][Math.floor(this.rely + 0.5)].IsPassable()) // maybe replace this in future with some kind of hit scan?
+    {
+      this.relx -= dx;
+      this.rely -= dy;
+    }
     JP.needDraw = true;
   }
   this.posx = Math.floor(this.relx);
