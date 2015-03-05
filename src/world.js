@@ -440,7 +440,7 @@ JP.World.prototype.TileMap = function()
     var height = this.mapData[x][y].height;
     var heat = this.mapData[x][y].heat;
     var moisture = this.mapData[x][y].moisture;
-    var tile = undefined;
+    var tile = null;
 
     var possibleTiles = [];
     for (var i = JP.World.Generation.tileset.length - 1; i >= 0; i--)
@@ -465,7 +465,7 @@ JP.World.prototype.TileMap = function()
     }
     if (possibleTiles.length > 0)
       tile = possibleTiles[randIntRange(0, possibleTiles.length-1)];
-    this.terrain[x][y] = (tile === undefined ? JP.Tile.Create("Invalid", x, y) : JP.Tile.Create(tile, x, y));
+    this.terrain[x][y] = (tile === null ? JP.Tile.Create("Invalid", x, y) : JP.Tile.Create(tile, x, y));
   }
   return x / this.mapData.length;
 };
