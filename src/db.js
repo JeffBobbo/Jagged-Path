@@ -39,13 +39,7 @@ JP.DB.LoadPlayer = function(fName, sName)
 
     var keys = Object.keys(invent);
     for (var i = keys.length - 1; i >= 0; --i)
-    {
-      try
-      {
-        JP.player.ItemDelta(keys[i], invent[keys[i]], true, false);
-      }
-      catch(msg) {}
-    }
+      JP.player.ItemDelta(keys[i], invent[keys[i]], true, false);
   });
 
   JP.player.ItemUpdate();
@@ -54,3 +48,8 @@ JP.DB.LoadPlayer = function(fName, sName)
   JP.player.posx = Math.floor(JP.player.relx);
   JP.player.poxy = Math.floor(JP.player.rely);
 };
+
+JP.DB.DeletePlayer = function(fName, sName)
+{
+  JP.DB.db.player.where('[fName+sName]').equals([fName, sName]).delete();
+}
