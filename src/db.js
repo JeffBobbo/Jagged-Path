@@ -6,21 +6,50 @@
 
 JP.DB = JP.DB || {};
 
-JP.DB.db = null;
+JP.DB.db = new Dexie("TestDB3");
 
-var req = indexedDB.open("JaggedPath");
-req.onerror = function(event)
-{
-  console.error(event.target.errorCode);
-  alert(event.target.errorCode);
-};
-req.onsuccess = function(event)
-{
-  JP.DB.db = event.target.result;
-};
-req.onupgradeneeded = function(event)
-{
-  var db = event.target.result;
+JP.DB.db.version(1).stores({
+  player: '[fName+sName]'
+});
 
-  var store = db.createObjectStore("name", {keyPath: "myKey"});
+JP.DB.db.open().catch(function(e) {
+  console.log(e);
+});
+
+
+JP.DB.SavePlayer = function()
+{
+  var o = {};
+  for (var i = JP.player.saveKeys.length - 1; i >= 0; --i)
+  {
+    var key = JP.player.saveKeys[i];
+    o[key] = JP.player[key];
+  }
+  o.inventory = JP.player.inventory;
+
+  JP.DB.db.player.put(o);
+};
+
+JP.DB.LoadPlayer = function(fName, sName)
+{
+  JP.DB.db.player.where('[fName+sName]').equals([fName, sName]).first(function(player){
+    var invent = player.inventory;
+    player.inventory = undefined;
+    JP.player.merge(player);
+
+    var keys = Object.keys(invent);
+    for (var i = keys.length - 1; i >= 0; --i)
+      JP.player.ItemDelta(keys[i], invent[keys[i]], true, false);
+  });
+
+  JP.player.ItemUpdate();
+  JP.player.GoldUpdate();
+
+  JP.player.posx = Math.floor(JP.player.relx);
+  JP.player.poxy = Math.floor(JP.player.rely);
+};
+
+JP.DB.DeletePlayer = function(fName, sName)
+{
+  JP.DB.db.player.where('[fName+sName]').equals([fName, sName]).delete();
 }
