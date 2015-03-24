@@ -13,11 +13,21 @@
   {
     "class": "plant",
     "name": "TestOakSpawner",
-    "num": 20,
+    "num": 1,
     "interval": 15000,
     "limited": -1,
-    "radius": 10,
+    "radius": 1,
     "minDist": 2,
     "progeny": "Oak Tree"
+  },
+  {
+    "class": "plant",
+    "name": "TestEvergreenSpawner",
+    "num": 1,
+    "interval": 15000,
+    "limited": -1,
+    "radius": 1,
+    "minDist": 2,
+    "progeny": "Evergreen Tree"
   }
 ]

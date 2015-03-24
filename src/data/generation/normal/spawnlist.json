@@ -11,11 +11,23 @@
     ]
   },
   {
-    "quantfrac": 0.30,
+    "quantfrac": 0.1,
     "name": "TestOakSpawner",
     "override": {
     },
     "tiles": [
+      "Grass",
+      "Dirt"
+    ]
+  },
+  {
+    "quantfrac": 0.1,
+    "name": "TestEvergreenSpawner",
+    "override": {
+    },
+    "tiles": [
+      "Mountain",
+      "Snow",
       "Grass",
       "Dirt"
     ]
