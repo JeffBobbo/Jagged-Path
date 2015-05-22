@@ -157,9 +157,12 @@ JP.Idle = function()
 {
   JP.KeyProcessing();
   //JP.player.Idle();
-  for (var i = JP.world.spawners.length - 1; i >= 0; i--)
+  //
+  var target = Math.floor(1000 / 70); // 70 instead of 60 so there's time to do other things
+  var start = getTime(); // using getTime instead JP.getTickCount due to FPS issues
+  for (var i = JP.world.spawners.length - 1; i >= 0 && getTime() - start < target; --i)
     JP.world.spawners[i].Idle();
-  for (var i = JP.world.entities.length - 1; i >= 0; i--)
+  for (var i = JP.world.entities.length - 1; i >= 0 && getTime() - start < target; --i)
   {
     JP.world.entities[i].Idle();
     JP.world.entities[i].Move();
@@ -167,7 +170,7 @@ JP.Idle = function()
   JP.Draw();
 
   // remove any seppuku'd entities
-  for (var i = JP.world.entities.length - 1; i >= 0; i--)
+  for (var i = JP.world.entities.length - 1; i >= 0; --i) // always do this in full
   {
     var ent = JP.world.entities[i]
     if (ent.seppuku === true)
