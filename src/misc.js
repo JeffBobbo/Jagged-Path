@@ -100,12 +100,10 @@ JP.isClipped = function(pos)
   var w = JP.canvas.width  / JP.zoomLevel;
   var h = JP.canvas.height / JP.zoomLevel;
 
-  w *= 1.5; // increase it a bit so stuff doesn't seem laggy
-  h *= 1.5;
+  w *= w; // increase it a bit so stuff doesn't seem laggy
+  h *= h;
 
-  if (InRange(0, w, Math.abs(origin.x - pos.x)) || InRange(0, h, Math.abs(origin.y - pos.y)))
-    return false;
-  return true;
+  return (Squared((origin.x - pos.x)) + Squared(origin.x - pos.x) > w + h);
 }
 
 /**
