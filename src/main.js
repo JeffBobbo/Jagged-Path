@@ -5,6 +5,7 @@
 */
 
 "use strict";
+var useDB = true; // toggles DB use
 
 /**
  * Global game namesapce
@@ -84,13 +85,6 @@ JP.Initialize = function()
     return;
   }
 
-  var prog = JP.world.Load();
-  if (prog !== false && prog !== true) // I know this looks weird, but prog being false means no world loaded
-  {
-    document.getElementById('loadingTitle').textContent = "Loading world data";
-    document.getElementById('loadingDetail').textContent = (prog * 100).toFixed(0) + '%';
-    return;
-  }
   JP.gameState++;
 };
 
@@ -416,7 +410,7 @@ window.onresize = JP.SetResolution;
  */
 function newWorld()
 {
-  JP.Delete();
+//  JP.Delete();
 
   loadWorld();
 };

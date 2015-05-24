@@ -68,13 +68,18 @@ JP.World.prototype.Save = function()
 
     if (x === this.mapData.length)
     {
+      localStorage.setItem("JP.WorldSize", JSON.stringify({x: JP.world.mapData.length, y: JP.world.mapData[0].length}));
       localStorage.setItem("JP.World.Saved", "true");
       return true;
     }
     for (var y = this.mapData[x].length - 1; y >= 0; y--)
       delete this.mapData[x][y].processed;
 
-    localStorage.setItem("JP.World.mapData." + x, LZString.compressToUTF16(JSON.stringify(this.mapData[x])));
+    if (useDB === true)
+      JP.DB.SaveWorldX(x);
+    else
+      localStorage.setItem("JP.World.mapData." + x, LZString.compressToUTF16(JSON.stringify(this.mapData[x])));
+
     return x / this.mapData.length;
   }
 };
@@ -83,7 +88,7 @@ JP.World.prototype.Load = function()
 {
   if (localStorage.getItem("JP.World.Saved") === null)
     return false;
-  if (localStorage.getItem("JP.World.mapData.0") === null)
+  if (useDB === false && localStorage.getItem("JP.World.mapData.0") === null)
   {
     console.error("'JP.World.Saved' wasn't null but no mapData found to load.");
     return false; // if we return here something bad is happening
@@ -92,29 +97,27 @@ JP.World.prototype.Load = function()
   if (JP.World.prototype.Load.x === undefined)
   {
     JP.World.prototype.Load.x = 0;
-    this.terrain = [];
-    this.mapData = [];
-    this.tmpData = [];
-    this.entities = [];
-    this.spawners = [];
   }
   var x = JP.World.prototype.Load.x++;
 
   if (JP.World.prototype.Load.max === undefined)
   {
-    var max = 0;
-    while (localStorage.getItem("JP.World.mapData." + max++));
+    var max = JSON.parse(localStorage.getItem("JP.WorldSize")).x;
     JP.World.prototype.Load.max = max - 1;
   }
-  var arr = localStorage.getItem("JP.World.mapData." + x);
-  if (arr !== null)
+  if (useDB === true)
   {
-    arr = JSON.parse(LZString.decompressFromUTF16(arr));
-    this.terrain[x] = [];
-    for (var y = this.terrain.length - 1; y >= 0; y--)
-      this.terrain[x][y] = {};
-    this.mapData[x] = arr;
-    return x / JP.World.prototype.Load.max;
+    JP.DB.LoadWorldX(x);
+  }
+  else
+  {
+    var arr = localStorage.getItem("JP.World.mapData." + x);
+    if (arr !== null)
+    {
+      arr = JSON.parse(LZString.decompressFromUTF16(arr));
+      this.mapData[x] = arr;
+      return x / JP.World.prototype.Load.max;
+    }
   }
   // need to do entity loading
   this.generationLevel = JP.World.Gen.TILING;
@@ -123,25 +126,33 @@ JP.World.prototype.Load = function()
 
 JP.World.prototype.Delete = function()
 {
-  var x = 0;
-  while (localStorage.getItem("JP.World.mapData." + x) !== null)
-    localStorage.removeItem("JP.World.mapData." + x++)
+  if (useDB)
+  {
+    JP.DB.DeleteWorld();
+  }
+  else
+  {
+    var x = 0;
+    while (localStorage.getItem("JP.World.mapData." + x) !== null)
+      localStorage.removeItem("JP.World.mapData." + x++)
+  }
   localStorage.removeItem("JP.World.Saved");
 }
 
 JP.World.Gen = JP.World.Gen || {};
 
 JP.World.Gen.NONE      = 0;
-JP.World.Gen.RADIAL    = 1;
-JP.World.Gen.HEIGHT    = 2;
-JP.World.Gen.HEAT      = 3;
-JP.World.Gen.MOISTURE  = 4;
-JP.World.Gen.FILTER    = 5;
-JP.World.Gen.TILING    = 6;
-JP.World.Gen.FEATURE   = 7;
-JP.World.Gen.PLACEMENT = 8;
-JP.World.Gen.SAVING    = 9;
-JP.World.Gen.DONE      = 10;
+JP.World.Gen.LOAD      = 1;
+JP.World.Gen.RADIAL    = 2;
+JP.World.Gen.HEIGHT    = 3;
+JP.World.Gen.HEAT      = 4;
+JP.World.Gen.MOISTURE  = 5;
+JP.World.Gen.FILTER    = 6;
+JP.World.Gen.TILING    = 7;
+JP.World.Gen.FEATURE   = 8;
+JP.World.Gen.PLACEMENT = 9;
+JP.World.Gen.SAVING    = 10;
+JP.World.Gen.DONE      = 11;
 
 JP.World.PERLINDIV = 200;
 
@@ -161,6 +172,18 @@ JP.World.prototype.GenerationTasks = function()
         if (ret === true)
         {
           this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.LOAD:
+        str = "Loading World Data";
+        ret = this.Load();
+        if (ret === false)
+        {
+          this.generationLevel = JP.World.Gen.RADIAL;
+        }
+        else if (ret === true)
+        {
+          this.generationLevel = JP.World.Gen.TILING;
         }
       break;
       case JP.World.Gen.RADIAL:

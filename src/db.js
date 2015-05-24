@@ -6,16 +6,44 @@
 
 JP.DB = JP.DB || {};
 
-JP.DB.db = new Dexie("TestDB3");
+JP.DB.db = new Dexie("TestDB5");
 
 JP.DB.db.version(1).stores({
-  player: '[fName+sName]'
+  player: '[fName+sName]',
+  mapData: '[x+y]'
 });
 
 JP.DB.db.open().catch(function(e) {
   console.log(e);
 });
 
+JP.DB.SaveWorldX = function(x)
+{
+  for (var y = JP.world.mapData[x].length - 1; y >= 0; y--)
+  {
+    var data = JP.world.mapData[x][y];
+    data.x = x;
+    data.y = y;
+    JP.DB.db.mapData.put(data).then(function(){console.log("done")}).catch(function(e){console.log(e)});
+  }
+};
+
+JP.DB.LoadWorldX = function(x)
+{
+  var size = JSON.parse(localStorage.getItem("JP.WorldSize"));
+  for (var y = size.y - 1; y >= 0; y--)
+  {
+    JP.DB.db.mapData.where('[x+y]').equals([x, y]).first(function(data){
+      console.log(data);
+      JP.world.mapData[x][y] = data;
+    });
+  }
+};
+
+JP.DB.DeleteWorld = function()
+{
+  JP.DB.db.mapData.clear();
+}
 
 JP.DB.SavePlayer = function()
 {
@@ -33,6 +61,8 @@ JP.DB.SavePlayer = function()
 JP.DB.LoadPlayer = function(fName, sName)
 {
   JP.DB.db.player.where('[fName+sName]').equals([fName, sName]).first(function(player){
+    if (player == null)
+      return;
     var invent = player.inventory;
     player.inventory = undefined;
     JP.player.merge(player);
@@ -51,5 +81,5 @@ JP.DB.LoadPlayer = function(fName, sName)
 
 JP.DB.DeletePlayer = function(fName, sName)
 {
-  JP.DB.db.player.where('[fName+sName]').equals([fName, sName]).delete();
+  JP.DB.db.player.clear();
 }
