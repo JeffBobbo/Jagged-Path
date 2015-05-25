@@ -1,0 +1,14 @@
+[
+  {
+    "class": "rock",
+    "name": "Coal",
+    "imgPath": "rock.png",
+    "hpMax": 7,
+    "drops": [
+      {
+        "name": "Coal",
+        "chance": 1.0
+      }
+    ]
+  }
+]

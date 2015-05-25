@@ -11,7 +11,7 @@
     "boxQuant": 10
   },
   {
-    "class": "plant",
+    "class": "resource",
     "name": "TestOakSpawner",
     "num": 1,
     "interval": 15000,
@@ -21,7 +21,7 @@
     "progeny": "Oak Tree"
   },
   {
-    "class": "plant",
+    "class": "resource",
     "name": "TestEvergreenSpawner",
     "num": 1,
     "interval": 15000,
@@ -29,5 +29,15 @@
     "radius": 1,
     "minDist": 2,
     "progeny": "Evergreen Tree"
+  },
+  {
+    "class": "resource",
+    "name": "TestCoalSpawner",
+    "num": 1,
+    "interval": 15000,
+    "limited": -1,
+    "radius": 1,
+    "minDist": 2,
+    "progeny": "Coal"
   }
 ]

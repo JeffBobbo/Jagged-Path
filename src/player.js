@@ -65,7 +65,6 @@ JP.Player = function()
 
 JP.Player.prototype.Save = function()
 {
-  var useDB = true;
   var o = {};
   for (var i = this.saveKeys.length - 1; i >= 0; i--)
   {
@@ -83,7 +82,6 @@ JP.Player.prototype.Save = function()
 
 JP.Player.prototype.Load = function(fName, sName)
 {
-  var useDB = true;
   fName = fName || "";
   sName = sName || "";
   if (useDB === true)
@@ -123,7 +121,6 @@ JP.Player.prototype.Load = function(fName, sName)
 
 JP.Player.prototype.Delete = function()
 {
-  var useDB = true;
   if (useDB === true)
     JP.DB.DeletePlayer();
   else
@@ -423,6 +420,17 @@ JP.Player.prototype.Fire = function()
   }
   JP.Item.Use(tb);
 };
+
+JP.Player.prototype.Mine = function()
+{
+  var pick = this.ItemClass(JP.Item.Class.PICKAXE);
+  if (pick === null)
+  {
+    new JP.Logger.LogItem("You have no pickaxe.").Post();
+    return;
+  }
+  JP.Item.Use(pick);
+}
 
 JP.Player.prototype.QuestProgress = function(quest)
 {

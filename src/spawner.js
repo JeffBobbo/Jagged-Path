@@ -19,8 +19,8 @@ JP.Spawn.Load = function(data)
     case "item":
       spawn.cstruct = JP.SpawnItem;
     break;
-    case "plant":
-      spawn.cstruct = JP.SpawnPlant;
+    case "resource":
+      spawn.cstruct = JP.SpawnResource;
     break;
     default:
       throw "Unknown spawn class for " + data.name + ". Class: " + data.class;
@@ -198,16 +198,16 @@ JP.SpawnItem.prototype.Spawn = function()
   this.lastSpawn = JP.getTickCount();
 }
 
-JP.SpawnPlant = function()
+JP.SpawnResource = function()
 {
   JP.SpawnBase.apply(this, arguments)
 
   this.minDist = 2;
 };
-JP.SpawnPlant.prototype = Object.create(JP.SpawnBase.prototype);
-JP.SpawnPlant.prototype.constructor = JP.SpawnBase;
+JP.SpawnResource.prototype = Object.create(JP.SpawnBase.prototype);
+JP.SpawnResource.prototype.constructor = JP.SpawnBase;
 
-JP.SpawnPlant.prototype.Spawn = function()
+JP.SpawnResource.prototype.Spawn = function()
 {
   if (this.CanSpawn() === false)
     return;

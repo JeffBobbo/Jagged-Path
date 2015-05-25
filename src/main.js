@@ -57,6 +57,8 @@ var JP = JP || {
   needDraw: false
 };
 
+var useDB = false;
+
 /**
  * game state
  * @enum
@@ -287,6 +289,7 @@ JP.Keys = JP.Keys || {
   C: 67, // chop wood
   T: 84, // talk
   F: 70, // fire
+  E: 69, // mine
 
   PLUS: 187, // zoom
   MINUS: 189,
@@ -351,6 +354,10 @@ JP.KeyProcessing = function()
       case JP.Keys.F:
         JP.player.Fire();
         JP.KeyMap[JP.Keys.F] = null;
+      break;
+      case JP.Keys.E:
+        JP.player.Mine();
+        JP.KeyMap[JP.Keys.E] = null;
       break;
 
       // map scaling

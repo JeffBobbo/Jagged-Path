@@ -31,5 +31,25 @@
       "Grass",
       "Dirt"
     ]
+  },
+  {
+    "quantfrac": 0.1,
+    "name": "TestCoalSpawner",
+    "override": {
+    },
+    "tiles": [
+      "Mountain",
+      "Dirt"
+    ]
+  },
+  {
+    "quantfrac": 0.05,
+    "name": "TestCoalSpawner",
+    "override": {
+    },
+    "tiles": [
+      "Grass",
+      "Savanna"
+    ]
   }
 ]
