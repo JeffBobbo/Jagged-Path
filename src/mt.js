@@ -19,14 +19,20 @@ MT.prototype.seed = function(s)
     case "number":
       seed = s;
     break;
+    case "string":
+      seed = parseInt(s);
+    break;
     default:
-      seed = (new Date()).getTime();
+      throw "Nope";
+    //  seed = (new Date()).getTime();
     break;
   }
+  seed &= 0x7FFFFFFF; // pretty sure this doesn't make a difference
 
   this.state[0] = seed;
   for (var i = 1; i < 624; ++i)
     this.state[i] = 0xFFFF & (0x6C078965 * (this.state[i - 1] ^ (this.state[i - 1] >> 30)) + i);
+  return seed;
 };
 
 MT.prototype.generate = function()
@@ -40,7 +46,8 @@ MT.prototype.generate = function()
   }
 };
 
-MT.prototype.extract = function()
+// 32 bit int
+MT.prototype.rand = function()
 {
   if (this.index === 0)
     this.generate();
@@ -58,17 +65,40 @@ MT.prototype.extract = function()
   return y;
 };
 
-MT.prototype.rand64 = function()
+// 31 bit int
+MT.prototype.rand31 = function()
 {
-  return this.extract();
+  return this.rand() >>> 1;
 };
 
-MT.prototype.rand = function()
-{
-  return this.extract() >>> 1;
-};
-
+// 0..0.99..
 MT.prototype.random = function()
 {
-  return this.extract() / MT.RAND_MAX;
+  return this.rand() / MT.RAND_MAX;
 };
+
+// 0..1
+MT.prototype.randomOne = function()
+{
+  return this.rand() / (MT.RAND_MAX - 1);
+}
+
+// min..max float
+MT.prototype.randomRange = function(min, max)
+{
+  if (min === max)
+    return min;
+  if (min >= max)
+  {
+    var t = min;
+    min = max;
+    max = t;
+  }
+  return min + ((max - min) * this.randomOne());
+}
+
+// min..max int
+MT.prototype.randRange = function(min, max)
+{
+  return Math.floor(this.randomRange(min, max + 1));
+}
