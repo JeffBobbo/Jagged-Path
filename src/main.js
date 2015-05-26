@@ -67,6 +67,8 @@ JP.STATE = {
   RUN:  2
 };
 
+var useDB = false;
+
 /**
  * Pregame setup, retrieves content files and loads the world data if there's a one to load
  * @function
@@ -83,7 +85,7 @@ JP.Initialize = function()
     document.getElementById('loadingExtra').textContent = 'Please Wait';
     return;
   }
-
+/*
   var prog = JP.world.Load();
   if (prog !== false && prog !== true) // I know this looks weird, but prog being false means no world loaded
   {
@@ -91,6 +93,7 @@ JP.Initialize = function()
     document.getElementById('loadingDetail').textContent = (prog * 100).toFixed(0) + '%';
     return;
   }
+*/
   JP.gameState++;
 };
 
@@ -100,6 +103,8 @@ JP.Initialize = function()
  */
 JP.Generate = function()
 {
+  JP.player.Load();
+
   if (JP.world.generationLevel < JP.World.Gen.DONE)
   {
     JP.world.GenerationTasks();
@@ -109,13 +114,9 @@ JP.Generate = function()
   {
     document.getElementById('loading').style.display = "none";
 
-
-    JP.player.Load();
-
     // temp hack
     if (JP.world.terrain[Math.floor(JP.player.relx)][Math.floor(JP.player.rely)].spawnSafe === true)
       JP.world.entities.unshift(JP.Entity.Create("Lumberjack", Math.floor(JP.player.relx), Math.floor(JP.player.rely))); // place a woodsman with the player
-
 
     JP.world.Prerender();
     document.getElementById('eventLog').style.display = "";
