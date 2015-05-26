@@ -57,7 +57,7 @@ JP.Player = function()
     "rely",
     "direction",
     "gold",
-    "canClimb",    
+    "canClimb",
     "canSwim",
     "quests"
   ];
@@ -68,7 +68,7 @@ JP.Player.prototype.Save = function()
   var o = {};
   for (var i = this.saveKeys.length - 1; i >= 0; i--)
   {
-    var key = this.saveKeys[i]; 
+    var key = this.saveKeys[i];
     o[key] = this[key];
   }
   o.inventory = this.inventory;
