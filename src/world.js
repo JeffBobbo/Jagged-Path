@@ -81,6 +81,12 @@ JP.World.prototype.Save = function()
 
 JP.World.prototype.Load = function()
 {
+  var seed = localStorage.getItem("JP.World.seed") || getTime();
+  this.mt = new MT(seed);
+  console.log("seed: " + seed);
+  localStorage.setItem("JP.World.seed", seed);
+  return true;
+
   if (localStorage.getItem("JP.World.Saved") === null)
     return false;
   if (localStorage.getItem("JP.World.mapData.0") === null)
@@ -132,16 +138,17 @@ JP.World.prototype.Delete = function()
 JP.World.Gen = JP.World.Gen || {};
 
 JP.World.Gen.NONE      = 0;
-JP.World.Gen.RADIAL    = 1;
-JP.World.Gen.HEIGHT    = 2;
-JP.World.Gen.HEAT      = 3;
-JP.World.Gen.MOISTURE  = 4;
-JP.World.Gen.FILTER    = 5;
-JP.World.Gen.TILING    = 6;
-JP.World.Gen.FEATURE   = 7;
-JP.World.Gen.PLACEMENT = 8;
-JP.World.Gen.SAVING    = 9;
-JP.World.Gen.DONE      = 10;
+JP.World.Gen.LOAD      = 1;
+JP.World.Gen.RADIAL    = 2;
+JP.World.Gen.HEIGHT    = 3;
+JP.World.Gen.HEAT      = 4;
+JP.World.Gen.MOISTURE  = 5;
+JP.World.Gen.FILTER    = 6;
+JP.World.Gen.TILING    = 7;
+JP.World.Gen.FEATURE   = 8;
+JP.World.Gen.PLACEMENT = 9;
+JP.World.Gen.SAVING    = 10;
+JP.World.Gen.DONE      = 11;
 
 JP.World.PERLINDIV = 200;
 
@@ -158,6 +165,14 @@ JP.World.prototype.GenerationTasks = function()
       case JP.World.Gen.NONE:
         str = "Creating World";
         ret = this.CreateMap();
+        if (ret === true)
+        {
+          this.generationLevel++;
+        }
+      break;
+      case JP.World.Gen.LOAD:
+        str = "Loading World";
+        ret = this.Load();
         if (ret === true)
         {
           this.generationLevel++;
@@ -292,7 +307,7 @@ JP.World.prototype.CreateRadialMap = function()
     return true; // return true when we're done
 
   for (var y = 0; y < this.tmpData[x].length; ++y)
-    this.tmpData[x][y].radius = randIntRange(1, 5);
+    this.tmpData[x][y].radius = this.mt.randRange(1, 5);
 
   return x / this.tmpData.length;
 };
@@ -303,7 +318,8 @@ JP.World.prototype.CreateHeightMap = function()
   {
     JP.World.prototype.CreateHeightMap.x = 0;
     //JP.World.prototype.CreateHeightMap.noise = new Noise(4, 2, 4, 3, 5, -Math.PI, Math.PI, -Math.PI, Math.PI);
-    noise.seed(Math.random());
+    var pseed = this.mt.random();
+    noise.seed(pseed);
   }
 
   var x = JP.World.prototype.CreateHeightMap.x++;
@@ -329,7 +345,7 @@ JP.World.prototype.CreateHeatMap = function()
   if (JP.World.prototype.CreateHeatMap.x === undefined)
   {
     JP.World.prototype.CreateHeatMap.x = 0;
-    JP.World.prototype.CreateHeatMap.belt = randRange(2 / 5, 3 / 5); // equator
+    JP.World.prototype.CreateHeatMap.belt = this.mt.randomRange(2 / 5, 3 / 5); // equator
   }
 
   var x = JP.World.prototype.CreateHeatMap.x++;
@@ -343,7 +359,7 @@ JP.World.prototype.CreateHeatMap = function()
   for (var y = 0; y < this.tmpData[x].length; ++y)
   {
     var p = y / this.tmpData[x].length; // position as a fraction comparable to hotSpotBelt
-    var dist = 1 - ((Math.abs(hotSpotBelt - p) * randRange(0.75, 1.25)) * DIST_MOD); // distance from the equator
+    var dist = 1 - ((Math.abs(hotSpotBelt - p) * this.mt.randomRange(0.75, 1.25)) * DIST_MOD); // distance from the equator
     var heat = Bound(0, 100, dist * 100);
     this.tmpData[x][y].heat = heat;
   }
@@ -355,7 +371,7 @@ JP.World.prototype.CreateMoistureMap = function()
   if (JP.World.prototype.CreateMoistureMap.x === undefined)
   {
     JP.World.prototype.CreateMoistureMap.x = 0;
-    noise.seed(Math.random());
+    noise.seed(this.mt.random());
   }
 
   var x = JP.World.prototype.CreateMoistureMap.x++;
@@ -464,7 +480,7 @@ JP.World.prototype.TileMap = function()
       possibleTiles.push(setting.tile);
     }
     if (possibleTiles.length > 0)
-      tile = possibleTiles[randIntRange(0, possibleTiles.length-1)];
+      tile = possibleTiles[this.mt.randRange(0, possibleTiles.length-1)];
     this.terrain[x][y] = (tile === null ? JP.Tile.Create("Invalid", x, y) : JP.Tile.Create(tile, x, y));
   }
   return x / this.mapData.length;
@@ -509,13 +525,13 @@ JP.World.prototype.AddRivers = function()
     // if we didn't find any, lets make some
     if (needToMake === true)
     {
-      var num = randIntRange(24, 36);
+      var num = this.mt.randRange(24, 36);
       for (var n = num - 1; n >= 0; n--)
       {
         while (true)
         {
-          var x = randIntRange(0, this.terrain.length - 1);
-          var y = randIntRange(0, this.terrain[0].length - 1);
+          var x = this.mt.randRange(0, this.terrain.length - 1);
+          var y = this.mt.randRange(0, this.terrain[0].length - 1);
 
           var name = this.terrain[x][y].name;
           if (name === "Sea" || name === "Snow" || name === "Ice" || name === "Desert")
@@ -591,7 +607,7 @@ JP.World.prototype.AddRivers = function()
         if (next !== null)
           cpos = next;
         else if (possibleNext.length > 0)
-          cpos = possibleNext[randIntRange(0, possibleNext.length - 1)];
+          cpos = possibleNext[this.mt.randRange(0, possibleNext.length - 1)];
         */
         if (weightedNext.Size() > 0)
           cpos = weightedNext.ChooseRandom();
@@ -610,7 +626,7 @@ JP.World.prototype.AddRivers = function()
     });
 
     // river is now sorted from low to high height
-    var truncate = randIntRange(10, 20);
+    var truncate = this.mt.randRange(10, 20);
     river.splice(river.length - truncate, Infinity); // remove truncate off the end
 
     // mark the tiles as river
@@ -666,7 +682,7 @@ JP.World.prototype.SpawnerMap = function()
   var spawnsToMake = Math.min(spawnLocations.length, (spawncfg.quant > 0 ? spawncfg.quant : Math.floor(spawnLocations.length * spawncfg.quantfrac)));
   while (--spawnsToMake > 0)
   {
-    var r = randIntRange(0, spawnLocations.length - 1);
+    var r = this.mt.randRange(0, spawnLocations.length - 1);
     var spawn = JP.Spawn.Create(spawncfg.name, spawnLocations[r].x, spawnLocations[r].y);
     spawnLocations.splice(r, 1); // remote it from the list
     if (spawncfg.override != null)
@@ -706,12 +722,12 @@ JP.World.prototype.EntityMap = function()
       var tiles = Object.keys(setting.tiles);
       for (var j = tiles.length - 1; j >= 0; j--)
       {
-        if (tiles[j] === this.terrain[x][y].name && setting.tiles[tiles[j]] >= Math.random())
+        if (tiles[j] === this.terrain[x][y].name && setting.tiles[tiles[j]] >= this.mt.random())
           possibleEntities.push(setting.entity);
       }
     }
     if (possibleEntities.length > 0)
-      this.entities.push(JP.Entity.Create(possibleEntities[randIntRange(0, possibleEntities.length - 1)], x, y));
+      this.entities.push(JP.Entity.Create(possibleEntities[this.mt.randRange(0, possibleEntities.length - 1)], x, y));
   }
   return x / this.mapData.length;
 };
