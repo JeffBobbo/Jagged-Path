@@ -421,6 +421,17 @@ JP.Player.prototype.Fire = function()
   JP.Item.Use(tb);
 };
 
+JP.Player.prototype.Mine = function()
+{
+  var pick = this.ItemClass(JP.Item.Class.PICKAXE);
+  if (pick === null)
+  {
+    new JP.Logger.LogItem("You have no pickaxe.").Post();
+    return;
+  }
+  JP.Item.Use(pick);
+}
+
 JP.Player.prototype.QuestProgress = function(quest)
 {
   for (var i = this.quests.length - 1; i >= 0; i--)

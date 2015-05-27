@@ -11,6 +11,7 @@ JP.Item.Class = {
   AXE: 1,
   WOOD: 2,
   TINDERBOX: 3,
+  PICKAXE: 4
 };
 
 JP.Item.registry = {};
@@ -31,6 +32,9 @@ JP.Item.Load = function(data)
     break;
     case "tinderbox":
       item = new JP.Item.Tinderbox();
+    break;
+    case "pickaxe":
+      item = new JP.Item.Pickaxe();
     break;
     default:
       alert("Unknown item class for " + data.name + ". Class: " + data.class);
@@ -277,4 +281,66 @@ JP.Item.Tinderbox.prototype.Use = function()
   JP.player.ItemDelta(wood, -1);
   new JP.Logger.LogItem("You started a fire.").Post();
   JP.needDraw = true;
+};
+
+JP.Item.Pickaxe = function()
+{
+  JP.Item.Item.apply(this, arguments);
+  this.name = "Pickaxe";
+  this.class = JP.Item.Class.PICKAXE;
+  
+  this.value = 350;
+
+  this.power = 1;
+  this.reach = 2;
+};
+JP.Item.Pickaxe.prototype = Object.create(JP.Item.Item.prototype);
+JP.Item.Pickaxe.prototype.constructor = JP.Item.Pickaxe;
+JP.Item.Pickaxe.prototype.Use = function()
+{
+  var rock = null;
+  if (JP.Option.Get("controlStyle") === JP.Option.ControlStyle.ARCADE)
+  {
+    switch (JP.player.direction)
+    {
+      case JP.Keys.A:
+        rock = JP.Entity.FindAroundPlayer(JP.Entity.Type.ROCK, this.reach, JP.rad(-45), JP.rad(45), 0);
+      break;
+      case JP.Keys.D:
+        rock = JP.Entity.FindAroundPlayer(JP.Entity.Type.ROCK, this.reach, JP.rad(-45), JP.rad(45), Math.PI/2);
+      break;
+      case JP.Keys.W:
+        rock = JP.Entity.FindAroundPlayer(JP.Entity.Type.ROCK, this.reach, JP.rad(-45), JP.rad(45), Math.PI);
+      break;
+      case JP.Keys.S:
+      default:
+        rock = JP.Entity.FindAroundPlayer(JP.Entity.Type.ROCK, this.reach, JP.rad(-45), JP.rad(45), -Math.PI/2);
+      break;
+    }
+  }
+  else
+  {
+    rock = JP.Entity.FindAroundPlayer(JP.Entity.Type.ROCK, this.reach, JP.rad(-45), JP.rad(45));
+  }
+  if (rock !== null)
+  {
+    if (rock.canMine === true)
+    {
+      if (rock.Impact(this.power))
+        new JP.Logger.LogItem("You mined the rock.").Post();
+      else
+        new JP.Logger.LogItem("You swing at the rock.").Post();
+      return true;
+    }
+    else
+    {
+      new JP.Logger.LogItem("You can't mine that.").Post();
+      return false;    
+    }
+  }
+  else
+  {
+    new JP.Logger.LogItem("There's nothing to mine.").Post();
+    return false;
+  }
 };

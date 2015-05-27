@@ -5,5 +5,12 @@
     "value": 350,
     "power": 1,
     "reach": 2
+  },
+  {
+    "class": "pickaxe",
+    "name": "Pickaxe",
+    "value": 350,
+    "power": 1,
+    "reach": 2
   }
 ]

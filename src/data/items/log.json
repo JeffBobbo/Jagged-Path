@@ -16,5 +16,12 @@
     "name": "Baobab Log",
     "value": 35,
     "power": 3
+  },
+
+  {
+    "class": "log",
+    "name": "Coal",
+    "value": 50,
+    "power": 5
   }
 ]

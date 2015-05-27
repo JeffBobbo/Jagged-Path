@@ -9,18 +9,21 @@ JP.Entity.ID = 0;
 
 JP.Entity.Type = JP.Entity.Type || {};
 JP.Entity.Type.NONE       = 0x00;
-//trees
+// trees
 JP.Entity.Type.OAK        = 0x01;
 JP.Entity.Type.EVERGREEN  = 0x02;
-JP.Entity.Type.TREE       = JP.Entity.Type.OAK + JP.Entity.Type.EVERGREEN;
+JP.Entity.Type.TREE       = JP.Entity.Type.OAK | JP.Entity.Type.EVERGREEN;
+// rocks
+JP.Entity.Type.STONE      = 0x04;
+JP.Entity.Type.ROCK       = JP.Entity.Type.STONE;
 // npcs
-JP.Entity.Type.LUMBERJACK = 0x04;
+JP.Entity.Type.LUMBERJACK = 0x08;
 JP.Entity.Type.NPC        = JP.Entity.Type.LUMBERJACK;
 //misc
-JP.Entity.Type.FIRE       = 0x08;
+JP.Entity.Type.FIRE       = 0x10;
 JP.Entity.Type.MISC       = JP.Entity.Type.FIRE;
 
-JP.Entity.Type.ITEM       = 0x10;
+JP.Entity.Type.ITEM       = 0x20;
 
 JP.Entity.registry = {};
 
@@ -37,6 +40,9 @@ JP.Entity.Load = function(data)
     break;
     case "npc":
       entity.cstruct = JP.Entity.NPC;
+    break;
+    case "rock":
+      entity.cstruct = JP.Entity.Rock;
     break;
     default:
       alert("Unknown entity class for " + data.name + ". Class: " + data.class);
@@ -432,6 +438,21 @@ JP.Entity.Tree = function()
 };
 JP.Entity.Tree.prototype = Object.create(JP.Entity.Entity.prototype);
 JP.Entity.Tree.prototype.constructor = JP.Entity.Tree;
+
+JP.Entity.Rock = function()
+{
+  JP.Entity.Entity.apply(this, arguments);
+  this.type = JP.Entity.Type.ROCK;
+  this.canMine = true;
+  this.hpMax = 5;
+  this.imgPath = 'rock.png';
+  this.hp = this.hpMax;
+
+  // reposition slightly so trees don't sit uniformly
+  this.size = (randIntRange((JP.zoomLevel >> 1) - 2, (JP.zoomLevel >> 1) + 2) << 1) / JP.zoomLevel;
+};
+JP.Entity.Rock.prototype = Object.create(JP.Entity.Entity.prototype);
+JP.Entity.Rock.prototype.constructor = JP.Entity.Rock;
 
 JP.Entity.NPC = function()
 {
