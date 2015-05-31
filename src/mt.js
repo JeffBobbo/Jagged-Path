@@ -23,8 +23,7 @@ MT.prototype.seed = function(s)
       seed = parseInt(s);
     break;
     default:
-      throw "Nope";
-    //  seed = (new Date()).getTime();
+      throw "Bad seed";
     break;
   }
   seed &= 0x7FFFFFFF; // pretty sure this doesn't make a difference
