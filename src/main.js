@@ -83,7 +83,7 @@ JP.Initialize = function()
   if (JP.Data.filesReq > JP.Data.filesRec)
   {
     document.getElementById('loadingTitle').textContent = "Retreiving game data";
-    document.getElementById('loadingDetail').textContent = Commify(JP.Data.filesRec) + " of " + Commify(JP.Data.filesReq) + " received";
+    document.getElementById('loadingDetail').textContent = Commify(JP.Data.filesRec) + " of " + Commify(JP.Data.filesReq) + " files received";
     document.getElementById('loadingExtra').textContent = 'Please Wait';
     return;
   }
@@ -105,7 +105,6 @@ JP.Initialize = function()
  */
 JP.Generate = function()
 {
-  JP.player.Load();
 
   if (JP.world.generationLevel < JP.World.Gen.DONE)
   {
@@ -116,6 +115,7 @@ JP.Generate = function()
   {
     document.getElementById('loading').style.display = "none";
 
+    JP.player.Load();
     // temp hack
     if (JP.world.terrain[Math.floor(JP.player.relx)][Math.floor(JP.player.rely)].spawnSafe === true)
       JP.world.entities.unshift(JP.Entity.Create("Lumberjack", Math.floor(JP.player.relx), Math.floor(JP.player.rely))); // place a woodsman with the player
@@ -491,7 +491,7 @@ function pageLoad()
   // setup the canvas
   JP.SetResolution(); // this handles the JP.t?canvas references
 
-  if (localStorage.getItem("JP.World.Saved") === null)
+  if (localStorage.getItem("JP.Saved") === null)
   {
     document.getElementById('loadWorld').disabled   = true;
     document.getElementById('deleteWorld').disabled = true;

@@ -21,6 +21,8 @@ JP.World.Generation = {
 
 JP.World.prototype.Save = function()
 {
+  localStorage.setItem("JP.Saved", true);
+  return true;
   var savePerRun = 100; // ents
 /*  if (full === true)
   {
@@ -82,48 +84,9 @@ JP.World.prototype.Save = function()
 JP.World.prototype.Load = function()
 {
   var seed = localStorage.getItem("JP.World.seed") || getTime();
-  this.mt = new MT(seed);
-  console.log("seed: " + seed);
+  this.mt = new MT();
+  seed = this.mt.seed(seed); // bit weird, but
   localStorage.setItem("JP.World.seed", seed);
-  return true;
-
-  if (localStorage.getItem("JP.World.Saved") === null)
-    return false;
-  if (localStorage.getItem("JP.World.mapData.0") === null)
-  {
-    console.error("'JP.World.Saved' wasn't null but no mapData found to load.");
-    return false; // if we return here something bad is happening
-  }
-
-  if (JP.World.prototype.Load.x === undefined)
-  {
-    JP.World.prototype.Load.x = 0;
-    this.terrain = [];
-    this.mapData = [];
-    this.tmpData = [];
-    this.entities = [];
-    this.spawners = [];
-  }
-  var x = JP.World.prototype.Load.x++;
-
-  if (JP.World.prototype.Load.max === undefined)
-  {
-    var max = 0;
-    while (localStorage.getItem("JP.World.mapData." + max++));
-    JP.World.prototype.Load.max = max - 1;
-  }
-  var arr = localStorage.getItem("JP.World.mapData." + x);
-  if (arr !== null)
-  {
-    arr = JSON.parse(LZString.decompressFromUTF16(arr));
-    this.terrain[x] = [];
-    for (var y = this.terrain.length - 1; y >= 0; y--)
-      this.terrain[x][y] = {};
-    this.mapData[x] = arr;
-    return x / JP.World.prototype.Load.max;
-  }
-  // need to do entity loading
-  this.generationLevel = JP.World.Gen.TILING;
   return true;
 };
 
@@ -132,7 +95,8 @@ JP.World.prototype.Delete = function()
   var x = 0;
   while (localStorage.getItem("JP.World.mapData." + x) !== null)
     localStorage.removeItem("JP.World.mapData." + x++)
-  localStorage.removeItem("JP.World.Saved");
+  localStorage.removeItem("JP.Saved");
+  localStorage.removeItem("JP.World.seed");
 }
 
 JP.World.Gen = JP.World.Gen || {};
@@ -318,8 +282,7 @@ JP.World.prototype.CreateHeightMap = function()
   {
     JP.World.prototype.CreateHeightMap.x = 0;
     //JP.World.prototype.CreateHeightMap.noise = new Noise(4, 2, 4, 3, 5, -Math.PI, Math.PI, -Math.PI, Math.PI);
-    var pseed = this.mt.random();
-    noise.seed(pseed);
+    JP.World.prototype.CreateHeightMap.noise = new SimplexNoise(new MT(this.mt.random()));
   }
 
   var x = JP.World.prototype.CreateHeightMap.x++;
@@ -333,7 +296,8 @@ JP.World.prototype.CreateHeightMap = function()
     var xp = x / this.tmpData.length
     var yp = y / this.tmpData[0].length; // normalize
     var size = 2;  // pick a scaling value
-    this.tmpData[x][y].height = noise.perlin2(xp*size, yp*size) * 100;
+    this.tmpData[x][y].height = pn.noise(xp * size, yp * size) * 100;
+    //this.tmpData[x][y].height = noise.perlin2(xp*size, yp*size) * 100;
     //this.tmpData[x][y].height = pn.Value(x, y) * 5;
     //this.tmpData[x][y].height = PerlinNoise.noise(xp * size, yp * size, 0.5) * 100;
   }
@@ -371,10 +335,11 @@ JP.World.prototype.CreateMoistureMap = function()
   if (JP.World.prototype.CreateMoistureMap.x === undefined)
   {
     JP.World.prototype.CreateMoistureMap.x = 0;
-    noise.seed(this.mt.random());
+    JP.World.prototype.CreateMoistureMap.noise = new SimplexNoise(new MT(this.mt.random()));
   }
 
   var x = JP.World.prototype.CreateMoistureMap.x++;
+  var pn = JP.World.prototype.CreateMoistureMap.noise;
 
   if (x === this.tmpData.length)
     return true; // return true when we're done
@@ -384,7 +349,8 @@ JP.World.prototype.CreateMoistureMap = function()
     var xp = x / this.tmpData.length
     var yp = y / this.tmpData[0].length; // normalize
     var size = 3;  // pick a scaling value
-    this.tmpData[x][y].moisture = noise.perlin2(xp*size, yp*size) * 100;
+    this.tmpData[x][y].moisture = pn.noise(xp * size, yp * size) * 100;
+    //this.tmpData[x][y].moisture = noise.perlin2(xp*size, yp*size) * 100;
     //this.tmpData[x][y].moisture = pn.Value(x, y) * 5;
     //this.tmpData[x][y].moisture = PerlinNoise.noise(xp * size, yp * size, 0.5) * 100;
   }
