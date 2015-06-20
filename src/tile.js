@@ -75,7 +75,7 @@ JP.Tile.Register = function(tile)
  * @param {number} y
  * @returns {JP.Tile} tile
  */
-JP.Tile.Create = function(tile, x, y)
+JP.Tile.Create = function(tile, data)
 {
   var reg = JP.Tile.registry[tile];
   if (reg === undefined)
@@ -83,8 +83,8 @@ JP.Tile.Create = function(tile, x, y)
   var tile = new JP.Tile();
   tile.merge(reg.data);
 
-  if (x !== undefined && y !== undefined)
-    tile.data = JP.world.mapData[x][y];
+  if (data !== undefined)
+    tile.data = data;
   return tile;
 }
 
