@@ -105,17 +105,17 @@ JP.Initialize = function()
  */
 JP.Generate = function()
 {
-
   if (JP.world.generationLevel < JP.World.Gen.DONE)
   {
-    JP.world.GenerationTasks();
+    JP.world.GenerationTasks(JP.player.posx, JP.player.posy);
     return;
   }
   else
   {
     document.getElementById('loading').style.display = "none";
 
-    JP.player.Load();
+    if (JP.player.posx === null) // if they're not in the world, place em somewhere
+      JP.player.Place();
     // temp hack
     if (JP.world.terrain[Math.floor(JP.player.relx)][Math.floor(JP.player.rely)].spawnSafe === true)
       JP.world.entities.unshift(JP.Entity.Create("Lumberjack", Math.floor(JP.player.relx), Math.floor(JP.player.rely))); // place a woodsman with the player
@@ -453,8 +453,10 @@ function loadWorld()
 
   // create the world
   JP.world = new JP.World();
+
   // load player data
   JP.player = new JP.Player();
+  JP.player.Load();
 
   JP.Logger.logNode = document.getElementById('eventLog');
   JP.canvas.focus();

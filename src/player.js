@@ -8,10 +8,10 @@ JP.Player = function()
 {
   this.fName = "";
   this.sName = "";
-  this.posx = -1;
-  this.posy = -1;
-  this.relx = -1; // floats
-  this.rely = -1; // floats
+  this.posx = null; // null means unplaced
+  this.posy = null;
+  this.relx = null; // floats
+  this.rely = null; // floats
 
   this.speed = 4; // in tiles per s
   this.rotationSpeed = Math.PI * 2; // pi radians per second
@@ -246,10 +246,14 @@ JP.Player.prototype.GoldUpdate = function()
 JP.Player.prototype.Place = function()
 {
   // choose a sensible location for the player
-  while (this.relx === -1 && this.rely === -1)
+  while (this.relx === null && this.rely === null)
   {
-    var x = randIntRange(0, JP.WIDTH - 1);
-    var y = randIntRange(0, JP.HEIGHT - 1);
+    var x = randIntRange(0, JP.world.terrain.length - 1);
+    if (JP.world.terrain[x] === undefined)
+      continue;
+    var y = randIntRange(0, JP.world.terrain[x].length - 1);
+    if (JP.world.terrain[x][y] === undefined)
+      continue;
     // make sure this spot is clear
     if (JP.world.terrain[x][y].spawnSafe === false)
       continue;
@@ -272,23 +276,23 @@ JP.Player.prototype.Move = function(dir)
     switch (dir)
     {
       case JP.Keys.A:
-        if (this.relx - dist > 0 && JP.world.terrain[Math.floor(this.relx - dist)][Math.floor(this.rely + 0.5)].IsPassable())
+        if (JP.world.terrain[Math.floor(this.relx - dist)] && JP.world.terrain[Math.floor(this.relx - dist)][Math.floor(this.rely + 0.5)].IsPassable())
           this.relx -= dist;
         this.direction = JP.Keys.A;
       break;
       case JP.Keys.D:
-        if (this.relx + dist < (JP.WIDTH - 1) && JP.world.terrain[Math.floor(this.relx + 1 + dist)][Math.floor(this.rely + 0.5)].IsPassable())
+        if (JP.world.terrain[Math.ceil(this.relx + dist)] && JP.world.terrain[Math.ceil(this.relx + dist)][Math.floor(this.rely + 0.5)].IsPassable())
           this.relx += dist;
         this.direction = JP.Keys.D;
       break;
 
       case JP.Keys.W:
-        if (this.rely - dist > 0 && JP.world.terrain[Math.floor(this.relx + 0.5)][Math.floor(this.rely - dist)].IsPassable())
+        if (JP.world.terrain[this.posx][Math.floor(this.rely - dist)] && JP.world.terrain[Math.floor(this.relx + 0.5)][Math.floor(this.rely - dist)].IsPassable())
           this.rely -= dist;
         this.direction = JP.Keys.W;
       break;
       case JP.Keys.S:
-        if (this.rely + dist < (JP.HEIGHT - 1) && JP.world.terrain[Math.floor(this.relx + 0.5)][Math.floor(this.rely + 1 + dist)].IsPassable())
+        if (JP.world.terrain[this.posx][Math.ceil(this.rely + dist)] && JP.world.terrain[Math.floor(this.relx + 0.5)][Math.ceil(this.rely + dist)].IsPassable())
           this.rely += dist;
         this.direction = JP.Keys.S;
       break;
