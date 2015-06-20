@@ -3,7 +3,8 @@ MT = function(s)
   this.state = new Uint32Array(624);
   this.index = 0;
 
-  this.seed(s);
+  if (s)
+    this.seed(s);
 };
 
 MT.RAND_MAX = Math.pow(2, 32);
