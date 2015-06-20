@@ -159,6 +159,8 @@ JP.Entity.Entity.prototype.Draw = function(xoffset, yoffset)
     return;
   if (this.rely < Math.floor(yoffset) || this.rely > JP.canvas.height / JP.zoomLevel + yoffset)
     return;
+  if (!(JP.world.terrain[Math.floor(this.relx)] && JP.world.terrain[Math.floor(this.relx)][Math.floor(this.rely)]))
+    return;
   if (this.imgPath !== undefined)
   {
     if (this.img === undefined)
