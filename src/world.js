@@ -447,7 +447,7 @@ JP.World.prototype.TileMap = function()
     }
     if (possibleTiles.length > 0)
       tile = possibleTiles[this.mt.randRange(0, possibleTiles.length-1)];
-    this.terrain[x][y] = (tile === null ? JP.Tile.Create("Invalid", x, y) : JP.Tile.Create(tile, x, y));
+    this.terrain[x][y] = (tile === null ? JP.Tile.Create("Invalid", this.mapData[x][y]) : JP.Tile.Create(tile, this.mapData[x][y]));
   }
   return x / this.mapData.length;
 };
