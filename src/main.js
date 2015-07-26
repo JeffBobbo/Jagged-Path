@@ -57,8 +57,6 @@ var JP = JP || {
   needDraw: false
 };
 
-var useDB = false;
-
 /**
  * game state
  * @enum
@@ -68,8 +66,6 @@ JP.STATE = {
   GEN:  1,
   RUN:  2
 };
-
-var useDB = false;
 
 /**
  * Pregame setup, retrieves content files and loads the world data if there's a one to load

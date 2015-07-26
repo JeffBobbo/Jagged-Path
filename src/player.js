@@ -73,42 +73,32 @@ JP.Player.prototype.Save = function()
   }
   o.inventory = this.inventory;
 
-  if (useDB === true)
-    JP.DB.SavePlayer(o);
-  else
-    localStorage.setItem("JP.Player", JSON.stringify(o));
-
+  localStorage.setItem("JP.Player", JSON.stringify(o));
 };
 
 JP.Player.prototype.Load = function(fName, sName)
 {
   fName = fName || "";
   sName = sName || "";
-  if (useDB === true)
+
+  var tmp = JSON.parse(localStorage.getItem("JP.Player"));
+
+  if (tmp === undefined || tmp === null)
+    return;
+
+  var invent = tmp.inventory;
+  tmp.inventory = undefined; // so we don't overwrite it in merge
+  this.merge(tmp);
+
+  var keys = Object.keys(invent);
+  for (var i = keys.length - 1; i >= 0; i--)
   {
-    JP.DB.LoadPlayer(fName, sName)
-  }
-  else
-  {
-    var tmp = JSON.parse(localStorage.getItem("JP.Player"));
-
-    if (tmp === undefined || tmp === null)
-      return;
-
-    var invent = tmp.inventory;
-    tmp.inventory = undefined; // so we don't overwrite it in merge
-    this.merge(tmp);
-
-    var keys = Object.keys(invent);
-    for (var i = keys.length - 1; i >= 0; i--)
+    try
     {
-      try
-      {
-        this.ItemDelta(keys[i], invent[keys[i]], true, false);
-      }
-      catch(msg)
-      {
-      }
+      this.ItemDelta(keys[i], invent[keys[i]], true, false);
+    }
+    catch(msg)
+    {
     }
   }
 
@@ -121,10 +111,7 @@ JP.Player.prototype.Load = function(fName, sName)
 
 JP.Player.prototype.Delete = function()
 {
-  if (useDB === true)
-    JP.DB.DeletePlayer();
-  else
-    localStorage.removeItem("JP.Player");
+  localStorage.removeItem("JP.Player");
 }
 
 JP.Player.prototype.CanClimb = function(snow)
